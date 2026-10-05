@@ -59,7 +59,7 @@ input,select{font:inherit;color:var(--tx);background:var(--sf);border:1px solid 
 .tm{position:absolute;top:calc(68px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#0007;border-radius:99px;padding:4px 14px;font-weight:700;z-index:3}
 .tm.rc:before{content:'';display:inline-block;width:9px;height:9px;border-radius:50%;background:#ff3b5c;margin-right:8px}
 .cbot{position:absolute;left:0;right:0;bottom:0;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;align-items:center;gap:12px;z-index:3}
-.rec{position:relative;width:80px;height:80px;flex:none;border-radius:50%;border:4px solid rgba(255,255,255,.95);background:radial-gradient(circle at 38% 32%,#ff9ab5 0 7%,#ff4d72 18%,#fe2c55 42%,#a80055 68%,#35105f 100%);box-shadow:0 0 0 3px rgba(255,255,255,.12),0 0 18px #ff2c63,0 0 42px rgba(139,123,255,.8),inset 0 0 18px rgba(255,255,255,.35);transition:border-radius .3s,transform .25s;overflow:visible;isolation:isolate}.rec:before{content:'';position:absolute;inset:-13px;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,transparent 42%,rgba(255,90,145,.22) 45%,transparent 58%),conic-gradient(from 0deg,transparent 0 18%,rgba(255,255,255,.9) 20%,transparent 23% 42%,rgba(126,210,255,.75) 44%,transparent 47% 70%,rgba(255,170,235,.8) 72%,transparent 75%);filter:blur(1px);animation:galaxySpin 3.8s linear infinite;z-index:-1}.rec:after{content:'✦  ·  ✧  ·  ✦';position:absolute;inset:-25px;display:grid;place-items:center;color:#fff;font-size:9px;letter-spacing:7px;text-shadow:0 0 7px #fff,0 0 15px #8b7bff;opacity:.9;animation:galaxyStars 2.4s ease-in-out infinite}.rec.on{border-radius:22px;transform:scale(.65);box-shadow:0 0 22px #ff2c63,0 0 55px rgba(139,123,255,.95),inset 0 0 18px rgba(255,255,255,.35)}.rec.on:before{animation:galaxySpin 1.2s linear infinite}.rec.on:after{animation:galaxyStars .7s ease-in-out infinite}@keyframes galaxySpin{to{transform:rotate(360deg)}}@keyframes galaxyStars{0%,100%{transform:scale(.9) rotate(0deg);opacity:.55}50%{transform:scale(1.08) rotate(8deg);opacity:1}}
+.rec{width:80px;height:80px;flex:none;border-radius:50%;border:4px solid #fff;background:#fe2c55;box-shadow:inset 0 0 0 4px rgba(0,0,0,.55);transition:border-radius .3s,transform .25s}.rec.on{border-radius:22px;transform:scale(.65)}
 .rv{display:flex;flex-direction:column}.rv video{flex:1;min-height:0;width:100%;object-fit:contain}.rv .pn{background:var(--sf);color:var(--tx);padding:14px}
 .tx{position:absolute;left:14px;right:14px;top:36%;text-align:center;font-size:30px;font-weight:800;color:#fff;text-shadow:0 2px 14px #000;pointer-events:none}.pv{width:100%;max-height:40vh;border-radius:16px;background:#000}
 .cshade{position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,rgba(0,0,0,.65));pointer-events:none}
@@ -249,6 +249,86 @@ async function ensureSupabaseProfile(user){
   if(res.error) throw res.error;
   if(ME&&ME.u!==payload.username){ME.u=payload.username;S.acct=ME;save()}
   return payload.username;
+}
+
+/* ==========================================
+   VIDEOS - SUPABASE STORAGE + public.videos
+   ========================================== */
+const VIDEO_BUCKET='videos';
+
+async function loadCloudVideos(){
+  if(!sb) return;
+  const {data,error}=await sb.from('videos')
+    .select('id,description,video_url');
+  if(error) throw error;
+
+  const remote=(data||[]).filter(v=>v.video_url).map(v=>({
+    id:v.id,
+    d:v.description||'Mi vídeo',
+    tags:[],
+    t:0,
+    src:v.video_url,
+    f:'',
+    txt:'',
+    sp:1,
+    nc:false,
+    mu:false,
+    remote:true
+  }));
+
+  const remoteIds=new Set(remote.map(v=>String(v.id)));
+  const local=S.meta.filter(v=>!remoteIds.has(String(v.id)) && v.src);
+  S.meta=[...remote,...local];
+}
+
+async function publishCloudVideo(file, description){
+  if(!sb) throw new Error('Supabase no está disponible.');
+  const user=await ensureSupabaseUser();
+
+  const mime=file.type||'video/webm';
+  const ext=mime.includes('mp4')?'mp4':'webm';
+  const uid=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+  const path=`${user.id}/${uid}.${ext}`;
+
+  const upload=await sb.storage.from(VIDEO_BUCKET).upload(path,file,{
+    contentType:mime,
+    upsert:false
+  });
+  if(upload.error) throw upload.error;
+
+  const {data:pub}=sb.storage.from(VIDEO_BUCKET).getPublicUrl(path);
+  const videoUrl=pub?.publicUrl;
+  if(!videoUrl){
+    await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
+    throw new Error('No se pudo obtener la URL pública del vídeo.');
+  }
+
+  const res=await sb.from('videos')
+    .insert({
+      description:description||'Mi vídeo',
+      video_url:videoUrl
+    })
+    .select('id,description,video_url')
+    .single();
+
+  if(res.error){
+    await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
+    throw res.error;
+  }
+
+  return {
+    id:res.data.id,
+    d:res.data.description||description||'Mi vídeo',
+    tags:[],
+    t:Date.now(),
+    src:res.data.video_url,
+    f:'',
+    txt:'',
+    sp:1,
+    nc:false,
+    mu:false,
+    remote:true
+  };
 }
 
 async function loadLiveMessages(liveId){
@@ -553,7 +633,32 @@ function review(){camOff();const u=URL.createObjectURL(blob);$('#m').innerHTML=`
  $('#rt').onclick=()=>open(true);$('#nx').onclick=()=>editor(new File([blob],'grabacion.webm',{type:blob.type}),cf)}
 function editor(f,fl=''){document.body.classList.remove('nl');camOff();const u=URL.createObjectURL(f);$('#m').innerHTML=`<div class="pg"><h2>Detalles del vídeo</h2><video src="${u}" controls muted playsinline class="pv"></video><p><input id="d" maxlength="150" placeholder="Descripción" aria-label="Descripción"></p><p><input id="h" placeholder="#hashtags separados por espacios" aria-label="Hashtags"></p><p><select id="fl" aria-label="Filtro"><option value="">Sin filtro</option><option value="filter:grayscale(1) contrast(1.1)">Blanco y negro</option><option value="filter:saturate(1.9) contrast(1.05)">Vívido</option><option value="filter:sepia(.8)">Retro</option><option value="filter:hue-rotate(200deg) saturate(1.4)">Neón frío</option><option value="filter:sepia(.35) saturate(1.5) hue-rotate(-20deg)">Cálido</option><option value="filter:contrast(1.35) brightness(.9) saturate(.8)">Cine</option></select></p><p><input id="tx" maxlength="40" placeholder="Texto sobre el vídeo (opcional)" aria-label="Texto"></p><p><select id="sp" aria-label="Velocidad"><option value="0.5">Velocidad 0.5×</option><option value="1" selected>Velocidad 1×</option><option value="1.5">Velocidad 1.5×</option><option value="2">Velocidad 2×</option></select></p><p><label><input type="checkbox" id="cc" checked style="width:auto"> Permitir comentarios</label></p><p><label><input type="checkbox" id="mu" style="width:auto"> Silenciar audio original</label></p><div class="chips"><button class="btn o" id="dr">Guardar borrador</button><button class="btn" id="pb">Publicar</button></div></div>`;
  $('#fl').value=fl;$('.pv').style.cssText=fl;$('#fl').onchange=()=>{$('.pv').style.cssText=$('#fl').value};$('#dr').onclick=()=>toast('Borrador guardado (demo)');
- $('#pb').onclick=async()=>{const id='u'+Date.now().toString(36);S.meta.unshift({id,d:$('#d').value.trim()||'Mi vídeo',tags:($('#h').value.match(/#[\w\u00C0-\u024F]{1,30}/g)||[]).slice(0,8),t:Date.now(),src:u,f:$('#fl').value,txt:$('#tx').value.trim(),sp:+$('#sp').value,nc:!$('#cc').checked,mu:$('#mu').checked});await idb('put',f,id);save();toast('Vídeo publicado');go('#/v/'+id)}}
+ $('#pb').onclick=async()=>{
+  const btn=$('#pb');
+  const description=$('#d').value.trim()||'Mi vídeo';
+  btn.disabled=true;
+  btn.textContent='Publicando…';
+  try{
+    const cloud=await publishCloudVideo(f,description);
+    S.meta.unshift(cloud);
+    save();
+    toast('Vídeo publicado para todos los usuarios');
+    go('#/v/'+cloud.id);
+  }catch(e){
+    console.error('Error publicando vídeo:',e);
+    const msg=String(e?.message||e);
+    if(/bucket|not found/i.test(msg)){
+      toast('Falta crear el bucket público "videos" en Supabase');
+    }else if(/row-level|permission|policy/i.test(msg)){
+      toast('Revisa las políticas RLS de videos y Storage');
+    }else{
+      toast('No se pudo publicar: '+msg.slice(0,90));
+    }
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Publicar';
+  }
+}}
 /* Paneles */
 const closeSheet=()=>{$('#ov').innerHTML=''};
 function sheet(t,body,foot=''){$('#ov').innerHTML=`<div class="sheet" role="dialog" aria-label="${t}"><div class="sh"><span>${t}</span><button data-a="x" aria-label="Cerrar">${ic('x',20)}</button></div><div class="sb">${body}</div>${foot}</div>`}
@@ -595,7 +700,13 @@ function welcome(){document.body.classList.add('nl');closeSheet();
   if(n.length<2){$('#we').textContent='Escribe tu nombre (mínimo 2 letras).';$('#wn').focus();return}
   if(u.length<3)u=(u+'nova'+(Math.random()*900+100|0)).slice(0,20);
   S.acct={n,u,bio:''};ME=S.acct;save();
-  try{const user=await ensureSupabaseUser();await ensureSupabaseProfile(user)}catch(e){console.warn('Perfil Supabase pendiente:',e)}
+  try{
+    const user=await ensureSupabaseUser();
+    await ensureSupabaseProfile(user);
+    await loadCloudVideos();
+  }catch(e){
+    console.warn('Supabase pendiente:',e);
+  }
   document.body.classList.remove('nl');go('#/')};
  const google=async()=>{
   if(!sb){$('#we').textContent='No se pudo cargar Supabase.';return}
@@ -606,7 +717,45 @@ function welcome(){document.body.classList.add('nl');closeSheet();
  };
  $('#wb').onclick=enter;$('#googleBtn').onclick=google;$('#wf').onkeydown=e=>{e.key=='Enter'&&enter()}}
 /* Inicio */
-(async()=>{await Promise.all(S.meta.map(async v=>{const b=await idb('get',v.id);if(b)v.src=URL.createObjectURL(b)}));S.meta=S.meta.filter(v=>v.src);theme();
- try{if(sb){const {data:{session}}=await sb.auth.getSession();if(session?.user){supabaseUser=session.user;const u=session.user,n=u.user_metadata?.full_name||u.user_metadata?.name||'Nova';const base=cl(u.user_metadata?.preferred_username||u.user_metadata?.user_name||u.email?.split('@')[0]||'nova');ME=S.acct={n,u:base.slice(0,20)||'nova',bio:''};save();await ensureSupabaseProfile(u)}}}catch(e){console.warn(e)}
- if(S.acct){ME=S.acct;route()}else welcome()})();
+(async()=>{
+  await Promise.all(S.meta.map(async v=>{
+    const b=await idb('get',v.id);
+    if(b)v.src=URL.createObjectURL(b)
+  }));
+  S.meta=S.meta.filter(v=>v.src);
+  theme();
+
+  try{
+    if(sb){
+      const {data:{session}}=await sb.auth.getSession();
+      if(session?.user){
+        supabaseUser=session.user;
+        const u=session.user;
+        const n=u.user_metadata?.full_name||u.user_metadata?.name||'Nova';
+        const base=cl(u.user_metadata?.preferred_username||u.user_metadata?.user_name||u.email?.split('@')[0]||'nova');
+        ME=S.acct={n,u:base.slice(0,20)||'nova',bio:''};
+        save();
+        await ensureSupabaseProfile(u);
+        await loadCloudVideos();
+      }
+    }
+  }catch(e){
+    console.warn('No se pudieron cargar los vídeos de Supabase:',e);
+  }
+
+  if(S.acct){
+    ME=S.acct;
+    try{
+      if(sb){
+        await ensureSupabaseUser();
+        await loadCloudVideos();
+      }
+    }catch(e){
+      console.warn('Feed cloud pendiente:',e);
+    }
+    route();
+  }else{
+    welcome();
+  }
+})();
 </script></body></html>
