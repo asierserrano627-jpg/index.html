@@ -211,7 +211,7 @@ input:disabled{opacity:.5}
 
 <script>
 /* ============================================================
-   NOVA · app principal
+   NOVA · app principal (con Realtime social)
    ============================================================ */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -224,10 +224,11 @@ const sb=(window.supabase&&window.supabase.createClient)
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY)
   : null;
 
-let liveChannel=null, currentLive=null, supabaseUser=null, cloudFeedChannel=null;
+let liveChannel=null, currentLive=null, supabaseUser=null, cloudFeedChannel=null, socialChannel=null;
 const rtcPeers=new Map();
 const rtcClientId=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
 let rtcRole='';
+let currentCommentsVideoId=null; // para saber si refrescar el panel de comentarios
 
 addEventListener('beforeunload',()=>{try{sb&&sb.removeAllChannels&&sb.removeAllChannels()}catch(e){}});
 
@@ -1004,6 +1005,7 @@ function editor(f,fl=''){
       console.error('Error publicando vídeo:',e);
       const msg=String(e?.message||e);
       if(/bucket|not found/i.test(msg)) toast('Falta crear el bucket público "videos" en Supabase');
+      else if(/user_id/i.test(msg)) toast('Falta la columna user_id en la tabla videos. Ejecuta el SQL.');
       else if(/row-level|permission|policy/i.test(msg)) toast('Revisa las políticas RLS de videos y Storage');
       else toast('No se pudo publicar: '+msg.slice(0,90));
     }finally{
@@ -1012,7 +1014,7 @@ function editor(f,fl=''){
   };
 }
 
-const closeSheet=()=>{$('#ov').innerHTML=''};
+const closeSheet=()=>{curC=null;currentCommentsVideoId=null;$('#ov').innerHTML=''};
 function sheet(t,body,foot=''){
   $('#ov').innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(t)}"><div class="sh"><span>${esc(t)}</span><button data-a="x" aria-label="Cerrar">${ic('x',20)}</button></div><div class="sb">${body}</div>${foot}</div>`;
 }
@@ -1035,6 +1037,19 @@ function readAv(f){
 const renderCommentsList=(list)=>list.length
   ?list.map(c=>`<div class="cm" style="display:flex;gap:8px;align-items:flex-start">${avt(30)}<div style="flex:1;min-width:0"><b>@${esc(c.u)}</b><div>${esc(c.t)}</div></div><button class="btn o" style="padding:4px 10px;font-size:12px" data-del-cm="${c.id}">Borrar</button></div>`).join('')
   :'<p class="mu">Sé el primero en comentar.</p>';
+
+async function renderCommentSheetFor(videoId){
+  const list=await loadComments(videoId);
+  const sbEl=$('.sb');
+  if(!sbEl)return;
+  sbEl.innerHTML=renderCommentsList(list);
+  sbEl.querySelectorAll('[data-del-cm]').forEach(b=>b.onclick=async()=>{
+    try{
+      await deleteComment(+b.dataset.delCm,videoId);
+      await renderCommentSheetFor(videoId);
+    }catch(err){console.error(err);toast('No se pudo borrar')}
+  });
+}
 
 const A={
   x:closeSheet,
@@ -1067,20 +1082,12 @@ const A={
   },
   cm:async e=>{
     curC=e.closest('.card').dataset.id;
+    currentCommentsVideoId=curC;
     if(vid(curC).nc)return toast('Comentarios desactivados');
     sheet('Comentarios','<p class="mu">Cargando…</p>',`<div class="cf"><input id="ci" placeholder="Escribe un comentario…" aria-label="Comentario" autocomplete="off"><button class="btn" data-a="cmp">Publicar</button></div>`);
     $('#ci').onkeydown=ev=>{ev.key=='Enter'&&A.cmp()};
-    try{
-      const list=await loadComments(curC);
-      if($('.sb'))$('.sb').innerHTML=renderCommentsList(list);
-      document.querySelectorAll('[data-del-cm]').forEach(b=>b.onclick=async()=>{
-        try{
-          await deleteComment(+b.dataset.delCm,curC);
-          const list2=await loadComments(curC);
-          if($('.sb'))$('.sb').innerHTML=renderCommentsList(list2);
-        }catch(err){console.error(err);toast('No se pudo borrar')}
-      });
-    }catch(err){console.error(err);if($('.sb'))$('.sb').innerHTML='<p class="mu">Error cargando comentarios.</p>'}
+    try{await renderCommentSheetFor(curC)}
+    catch(err){console.error(err);if($('.sb'))$('.sb').innerHTML='<p class="mu">Error cargando comentarios.</p>'}
   },
   cmp:async()=>{
     const t=$('#ci').value.trim();if(!t)return;
@@ -1088,15 +1095,7 @@ const A={
     if(btn)btn.disabled=true;
     try{
       await postComment(curC,t);
-      const list=await loadComments(curC);
-      if($('.sb'))$('.sb').innerHTML=renderCommentsList(list);
-      document.querySelectorAll('[data-del-cm]').forEach(b=>b.onclick=async()=>{
-        try{
-          await deleteComment(+b.dataset.delCm,curC);
-          const list2=await loadComments(curC);
-          if($('.sb'))$('.sb').innerHTML=renderCommentsList(list2);
-        }catch(err){console.error(err);toast('No se pudo borrar')}
-      });
+      await renderCommentSheetFor(curC);
     }catch(err){console.error(err);toast('No se pudo publicar')}
     finally{if(btn)btn.disabled=false}
   },
@@ -1142,7 +1141,7 @@ document.addEventListener('click',ev=>{
   }
 });
 
-window.addEventListener('hashchange',()=>{if(ME&&location.hash&&location.hash!=H){H=location.hash;route()}});
+window.addEventListener('hashchange',()=>{if(ME&&location.hash&&location.hash!==H){H=location.hash;route()}});
 
 function route(){
   const[r,a]=H.slice(2).split('/'),p=decodeURIComponent(a||'');
@@ -1197,9 +1196,12 @@ function welcome(){
 
   $('#wb').onclick=enter;
   $('#googleBtn').onclick=google;
-  $('#wf').onkeydown=e=>{e.key=='Enter'&&enter()};
+  $('#wf').onkeydown=e=>{e.key==='Enter'&&enter()};
 }
 
+/* ============================================================
+   REALTIME · feed + social (likes, comentarios, guardados)
+   ============================================================ */
 async function subscribeCloudFeed(){
   if(!sb||cloudFeedChannel)return;
   cloudFeedChannel=sb.channel('nova-public-feed')
@@ -1208,6 +1210,45 @@ async function subscribeCloudFeed(){
     .subscribe(status=>console.log('Feed Realtime:',status));
 }
 
+async function subscribeSocial(){
+  if(!sb||socialChannel)return;
+  socialChannel=sb.channel('nova-social')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'likes'},
+      payload=>{applyLikeDelta(payload.new.video_id,+1);})
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'likes'},
+      payload=>{applyLikeDelta(payload.old.video_id,-1);})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'saves'},
+      payload=>{applySaveDelta(payload.new.video_id,+1);})
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'saves'},
+      payload=>{applySaveDelta(payload.old.video_id,-1);})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'comments'},
+      async payload=>{
+        applyCommentDelta(payload.new.video_id,+1);
+        if(String(payload.new.video_id)===String(currentCommentsVideoId)){
+          await renderCommentSheetFor(currentCommentsVideoId);
+        }
+      })
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'comments'},
+      payload=>{applyCommentDelta(payload.old.video_id,-1);})
+    .subscribe(status=>console.log('Social Realtime:',status));
+}
+
+function applyLikeDelta(videoId,delta){
+  const v=vid(videoId); if(!v)return;
+  v.likeCount=Math.max(0,(v.likeCount||0)+delta);
+  refresh(videoId);
+}
+function applySaveDelta(videoId,delta){
+  const v=vid(videoId); if(!v)return;
+  v.saveCount=Math.max(0,(v.saveCount||0)+delta);
+}
+function applyCommentDelta(videoId,delta){
+  const v=vid(videoId); if(!v)return;
+  v.commentCount=Math.max(0,(v.commentCount||0)+delta);
+  refresh(videoId);
+}
+
+/* ---------- Arranque ---------- */
 (async()=>{
   await Promise.all(S.meta.map(async v=>{
     if(v.remote)return;
@@ -1220,6 +1261,7 @@ async function subscribeCloudFeed(){
   if(sb){
     try{
       await subscribeCloudFeed();
+      await subscribeSocial();
       const {data:{session}}=await sb.auth.getSession();
       if(session?.user){
         supabaseUser=session.user;
