@@ -883,8 +883,14 @@ async function subscribeCloudFeed(){
 
         await refreshCloudFeed();
       }
+      // El feed público debe cargarse también sin sesión.
+      // La tabla public.videos puede ser leída por usuarios anónimos si RLS lo permite.
+      if(!S.meta.some(v=>v.remote)){
+        try{await refreshCloudFeed()}catch(e){console.warn('Feed público pendiente:',e)}
+      }
     }catch(e){
       console.warn('Sesión/feed Supabase pendiente:',e);
+      try{await refreshCloudFeed()}catch(e2){console.warn('Feed público pendiente:',e2)}
     }
   }
 
