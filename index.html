@@ -64,16 +64,13 @@ input,select{font:inherit;color:var(--tx);background:var(--sf);border:1px solid 
 .rv{display:flex;flex-direction:column}.rv video{flex:1;min-height:0;width:100%;object-fit:contain}.rv .pn{background:var(--sf);color:var(--tx);padding:14px}
 .tx{position:absolute;left:14px;right:14px;top:36%;text-align:center;font-size:30px;font-weight:800;color:#fff;text-shadow:0 2px 14px #000;pointer-events:none}.pv{width:100%;max-height:40vh;border-radius:16px;background:#000}
 .cshade{position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,rgba(0,0,0,.65));pointer-events:none}
-.snd{position:absolute;left:50%;top:0;transform:translateX(-50%);height:46px;display:flex;align-items:center;gap:6px;padding:0 16px;border-radius:99px;background:rgba(0,0,0,.4);color:#fff;font-weight:600;white-space:nowrap}
 .tl{position:absolute;right:10px;top:calc(76px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:20px;z-index:3}
 .tb{color:#fff;filter:drop-shadow(0 1px 4px #000a);display:grid;place-items:center;width:40px;height:40px;border-radius:50%}.tb.on{background:rgba(255,255,255,.28)}
 .cd{display:none;position:absolute;inset:0;place-items:center;font-size:120px;font-weight:800;background:#0005;z-index:4;pointer-events:none}
 .durs{display:flex;gap:4px;font-size:13px;font-weight:700}.durs button{color:#fffc;padding:6px 12px;border-radius:99px}.durs .on{background:#fff;color:#000}
-.fxr{display:flex;align-items:center;justify-content:center;gap:10px;width:100%}
 .fx{width:40px;height:40px;flex:none;border-radius:50%;border:2px solid transparent;color:#fff;font-size:9px;font-weight:700}.fx.on{border-color:#fff}
 .brow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;width:100%;padding:0 14px}
 .gal{width:38px;height:38px;border:2px solid #fff;border-radius:9px;display:grid;place-items:center;color:#fff;background:#fff3}
-.tabs{display:flex;gap:22px;font-size:13px;font-weight:700;color:#fff}.tabs button{color:#fff9}
 .gx,nav a b,.rail b,.cb,.tb,.btn.o{background:radial-gradient(circle at 25% 20%,rgba(139,123,255,.5),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.38),transparent 60%),radial-gradient(1px 1px at 20% 70%,#fff,transparent),radial-gradient(1px 1px at 70% 25%,#fff,transparent),radial-gradient(1.5px 1.5px at 55% 55%,#fff9,transparent),rgba(30,15,80,.35);border:1px solid rgba(170,150,255,.4);backdrop-filter:blur(8px);box-shadow:0 0 14px rgba(139,123,255,.35),inset 0 0 10px rgba(255,255,255,.08);color:#f0ecff}
 nav a b{width:44px;border-radius:14px}nav a.mk b{border:0;color:#fff}nav a.on b{box-shadow:0 0 18px rgba(139,123,255,.8);animation:pop .45s}
 .rail .act b{animation:pop .45s}
@@ -302,7 +299,8 @@ async function loadCloudVideos(){
 
   const remote=(data||[]).filter(v=>v&&v.video_url).map(v=>({
     id:String(v.id),d:v.description||'Mi vídeo',tags:[],t:0,src:v.video_url,
-    f:'',txt:'',sp:1,nc:false,mu:false,remote:true
+    f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    likeCount:0,commentCount:0,saveCount:0
   }));
 
   const remoteIds=new Set(remote.map(v=>String(v.id)));
@@ -312,9 +310,126 @@ async function loadCloudVideos(){
   return remote.length;
 }
 
+/* ---------- LIKES / COMMENTS / SAVES (globales) ---------- */
+async function loadSocialState(videoIds){
+  if(!sb||!videoIds.length)return;
+  const ids=videoIds.map(String);
+  const {data:{session}}=await sb.auth.getSession();
+  const uid=session?.user?.id;
+
+  const [likes, comments, saves]=await Promise.all([
+    sb.from('likes').select('video_id').in('video_id',ids),
+    sb.from('comments').select('video_id').in('video_id',ids),
+    sb.from('saves').select('video_id').in('video_id',ids)
+  ]);
+
+  const likeMap={}, commentMap={}, saveMap={};
+  (likes.data||[]).forEach(r=>likeMap[r.video_id]=(likeMap[r.video_id]||0)+1);
+  (comments.data||[]).forEach(r=>commentMap[r.video_id]=(commentMap[r.video_id]||0)+1);
+  (saves.data||[]).forEach(r=>saveMap[r.video_id]=(saveMap[r.video_id]||0)+1);
+
+  S.meta.forEach(v=>{
+    const key=String(v.id);
+    if(!ids.includes(key))return;
+    v.likeCount=likeMap[key]||0;
+    v.commentCount=commentMap[key]||0;
+    v.saveCount=saveMap[key]||0;
+  });
+
+  if(uid){
+    const [myLikes, mySaves]=await Promise.all([
+      sb.from('likes').select('video_id').eq('user_id',uid).in('video_id',ids),
+      sb.from('saves').select('video_id').eq('user_id',uid).in('video_id',ids)
+    ]);
+    S.liked={}; S.saved={};
+    (myLikes.data||[]).forEach(r=>S.liked[r.video_id]=1);
+    (mySaves.data||[]).forEach(r=>S.saved[r.video_id]=1);
+    save();
+  }
+}
+
+async function toggleLike(videoId){
+  const user=await ensureSupabaseUser();
+  const id=String(videoId);
+  const liked=!!S.liked[id];
+
+  if(liked){
+    delete S.liked[id];
+    await sb.from('likes').delete().eq('video_id',id).eq('user_id',user.id);
+  }else{
+    S.liked[id]=1;
+    await sb.from('likes').insert({video_id:id,user_id:user.id});
+  }
+  save();
+
+  const v=vid(videoId);
+  if(v)v.likeCount=Math.max(0,(v.likeCount||0)+(liked?-1:1));
+  refresh(videoId);
+}
+
+async function toggleSave(videoId){
+  const user=await ensureSupabaseUser();
+  const id=String(videoId);
+  const saved=!!S.saved[id];
+
+  if(saved){
+    delete S.saved[id];
+    await sb.from('saves').delete().eq('video_id',id).eq('user_id',user.id);
+  }else{
+    S.saved[id]=1;
+    await sb.from('saves').insert({video_id:id,user_id:user.id});
+  }
+  save();
+
+  const v=vid(videoId);
+  if(v)v.saveCount=Math.max(0,(v.saveCount||0)+(saved?-1:1));
+  refresh(videoId);
+}
+
+async function loadComments(videoId){
+  const {data,error}=await sb.from('comments')
+    .select('id,content,created_at,user_id,profiles(username)')
+    .eq('video_id',String(videoId))
+    .order('created_at',{ascending:false})
+    .limit(100);
+  if(error){console.error(error);return []}
+  return (data||[]).map(c=>({
+    u:c.profiles?.username||'usuario',
+    t:c.content,
+    ts:c.created_at,
+    id:c.id,
+    uid:c.user_id
+  }));
+}
+
+async function postComment(videoId,content){
+  const user=await ensureSupabaseUser();
+  await ensureSupabaseProfile(user);
+  const {error}=await sb.from('comments').insert({
+    video_id:String(videoId),
+    user_id:user.id,
+    content
+  });
+  if(error)throw error;
+
+  const v=vid(videoId);
+  if(v)v.commentCount=(v.commentCount||0)+1;
+  refresh(videoId);
+}
+
+async function deleteComment(commentId,videoId){
+  const {error}=await sb.from('comments').delete().eq('id',commentId);
+  if(error)throw error;
+  const v=vid(videoId);
+  if(v)v.commentCount=Math.max(0,(v.commentCount||0)-1);
+  refresh(videoId);
+}
+
 async function refreshCloudFeed(){
   try{
     const count=await loadCloudVideos();
+    const remoteIds=S.meta.filter(v=>v.remote).map(v=>String(v.id));
+    if(remoteIds.length) await loadSocialState(remoteIds);
     if(ME&&location.hash!=='#/create') route();
     return count;
   }catch(e){
@@ -354,7 +469,8 @@ async function publishCloudVideo(file, description){
 
   return {
     id:String(res.data.id),d:res.data.description||description||'Mi vídeo',
-    tags:[],t:Date.now(),src:res.data.video_url,f:'',txt:'',sp:1,nc:false,mu:false,remote:true
+    tags:[],t:Date.now(),src:res.data.video_url,f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    likeCount:0,commentCount:0,saveCount:0
   };
 }
 
@@ -634,12 +750,15 @@ const D7=7*864e5;
 const cl=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9._]/g,'');
 
 /* ---------- Estado ---------- */
-let S={acct:null,liked:{},saved:{},com:{},muted:true,theme:'auto',meta:[],hist:[]};
+let S={acct:null,liked:{},saved:{},muted:true,theme:'auto',meta:[],hist:[]};
 try{Object.assign(S,JSON.parse(localStorage.getItem('nova')||'{}'))}catch(e){}
 
 const save=()=>{try{
   localStorage.setItem('nova',JSON.stringify({
-    ...S,
+    acct:S.acct,
+    muted:S.muted,
+    theme:S.theme,
+    hist:S.hist,
     meta:S.meta.map(v=>({...v,src:/^https?:/i.test(v.src||'')?v.src:undefined}))
   }));
 }catch(e){}};
@@ -649,20 +768,23 @@ const idb=(m,...a)=>DB.then(d=>d&&new Promise(r=>{try{const q=d.transaction('b',
 
 let H=location.hash||'#/',ME=null,st=null,fc='user',mr=null,ch=[],iv=null,el=0,blob=null,curC=null,lastTap=0,cf='',dur=60,tim=0,fxi=0,cdv=null,tor=0;
 
-const vid=id=>S.meta.find(v=>v.id==id);
-const cms=id=>S.com[id]||(S.com[id]=[]);
+const vid=id=>S.meta.find(v=>String(v.id)==String(id));
 
 function theme(){const r=document.documentElement;S.theme=='auto'?r.removeAttribute('data-theme'):r.dataset.theme=S.theme}
 function toast(t){const e=document.createElement('div');e.className='tt';e.setAttribute('role','status');e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),2000)}
 const go=h=>{H=h;try{history.replaceState(null,'',h)}catch(e){}route()};
 const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi" href="#/v/${v.id}"><video src="${esc(v.src)}" muted playsinline preload="metadata"></video><span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
 
-const rail=v=>`<a href="#/profile" aria-label="Perfil">${avt(46)}</a>
-<button data-a="like" class="${S.liked[v.id]?'act':''}" aria-label="Me gusta"><b>${ic('heart',24,S.liked[v.id])}</b><span>${S.liked[v.id]?1:0}</span></button>
-<button data-a="cm" aria-label="Comentarios"><b>${ic('chat')}</b><span>${cms(v.id).length}</span></button>
+const rail=v=>{
+  const lk=v.likeCount??(S.liked[v.id]?1:0);
+  const cm=v.commentCount??0;
+  return `<a href="#/profile" aria-label="Perfil">${avt(46)}</a>
+<button data-a="like" class="${S.liked[v.id]?'act':''}" aria-label="Me gusta"><b>${ic('heart',24,S.liked[v.id])}</b><span>${lk}</span></button>
+<button data-a="cm" aria-label="Comentarios"><b>${ic('chat')}</b><span>${cm}</span></button>
 <button data-a="sv" class="${S.saved[v.id]?'act':''}" aria-label="Guardar"><b>${ic('mark',24,S.saved[v.id])}</b><span>${S.saved[v.id]?'Guardado':'Guardar'}</span></button>
 <button data-a="mute" aria-label="Sonido"><b>${ic(S.muted?'voloff':'volon')}</b></button>
 <button data-a="del" aria-label="Borrar"><b>${ic('trash')}</b></button>`;
+};
 
 const SAFE_FILTERS=new Set(['','filter:grayscale(1) contrast(1.1)','filter:saturate(1.9) contrast(1.05)','filter:contrast(1.35) brightness(.9) saturate(.8)','filter:sepia(.8)','filter:hue-rotate(200deg) saturate(1.4)','filter:sepia(.35) saturate(1.5) hue-rotate(-20deg)']);
 const safeFilter=f=>SAFE_FILTERS.has(f||'')?(f||''):'';
@@ -696,16 +818,6 @@ function feed(first){
 
 function refresh(id){const c=document.querySelector(`.card[data-id="${id}"]`);c&&(c.querySelector('.rail').innerHTML=rail(vid(id)))}
 
-function like(c,burst){
-  const id=c.dataset.id;
-  if(burst){
-    S.liked[id]=1;
-    const h=document.createElement('div');h.className='heart';h.innerHTML=ic('heart',110,1);c.append(h);
-    setTimeout(()=>h.remove(),800);
-  }else S.liked[id]?delete S.liked[id]:S.liked[id]=1;
-  save();refresh(id);
-}
-
 function discover(){
   $('#m').innerHTML=`<div class="pg"><input id="q" type="search" placeholder="Buscar vídeos o #hashtags…" aria-label="Buscar" autocomplete="off"><div id="res" style="margin-top:14px"></div></div>`;
   const f=()=>{
@@ -730,17 +842,6 @@ function camOff(){
   try{mr&&mr.state!='inactive'&&(mr.onstop=null,mr.stop())}catch(e){}
   st&&st.getTracks().forEach(t=>t.stop());
   st=null;mr=null;
-}
-function ask(msg,bl){
-  document.body.classList.remove('nl');
-  bl&&toast('Esta vista no permite la cámara');
-  $('#m').innerHTML=`<div class="pg"><div class="em"><b>${ic('play',44)}</b><h2>Crea un vídeo</h2><p>Nova usa la cámara y el micrófono solo en esta pantalla.</p><p role="alert" style="color:#ff8aa0">${esc(msg||'')}</p><div class="chips c">${bl?'':'<button class="btn" id="al">Permitir cámara</button>'}<button class="btn${bl?'':' o'}" id="cp">Grabar con el móvil</button><button class="btn o" id="up">Subir vídeo</button>${bl&&/^https?:/.test(location.protocol)?'<button class="btn o" id="nt">Abrir en pestaña</button>':''}</div></div><input id="f1" type="file" accept="video/*" hidden><input id="f2" type="file" accept="video/*" capture="user" hidden></div>`;
-  $('#al')&&($('#al').onclick=()=>open(true));
-  $('#nt')&&($('#nt').onclick=()=>{const w=window.open(location.href.split('#')[0]+'#/create','_blank');w||toast('Abre este enlace en el navegador')});
-  [['#up','#f1'],['#cp','#f2']].forEach(([b,i])=>{
-    const n=$(i);n.onchange=e=>{const f=e.target.files[0];f&&editor(f)};
-    $(b).onclick=()=>n.click();
-  });
 }
 
 async function open(first){
@@ -795,7 +896,6 @@ const mm=t=>String(t/60|0).padStart(2,'0')+':'+String(t%60).padStart(2,'0');
 
 const FL=[['','Normal','#444'],['filter:grayscale(1) contrast(1.1)','B/N','#888'],['filter:saturate(1.9) contrast(1.05)','Vívido','#e0457b'],['filter:contrast(1.35) brightness(.9) saturate(.8)','Cine','#2b6c8f'],['filter:sepia(.8)','Retro','#8a6a3c'],['filter:hue-rotate(200deg) saturate(1.4)','Neón','#3a5bd9'],['filter:sepia(.35) saturate(1.5) hue-rotate(-20deg)','Cálido','#c9772e']];
 
-const fxb=i=>`<button class="fx${FL[i][0]==cf?' on':''}" data-f="${i}" style="background:${FL[i][2]}" aria-label="Filtro ${FL[i][1]}">${FL[i][1]}</button>`;
 function setF(f){cf=safeFilter(f);fxi=Math.max(0,FL.findIndex(x=>x[0]==cf));att();document.querySelectorAll('.fx').forEach(b=>b.classList.toggle('on',FL[+b.dataset.f][0]==cf))}
 
 function cnt(){
@@ -916,7 +1016,6 @@ const closeSheet=()=>{$('#ov').innerHTML=''};
 function sheet(t,body,foot=''){
   $('#ov').innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(t)}"><div class="sh"><span>${esc(t)}</span><button data-a="x" aria-label="Cerrar">${ic('x',20)}</button></div><div class="sb">${body}</div>${foot}</div>`;
 }
-const cmH=id=>cms(id).map(c=>`<div class="cm" style="display:flex;gap:8px">${avt(30)}<div><b>@${esc(c.u)}</b><div>${esc(c.t)}</div></div></div>`).join('')||'<p class="mu">Sé el primero en comentar.</p>';
 
 function readAv(f){
   const u=URL.createObjectURL(f),i=new Image();
@@ -933,15 +1032,32 @@ function readAv(f){
   i.src=u;
 }
 
+const renderCommentsList=(list)=>list.length
+  ?list.map(c=>`<div class="cm" style="display:flex;gap:8px;align-items:flex-start">${avt(30)}<div style="flex:1;min-width:0"><b>@${esc(c.u)}</b><div>${esc(c.t)}</div></div><button class="btn o" style="padding:4px 10px;font-size:12px" data-del-cm="${c.id}">Borrar</button></div>`).join('')
+  :'<p class="mu">Sé el primero en comentar.</p>';
+
 const A={
   x:closeSheet,
   pk:()=>$('#pf').click(),
-  like:e=>like(e.closest('.card')),
-  sv:e=>{
+  like:async e=>{
+    const c=e.closest('.card');
+    const id=c.dataset.id;
+    try{
+      const wasLiked=!!S.liked[id];
+      if(!wasLiked){
+        const h=document.createElement('div');
+        h.className='heart';h.innerHTML=ic('heart',110,1);c.append(h);
+        setTimeout(()=>h.remove(),800);
+      }
+      await toggleLike(id);
+    }catch(err){console.error(err);toast('No se pudo dar like')}
+  },
+  sv:async e=>{
     const id=e.closest('.card').dataset.id;
-    S.saved[id]?delete S.saved[id]:S.saved[id]=1;
-    save();refresh(id);
-    toast(S.saved[id]?'Guardado':'Eliminado de guardados');
+    try{
+      await toggleSave(id);
+      toast(S.saved[id]?'Guardado':'Eliminado de guardados');
+    }catch(err){console.error(err);toast('No se pudo guardar')}
   },
   mute:()=>{
     S.muted=!S.muted;save();
@@ -949,20 +1065,44 @@ const A={
     document.querySelectorAll('[data-a=mute] b').forEach(b=>b.innerHTML=ic(S.muted?'voloff':'volon'));
     toast(S.muted?'Silenciado':'Sonido activado');
   },
-  cm:e=>{
+  cm:async e=>{
     curC=e.closest('.card').dataset.id;
     if(vid(curC).nc)return toast('Comentarios desactivados');
-    sheet('Comentarios',`<div id="cl">${cmH(curC)}</div>`,`<div class="cf"><input id="ci" placeholder="Escribe un comentario…" aria-label="Comentario" autocomplete="off"><button class="btn" data-a="cmp">Publicar</button></div>`);
+    sheet('Comentarios','<p class="mu">Cargando…</p>',`<div class="cf"><input id="ci" placeholder="Escribe un comentario…" aria-label="Comentario" autocomplete="off"><button class="btn" data-a="cmp">Publicar</button></div>`);
     $('#ci').onkeydown=ev=>{ev.key=='Enter'&&A.cmp()};
+    try{
+      const list=await loadComments(curC);
+      if($('.sb'))$('.sb').innerHTML=renderCommentsList(list);
+      document.querySelectorAll('[data-del-cm]').forEach(b=>b.onclick=async()=>{
+        try{
+          await deleteComment(+b.dataset.delCm,curC);
+          const list2=await loadComments(curC);
+          if($('.sb'))$('.sb').innerHTML=renderCommentsList(list2);
+        }catch(err){console.error(err);toast('No se pudo borrar')}
+      });
+    }catch(err){console.error(err);if($('.sb'))$('.sb').innerHTML='<p class="mu">Error cargando comentarios.</p>'}
   },
-  cmp:()=>{
+  cmp:async()=>{
     const t=$('#ci').value.trim();if(!t)return;
-    cms(curC).unshift({u:ME.u,t});
-    save();$('#cl').innerHTML=cmH(curC);$('#ci').value='';refresh(curC);
+    const btn=document.querySelector('[data-a="cmp"]');
+    if(btn)btn.disabled=true;
+    try{
+      await postComment(curC,t);
+      const list=await loadComments(curC);
+      if($('.sb'))$('.sb').innerHTML=renderCommentsList(list);
+      document.querySelectorAll('[data-del-cm]').forEach(b=>b.onclick=async()=>{
+        try{
+          await deleteComment(+b.dataset.delCm,curC);
+          const list2=await loadComments(curC);
+          if($('.sb'))$('.sb').innerHTML=renderCommentsList(list2);
+        }catch(err){console.error(err);toast('No se pudo borrar')}
+      });
+    }catch(err){console.error(err);toast('No se pudo publicar')}
+    finally{if(btn)btn.disabled=false}
   },
   del:async e=>{
     const id=e.closest('.card').dataset.id;
-    if(!confirm('¿Borrar este vídeo?'))return;
+    if(!confirm('¿Borrar este vídeo de tu vista?'))return;
     S.meta=S.meta.filter(v=>v.id!=id);
     await idb('delete',id);
     save();go('#/');
@@ -980,10 +1120,7 @@ const A={
     if(cn&&n.length<2)return toast('El nombre necesita al menos 2 letras');
     if(cu&&u.length<3)return toast('El usuario necesita 3 caracteres o más');
     if(cn){ME.n=n;ME.nAt=Date.now()}
-    if(cu){
-      const o=ME.u;ME.u=u;ME.uAt=Date.now();
-      Object.values(S.com).forEach(a=>a.forEach(c=>{if(c.u==o)c.u=u}));
-    }
+    if(cu){ME.u=u;ME.uAt=Date.now()}
     ME.bio=$('#bi').value;save();closeSheet();toast('Perfil actualizado');profile();
   },
   th:()=>{S.theme={auto:'dark',dark:'light',light:'auto'}[S.theme];theme();save();profile()},
@@ -1000,7 +1137,7 @@ document.addEventListener('click',ev=>{
     const n=Date.now(),v=c.querySelector('video');
     const tg=()=>v.paused?v.play().catch(()=>{}):v.pause();
     tg();
-    if(n-lastTap<300){tg();like(c,true)}
+    if(n-lastTap<300){tg();A.like({closest:()=>c})}
     lastTap=n;
   }
 });
@@ -1096,6 +1233,10 @@ async function subscribeCloudFeed(){
       }
       if(!S.meta.some(v=>v.remote)){
         try{await refreshCloudFeed()}catch(e){console.warn('Feed público pendiente:',e)}
+      }
+      const remoteIds=S.meta.filter(v=>v.remote).map(v=>String(v.id));
+      if(remoteIds.length){
+        try{await loadSocialState(remoteIds)}catch(e){console.warn('Social pendiente:',e)}
       }
     }catch(e){
       console.warn('Sesión/feed Supabase pendiente:',e);
