@@ -257,13 +257,15 @@ async function ensureSupabaseProfile(user){
 const VIDEO_BUCKET='videos';
 
 async function loadCloudVideos(){
-  if(!sb) return;
+  if(!sb) throw new Error('Supabase no está disponible.');
   const {data,error}=await sb.from('videos')
-    .select('id,description,video_url');
+    .select('id,description,video_url')
+    .order('id',{ascending:false});
+
   if(error) throw error;
 
-  const remote=(data||[]).filter(v=>v.video_url).map(v=>({
-    id:v.id,
+  const remote=(data||[]).filter(v=>v && v.video_url).map(v=>({
+    id:String(v.id),
     d:v.description||'Mi vídeo',
     tags:[],
     t:0,
@@ -277,8 +279,22 @@ async function loadCloudVideos(){
   }));
 
   const remoteIds=new Set(remote.map(v=>String(v.id)));
-  const local=S.meta.filter(v=>!remoteIds.has(String(v.id)) && v.src);
+  const local=S.meta.filter(v=>!remoteIds.has(String(v.id)) && v.src && !v.remote);
   S.meta=[...remote,...local];
+  save();
+  return remote.length;
+}
+
+async function refreshCloudFeed(){
+  try{
+    const count=await loadCloudVideos();
+    if(ME && location.hash!=='#/create') route();
+    return count;
+  }catch(e){
+    console.error('Nova: no se pudieron cargar los vídeos:',e);
+    toast('No se pudieron cargar los vídeos de Supabase');
+    return -1;
+  }
 }
 
 async function publishCloudVideo(file, description){
@@ -520,8 +536,9 @@ const rail=v=>`<a href="#/profile" aria-label="Perfil">${avt(46)}</a><button dat
 <button data-a="mute" aria-label="Sonido"><b>${ic(S.muted?'voloff':'volon')}</b></button><button data-a="del" aria-label="Borrar"><b>${ic('trash')}</b></button>`;
 const slide=v=>`<section class="v"><div class="card" data-id="${v.id}"><video src="${v.src}" loop playsinline ${S.muted?'muted':''} style="${esc(v.f||'')}"></video><div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><div style="display:flex;align-items:center;gap:8px">${avt(30)}<b>@${esc(ME.u)}</b></div><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
 function feed(first){let l=[...S.meta];if(first){const f=vid(first);if(f)l=[f,...l.filter(v=>v!=f)]}
- $('#m').innerHTML=l.length?`<div class="feed" id="fd" tabindex="0">${l.map(slide).join('')}</div>`:`<div class="em" style="padding-top:28vh"><b>${ic('play',44)}</b><h2>Aquí aparecerán los vídeos</h2><p>Todavía no se ha publicado nada.</p><a class="btn" href="#/create">Crear vídeo</a></div>`;
- const fd=$('#fd');if(!fd)return;
+ $('#m').innerHTML=l.length?`<div class="feed" id="fd" tabindex="0">${l.map(slide).join('')}</div>`:`<div class="em" style="padding-top:28vh"><b>${ic('play',44)}</b><h2>Aquí aparecerán los vídeos</h2><p>Todavía no se ha publicado nada.</p><div class="chips c"><button class="btn o" id="reloadCloud">Actualizar</button><a class="btn" href="#/create">Crear vídeo</a></div></div>`;
+ const fd=$('#fd');
+ if(!fd){const rb=$('#reloadCloud');rb&&(rb.onclick=refreshCloudFeed);return;}
  const io=new IntersectionObserver(es=>es.forEach(e=>{const vd=e.target.querySelector('video');const cd=e.target.querySelector('.card'),m=vid(cd.dataset.id)||{};if(e.isIntersecting){vd.playbackRate=m.sp||1;vd.muted=S.muted||!!m.mu;vd.play().catch(()=>{});cd._t=setTimeout(()=>{if(!S.hist.includes(m.id)){S.hist.unshift(m.id);S.hist=S.hist.slice(0,50);save()}},2000)}else{clearTimeout(cd._t);vd.pause()}}),{root:fd,threshold:.6});
  fd.querySelectorAll('.v').forEach(s=>io.observe(s))}
 function refresh(id){const c=document.querySelector(`.card[data-id="${id}"]`);c&&(c.querySelector('.rail').innerHTML=rail(vid(id)))}
@@ -642,6 +659,7 @@ function editor(f,fl=''){document.body.classList.remove('nl');camOff();const u=U
     const cloud=await publishCloudVideo(f,description);
     S.meta.unshift(cloud);
     save();
+    await refreshCloudFeed();
     toast('Vídeo publicado para todos los usuarios');
     go('#/v/'+cloud.id);
   }catch(e){
@@ -702,8 +720,8 @@ function welcome(){document.body.classList.add('nl');closeSheet();
   S.acct={n,u,bio:''};ME=S.acct;save();
   try{
     const user=await ensureSupabaseUser();
-    await ensureSupabaseProfile(user);
-    await loadCloudVideos();
+    try{await ensureSupabaseProfile(user)}catch(e){console.warn('Perfil Supabase pendiente:',e)}
+    await refreshCloudFeed();
   }catch(e){
     console.warn('Supabase pendiente:',e);
   }
@@ -725,8 +743,8 @@ function welcome(){document.body.classList.add('nl');closeSheet();
   S.meta=S.meta.filter(v=>v.src);
   theme();
 
-  try{
-    if(sb){
+  if(sb){
+    try{
       const {data:{session}}=await sb.auth.getSession();
       if(session?.user){
         supabaseUser=session.user;
@@ -735,24 +753,19 @@ function welcome(){document.body.classList.add('nl');closeSheet();
         const base=cl(u.user_metadata?.preferred_username||u.user_metadata?.user_name||u.email?.split('@')[0]||'nova');
         ME=S.acct={n,u:base.slice(0,20)||'nova',bio:''};
         save();
-        await ensureSupabaseProfile(u);
-        await loadCloudVideos();
+
+        // Profile sync must never prevent the public feed from loading.
+        try{await ensureSupabaseProfile(u)}catch(e){console.warn('Perfil Supabase pendiente:',e)}
+
+        await refreshCloudFeed();
       }
+    }catch(e){
+      console.warn('Sesión/feed Supabase pendiente:',e);
     }
-  }catch(e){
-    console.warn('No se pudieron cargar los vídeos de Supabase:',e);
   }
 
   if(S.acct){
     ME=S.acct;
-    try{
-      if(sb){
-        await ensureSupabaseUser();
-        await loadCloudVideos();
-      }
-    }catch(e){
-      console.warn('Feed cloud pendiente:',e);
-    }
     route();
   }else{
     welcome();
