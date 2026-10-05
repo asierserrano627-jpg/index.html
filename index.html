@@ -383,33 +383,73 @@ async function ensureSupabaseProfile(user){
 /* ---------- VIDEOS ---------- */
 const VIDEO_BUCKET='videos';
 
+/* FIX: guarda username en la tabla videos al insertar */
+async function publishCloudVideo(file, description){
+  if(!sb) throw new Error('Supabase no está disponible.');
+  const user=await ensureSupabaseUser();
+  const username=await ensureSupabaseProfile(user);
+  const mime=file.type||'video/webm';
+  const ext=mime.includes('mp4')?'mp4':'webm';
+  const uid=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+  const path=`${user.id}/${uid}.${ext}`;
+
+  const upload=await sb.storage.from(VIDEO_BUCKET).upload(path,file,{contentType:mime,upsert:false});
+  if(upload.error) throw upload.error;
+
+  const {data:pub}=sb.storage.from(VIDEO_BUCKET).getPublicUrl(path);
+  const videoUrl=pub?.publicUrl;
+  if(!videoUrl){
+    await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
+    throw new Error('No se pudo obtener la URL pública del vídeo.');
+  }
+  const res=await sb.from('videos')
+    .insert({
+      description:description||'Mi vídeo',
+      video_url:videoUrl,
+      user_id:user.id,
+      username:username
+    })
+    .select('id,description,video_url,user_id,username').single();
+  if(res.error){
+    console.error('Nova: error guardando vídeo',res.error);
+    await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
+    throw new Error(`No se pudo guardar el vídeo: ${res.error.message||'error'}`);
+  }
+  return {
+    id:String(res.data.id),
+    d:res.data.description||description||'Mi vídeo',
+    tags:[],t:Date.now(),src:res.data.video_url,
+    f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    userId:res.data.user_id,
+    username:res.data.username||username,
+    likeCount:0,commentCount:0,saveCount:0
+  };
+}
+
+/* FIX: lee username directo de la tabla videos, sin depender del join */
 async function loadCloudVideos(){
   if(!sb) throw new Error('Supabase no está disponible.');
   const {data:rows,error}=await sb.from('videos')
-    .select('id,description,video_url,user_id')
+    .select('id,description,video_url,user_id,username')
     .order('id',{ascending:false});
   if(error) throw error;
 
-  const authorIds=[...new Set((rows||[]).map(v=>v.user_id).filter(Boolean))];
+  const missingIds=[...new Set((rows||[]).filter(v=>!v.username&&v.user_id).map(v=>v.user_id))];
   let umap={};
-  if(authorIds.length){
-    const {data:profs}=await sb.from('profiles').select('id,username,display_name').in('id',authorIds);
-    (profs||[]).forEach(p=>umap[p.id]={username:p.username,display_name:p.display_name});
+  if(missingIds.length){
+    const {data:profs}=await sb.from('profiles').select('id,username').in('id',missingIds);
+    (profs||[]).forEach(p=>umap[p.id]=p.username);
   }
 
-  const remote=(rows||[]).filter(v=>v&&v.video_url).map(v=>{
-    const prof=umap[v.user_id]||{};
-    return {
-      id:String(v.id),
-      d:v.description||'Mi vídeo',
-      tags:[],t:0,src:v.video_url,
-      f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
-      userId:v.user_id||null,
-      username:prof.username||null,
-      displayName:prof.display_name||null,
-      likeCount:0,commentCount:0,saveCount:0
-    };
-  });
+  const remote=(rows||[]).filter(v=>v&&v.video_url).map(v=>({
+    id:String(v.id),
+    d:v.description||'Mi vídeo',
+    tags:[],t:0,src:v.video_url,
+    f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    userId:v.user_id||null,
+    username:v.username||(v.user_id?umap[v.user_id]:null)||'usuario',
+    likeCount:0,commentCount:0,saveCount:0
+  }));
 
   const remoteIds=new Set(remote.map(v=>String(v.id)));
   const kept=S.meta.filter(v=>!remoteIds.has(String(v.id)));
@@ -520,39 +560,6 @@ async function refreshCloudFeed(){
     return -1;
   }
 }
-async function publishCloudVideo(file, description){
-  if(!sb) throw new Error('Supabase no está disponible.');
-  const user=await ensureSupabaseUser();
-  await ensureSupabaseProfile(user);
-  const mime=file.type||'video/webm';
-  const ext=mime.includes('mp4')?'mp4':'webm';
-  const uid=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
-  const path=`${user.id}/${uid}.${ext}`;
-
-  const upload=await sb.storage.from(VIDEO_BUCKET).upload(path,file,{contentType:mime,upsert:false});
-  if(upload.error) throw upload.error;
-
-  const {data:pub}=sb.storage.from(VIDEO_BUCKET).getPublicUrl(path);
-  const videoUrl=pub?.publicUrl;
-  if(!videoUrl){
-    await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
-    throw new Error('No se pudo obtener la URL pública del vídeo.');
-  }
-  const res=await sb.from('videos')
-    .insert({description:description||'Mi vídeo',video_url:videoUrl,user_id:user.id})
-    .select('id,description,video_url,user_id').single();
-  if(res.error){
-    console.error('Nova: error guardando vídeo',res.error);
-    await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
-    throw new Error(`No se pudo guardar el vídeo: ${res.error.message||'error'}${res.error.code?` (código ${res.error.code})`:''}`);
-  }
-  return {
-    id:String(res.data.id),d:res.data.description||description||'Mi vídeo',
-    tags:[],t:Date.now(),src:res.data.video_url,f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
-    userId:res.data.user_id,username:ME?.u||null,
-    likeCount:0,commentCount:0,saveCount:0
-  };
-}
 
 /* ---------- FOLLOWS ---------- */
 async function isFollowing(userId){
@@ -579,7 +586,7 @@ async function getFollowCounts(userId){
   return {followers:f1.count||0,following:f2.count||0};
 }
 
-/* ---------- CHAT & RACHA ---------- */
+/* ---------- CHAT ---------- */
 async function getOrCreateConversation(otherUserId){
   const me=await getMyId();
   if(!me||!otherUserId||me===otherUserId) throw new Error('Conversación no válida');
@@ -614,7 +621,6 @@ async function loadConversationList(){
     .order('updated_at',{ascending:false})
     .limit(50);
   if(error){console.error(error);return []}
-
   const rows=await Promise.all((data||[]).map(async c=>{
     const otherId=c.user_a===me?c.user_b:c.user_a;
     const prof=await getProfile(otherId);
@@ -635,7 +641,7 @@ async function loadConversationList(){
   return rows;
 }
 
-/* ---------- RACHA: se rompe a las 00:00 UTC ---------- */
+/* ---------- RACHA ---------- */
 function computeStreakDisplay(c){
   if(!c)return {count:0,active:false};
   const today=new Date().toISOString().slice(0,10);
@@ -646,19 +652,13 @@ function computeStreakDisplay(c){
   const bothToday = aLast===today && bLast===today;
   const bothRecent = (aLast===today||aLast===y) && (bLast===today||bLast===y);
   if(count>0){
-    if(c.streak_last===today && bothToday){
-      // ok
-    }else if(c.streak_last===y && bothRecent){
-      // ok
-    }else{
-      count=0;
-    }
+    if(c.streak_last===today && bothToday){}
+    else if(c.streak_last===y && bothRecent){}
+    else{count=0}
   }
   const active = count>0 && bothRecent;
   return {count,active};
 }
-
-/* ---------- RACHA animación ---------- */
 const STREAK_LEVELS=[
   {min:0,  cls:'off',  glow:'none'},
   {min:1,  cls:'lvl1', glow:'0 0 8px rgba(255,180,90,.5)'},
@@ -951,6 +951,7 @@ ${isMine?`<button data-a="del" aria-label="Borrar"><b>${ic('trash')}</b></button
 const SAFE_FILTERS=new Set(['','filter:grayscale(1) contrast(1.1)','filter:saturate(1.9) contrast(1.05)','filter:contrast(1.35) brightness(.9) saturate(.8)','filter:sepia(.8)','filter:hue-rotate(200deg) saturate(1.4)','filter:sepia(.35) saturate(1.5) hue-rotate(-20deg)']);
 const safeFilter=f=>SAFE_FILTERS.has(f||'')?(f||''):'';
 
+/* FIX: slide muestra el username guardado en la tabla videos */
 const slide=v=>{
   const authorName=v.username||'usuario';
   const authorLetter=(authorName[0]||'?').toUpperCase();
@@ -1242,9 +1243,7 @@ async function refreshNotifBadge(){
         bell.append(badge);
       }
       badge.textContent=n>99?'99+':String(n);
-    }else if(badge){
-      badge.remove();
-    }
+    }else if(badge){badge.remove()}
   }catch(e){}
 }
 async function subscribeNotifications(){
@@ -1257,7 +1256,6 @@ async function subscribeNotifications(){
         const n=payload.new;
         if(n.type==='message'&&String(n.target_id)!==String(currentChat.convId)){
           toast('💬 Nuevo mensaje');
-          // Sonido
           try{
             const ac=new (window.AudioContext||window.webkitAudioContext)();
             const o=ac.createOscillator(),k=ac.createGain();
@@ -1273,7 +1271,6 @@ async function subscribeNotifications(){
       })
     .subscribe(s=>console.log('Notif Realtime:',s));
 }
-
 async function activityPage(){
   $('#m').innerHTML=`<div class="pg"><h2>Actividad</h2><p class="mu">Cargando…</p></div>`;
   const me=await getMyId();
@@ -1462,7 +1459,7 @@ function editor(f,fl=''){
       console.error(e);
       const msg=String(e?.message||e);
       if(/bucket|not found/i.test(msg)) toast('Falta crear el bucket "videos" en Supabase');
-      else if(/user_id/i.test(msg)) toast('Falta la columna user_id en videos');
+      else if(/user_id|username/i.test(msg)) toast('Falta columna en videos. Ejecuta el SQL.');
       else if(/row-level|permission|policy/i.test(msg)) toast('Revisa las políticas RLS');
       else toast('No se pudo publicar: '+msg.slice(0,90));
     }finally{btn.disabled=false;btn.textContent='Publicar'}
