@@ -208,7 +208,10 @@ const SUPABASE_PUBLISHABLE_KEY='sb_publishable_98LpxzHM3nVS4hiYwXzmVA_DGbfbWzs';
 const sb=(window.supabase&&window.supabase.createClient)
   ? window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY)
   : null;
-let liveChannel=null, currentLive=null, supabaseUser=null;
+let liveChannel=null, currentLive=null, supabaseUser=null, cloudFeedChannel=null;
+const rtcPeers=new Map();
+const rtcClientId=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+let rtcRole='';
 
 async function ensureSupabaseUser(){
   if(!sb) throw new Error('No se pudo cargar Supabase JS.');
@@ -328,8 +331,13 @@ async function publishCloudVideo(file, description){
     .single();
 
   if(res.error){
+    console.error('Nova: error guardando vídeo en public.videos', {
+      code:res.error.code, message:res.error.message, details:res.error.details, hint:res.error.hint
+    });
     await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
-    throw res.error;
+    throw new Error(
+      `No se pudo guardar el vídeo en Supabase: ${res.error.message || 'error desconocido'}${res.error.code ? ` (código ${res.error.code})` : ''}`
+    );
   }
 
   return {
@@ -394,11 +402,113 @@ async function sendLiveMessage(){
 
 async function subscribeLive(liveId){
   if(liveChannel)await sb.removeChannel(liveChannel);
-  liveChannel=sb.channel('live-messages-'+liveId)
+  liveChannel=sb.channel('nova-live-'+liveId);
+  liveChannel
     .on('postgres_changes',
       {event:'INSERT',schema:'public',table:'live_messages',filter:'live_id=eq.'+liveId},
-      payload=>{const m=payload.new;sb.from('profiles').select('username').eq('id',m.user_id).single().then(({data})=>{m.profiles=data||null;renderLiveMessage(m);const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight});})
-    .subscribe(status=>console.log('Live Realtime:',status));
+      payload=>{
+        const m=payload.new;
+        sb.from('profiles').select('username').eq('id',m.user_id).single().then(({data})=>{
+          m.profiles=data||null;renderLiveMessage(m);
+          const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
+        });
+      })
+    .on('broadcast',{event:'rtc'},async ({payload})=>{
+      try{await handleRTCSignal(payload)}catch(e){console.error('Nova RTC:',e)}
+    })
+    .subscribe(status=>{
+      console.log('Live Realtime:',status);
+      if(status==='SUBSCRIBED' && rtcRole==='viewer'){
+        liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}});
+      }
+    });
+}
+
+function getLiveVideo(){return $('#liveCam')}
+
+function rtcConfig(){
+  return {iceServers:[
+    {urls:'stun:stun.l.google.com:19302'},
+    {urls:'stun:stun1.l.google.com:19302'}
+  ]};
+}
+
+function cleanupRTCPeers(){
+  rtcPeers.forEach(pc=>{try{pc.close()}catch(e){}});
+  rtcPeers.clear();
+  rtcRole='';
+  const v=getLiveVideo();
+  if(v && v.srcObject && v.srcObject!==liveStream) v.srcObject=null;
+}
+
+async function sendRTC(payload){
+  if(!liveChannel)return;
+  await liveChannel.send({type:'broadcast',event:'rtc',payload:{...payload,liveId:currentLive?.id}});
+}
+
+async function makeBroadcasterPeer(viewerId){
+  if(!liveStream || !liveChannel)return;
+  const old=rtcPeers.get(viewerId);if(old){try{old.close()}catch(e){}}
+  const pc=new RTCPeerConnection(rtcConfig());
+  rtcPeers.set(viewerId,pc);
+  liveStream.getTracks().forEach(track=>pc.addTrack(track,liveStream));
+  pc.onicecandidate=e=>{if(e.candidate)sendRTC({type:'ice',to:viewerId,from:rtcClientId,candidate:e.candidate})};
+  pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState)){try{pc.close()}catch(e){};rtcPeers.delete(viewerId)}};
+  const offer=await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  await sendRTC({type:'offer',to:viewerId,from:rtcClientId,offer:pc.localDescription});
+}
+
+async function handleRTCSignal(msg){
+  if(!msg || msg.liveId!==currentLive?.id)return;
+  if(msg.type==='viewer-join' && rtcRole==='broadcaster' && msg.from){
+    await makeBroadcasterPeer(msg.from);return;
+  }
+  if(msg.to && msg.to!==rtcClientId)return;
+  if(msg.type==='offer' && rtcRole==='viewer'){
+    const pc=new RTCPeerConnection(rtcConfig());
+    rtcPeers.set('broadcaster',pc);
+    pc.ontrack=e=>{
+      const v=getLiveVideo();
+      if(v && e.streams[0]){
+        v.srcObject=e.streams[0];
+        v.muted=false;
+        v.controls=false;
+        v.style.display='';
+        v.play().catch(()=>{});
+        const off=$('#liveCamOff');if(off)off.style.display='none';
+      }
+    };
+    pc.onicecandidate=e=>{if(e.candidate)sendRTC({type:'ice',to:msg.from,from:rtcClientId,candidate:e.candidate})};
+    pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))toast('Se perdió la conexión del Live')};
+    await pc.setRemoteDescription(msg.offer);
+    const answer=await pc.createAnswer();
+    await pc.setLocalDescription(answer);
+    await sendRTC({type:'answer',to:msg.from,from:rtcClientId,answer:pc.localDescription});
+    return;
+  }
+  if(msg.type==='answer' && rtcRole==='broadcaster' && msg.from){
+    const pc=rtcPeers.get(msg.from);if(!pc)return;
+    await pc.setRemoteDescription(msg.answer);return;
+  }
+  if(msg.type==='ice' && msg.from && msg.candidate){
+    const key=rtcRole==='broadcaster'?msg.from:'broadcaster';
+    const pc=rtcPeers.get(key);if(!pc)return;
+    try{await pc.addIceCandidate(msg.candidate)}catch(e){console.warn('ICE:',e)}
+  }
+}
+
+async function startLiveRTC(){
+  if(!window.RTCPeerConnection)throw new Error('Este navegador no admite WebRTC.');
+  rtcRole='broadcaster';
+  const v=getLiveVideo();
+  if(v){v.srcObject=liveStream;v.muted=true;v.play().catch(()=>{})}
+}
+
+async function joinLiveRTC(){
+  if(!window.RTCPeerConnection)throw new Error('Este navegador no admite WebRTC.');
+  rtcRole='viewer';
+  const v=getLiveVideo();if(v){v.srcObject=null;v.muted=false}
 }
 
 let liveStream=null;
@@ -406,11 +516,11 @@ async function startLiveCamera(){
   if(liveStream)return liveStream;
   if(!navigator.mediaDevices?.getUserMedia)throw new Error('Este navegador no permite usar la cámara aquí.');
   liveStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1080},height:{ideal:1920}},audio:true});
-  const v=$('#liveCam');
-  if(v){v.srcObject=liveStream;v.muted=true;await v.play().catch(()=>{});}
+  const v=getLiveVideo();
+  if(v){v.srcObject=liveStream;v.muted=true;await v.play().catch(()=>{})}
   return liveStream;
 }
-function stopLiveCamera(){if(liveStream){liveStream.getTracks().forEach(t=>t.stop());liveStream=null}const v=$('#liveCam');if(v)v.srcObject=null}
+function stopLiveCamera(){if(liveStream){liveStream.getTracks().forEach(t=>t.stop());liveStream=null}const v=getLiveVideo();if(v)v.srcObject=null}
 
 async function startLive(){
   const title='Mi directo';
@@ -418,21 +528,19 @@ async function startLive(){
     const user=await ensureSupabaseUser();
     await ensureSupabaseProfile(user);
     await startLiveCamera();
-    const {data,error}=await sb.from('lives').insert({
-      user_id:user.id,title,status:'live'
-    }).select().single();
+    const {data,error}=await sb.from('lives').insert({user_id:user.id,title,status:'live'}).select().single();
     if(error)throw error;
     currentLive=data;
-    const off=$('#liveCamOff'); if(off)off.style.display='none';
+    const off=$('#liveCamOff');if(off)off.style.display='none';
     $('#liveStatusPill').textContent='EN DIRECTO';
     $('#startLiveBtn').style.display='none';
     $('#endLiveBtn').style.display='';
     await loadLiveMessages(data.id);
     await subscribeLive(data.id);
+    await startLiveRTC();
     toast('Live iniciado');
   }catch(e){
-    console.error(e);
-    stopLiveCamera();
+    console.error(e);stopLiveCamera();cleanupRTCPeers();
     toast('No se pudo iniciar el Live: '+(e.message||'revisa Supabase y los permisos de cámara'));
   }
 }
@@ -442,10 +550,11 @@ async function joinLive(id){
     const {data,error}=await sb.from('lives').select('*').eq('id',id).single();
     if(error)throw error;
     currentLive=data;
-    stopLiveCamera();
-    const off=$('#liveCamOff'); if(off)off.style.display='grid';
+    stopLiveCamera();cleanupRTCPeers();
+    const off=$('#liveCamOff');if(off)off.style.display='grid';
     await loadLiveMessages(id);
     await subscribeLive(id);
+    await joinLiveRTC();
     $('#liveStatusPill').textContent='VIENDO LIVE';
     $('#startLiveBtn').style.display='none';
     $('#endLiveBtn').style.display='none';
@@ -462,6 +571,7 @@ async function endLive(){
     if(error)throw error;
     if(liveChannel)await sb.removeChannel(liveChannel);
     liveChannel=null; currentLive=null;
+    cleanupRTCPeers();
     stopLiveCamera();
     $('#liveStatusPill').textContent='LIVE';
     $('#startLiveBtn').style.display='';
@@ -706,7 +816,7 @@ document.addEventListener('click',ev=>{const al=ev.target.closest('a[href^="#/"]
  const c=ev.target.closest('.card');if(c&&!ev.target.closest('a,button')){const n=Date.now(),v=c.querySelector('video'),tg=()=>v.paused?v.play().catch(()=>{}):v.pause();tg();if(n-lastTap<300){tg();like(c,true)}lastTap=n}});
 window.addEventListener('hashchange',()=>{if(ME&&location.hash&&location.hash!=H){H=location.hash;route()}});
 /* Rutas */
-function route(){const[r,a]=H.slice(2).split('/'),p=decodeURIComponent(a||'');closeSheet();camOff();if(r!=='live'){if(liveChannel){sb&&sb.removeChannel(liveChannel);liveChannel=null;currentLive=null}stopLiveCamera()}document.body.classList.remove('nl');
+function route(){const[r,a]=H.slice(2).split('/'),p=decodeURIComponent(a||'');closeSheet();camOff();if(r!=='live'){if(liveChannel){sb&&sb.removeChannel(liveChannel);liveChannel=null;currentLive=null}cleanupRTCPeers();stopLiveCamera()}document.body.classList.remove('nl');
  document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.r==(r=='v'||r=='t'?'':r)));
  try{(({'':()=>feed(),v:()=>feed(p),discover,create:()=>open(true),profile,activity,hist:history2,t:()=>tagPage(p),live:livePage})[r]||(()=>feed()))()}
  catch(e){$('#m').innerHTML='<div class="em">Ups, algo salió mal.<br><br><a class="btn" href="#/">Volver al inicio</a></div>'}}
@@ -734,6 +844,19 @@ function welcome(){document.body.classList.add('nl');closeSheet();
   }catch(e){$('#we').textContent=e.message||'No se pudo conectar con Google.'}
  };
  $('#wb').onclick=enter;$('#googleBtn').onclick=google;$('#wf').onkeydown=e=>{e.key=='Enter'&&enter()}}
+
+async function subscribeCloudFeed(){
+  if(!sb||cloudFeedChannel)return;
+  cloudFeedChannel=sb.channel('nova-public-feed')
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'videos'},async ()=>{
+      await refreshCloudFeed();
+    })
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'videos'},async ()=>{
+      await refreshCloudFeed();
+    })
+    .subscribe(status=>console.log('Feed Realtime:',status));
+}
+
 /* Inicio */
 (async()=>{
   await Promise.all(S.meta.map(async v=>{
@@ -745,6 +868,7 @@ function welcome(){document.body.classList.add('nl');closeSheet();
 
   if(sb){
     try{
+      await subscribeCloudFeed();
       const {data:{session}}=await sb.auth.getSession();
       if(session?.user){
         supabaseUser=session.user;
