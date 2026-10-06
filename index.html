@@ -383,7 +383,6 @@ async function ensureSupabaseProfile(user){
 /* ---------- VIDEOS ---------- */
 const VIDEO_BUCKET='videos';
 
-/* FIX: guarda username en la tabla videos al insertar */
 async function publishCloudVideo(file, description){
   if(!sb) throw new Error('Supabase no está disponible.');
   const user=await ensureSupabaseUser();
@@ -426,7 +425,6 @@ async function publishCloudVideo(file, description){
   };
 }
 
-/* FIX: lee username directo de la tabla videos, sin depender del join */
 async function loadCloudVideos(){
   if(!sb) throw new Error('Supabase no está disponible.');
   const {data:rows,error}=await sb.from('videos')
@@ -951,7 +949,6 @@ ${isMine?`<button data-a="del" aria-label="Borrar"><b>${ic('trash')}</b></button
 const SAFE_FILTERS=new Set(['','filter:grayscale(1) contrast(1.1)','filter:saturate(1.9) contrast(1.05)','filter:contrast(1.35) brightness(.9) saturate(.8)','filter:sepia(.8)','filter:hue-rotate(200deg) saturate(1.4)','filter:sepia(.35) saturate(1.5) hue-rotate(-20deg)']);
 const safeFilter=f=>SAFE_FILTERS.has(f||'')?(f||''):'';
 
-/* FIX: slide muestra el username guardado en la tabla videos */
 const slide=v=>{
   const authorName=v.username||'usuario';
   const authorLetter=(authorName[0]||'?').toUpperCase();
@@ -1045,14 +1042,71 @@ function discover(){
 
 function tagPage(a){$('#m').innerHTML=`<div class="pg"><h2>#${esc(a)}</h2>${grid(S.meta.filter(v=>v.tags.includes('#'+a)))}</div>`}
 
-function profile(){
+/* ---------- PERFIL PROPIO (CORREGIDO) ---------- */
+async function profile(){
+  document.body.classList.remove('nl');
+  const me=await getMyId();
   const lk=Object.keys(S.liked).length;
-  $('#m').innerHTML=`<div class="pg"><div style="display:flex;gap:14px;align-items:center">${avt(80)}<div><h2 style="margin:0">${esc(ME.n)}</h2><span class="mu">@${esc(ME.u)}</span></div></div><p>${esc(ME.bio||'Nuevo en Nova')}</p>
-  <div class="st"><span><b>${S.meta.length}</b>Vídeos</span><span><b>${lk}</b>Likes dados</span></div>
-  <div class="chips"><button class="btn o" data-a="bio">Editar perfil</button><button class="btn o" data-a="th">Tema: ${{auto:'Automático',dark:'Oscuro',light:'Claro'}[S.theme]}</button><a class="btn o" href="#/hist">Historial</a><button class="btn o" data-a="out">Cerrar sesión</button></div>
-  <h2>Vídeos</h2>${grid(S.meta)}<h2>Guardados</h2>${grid(S.meta.filter(v=>S.saved[v.id]))}</div>`;
+
+  $('#m').innerHTML=`<div class="pg"><div class="em">Cargando tu perfil…</div></div>`;
+
+  // Traer SOLO mis vídeos desde Supabase
+  const {data:mine,error}=await sb.from('videos')
+    .select('id,description,video_url,user_id,username')
+    .eq('user_id',me)
+    .order('id',{ascending:false});
+  if(error)console.error(error);
+
+  const myVideos=(mine||[]).map(v=>({
+    id:String(v.id),
+    d:v.description||'Mi vídeo',
+    tags:[],t:0,src:v.video_url,
+    f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    userId:v.user_id,
+    username:v.username||ME.u,
+    likeCount:0,commentCount:0,saveCount:0
+  }));
+
+  if(myVideos.length){
+    try{await loadSocialState(myVideos.map(v=>v.id))}catch(e){}
+    myVideos.forEach(v=>{
+      const fromMeta=vid(v.id);
+      if(fromMeta){
+        v.likeCount=fromMeta.likeCount||0;
+        v.commentCount=fromMeta.commentCount||0;
+      }
+    });
+  }
+
+  const savedVideos=S.meta.filter(v=>S.saved[v.id]);
+
+  $('#m').innerHTML=`<div class="pg">
+    <div style="display:flex;gap:14px;align-items:center">
+      ${avt(80)}
+      <div>
+        <h2 style="margin:0">${esc(ME.n)}</h2>
+        <span class="mu">@${esc(ME.u)}</span>
+      </div>
+    </div>
+    <p>${esc(ME.bio||'Nuevo en Nova')}</p>
+    <div class="st">
+      <span><b>${myVideos.length}</b>Vídeos</span>
+      <span><b>${lk}</b>Likes dados</span>
+    </div>
+    <div class="chips">
+      <button class="btn o" data-a="bio">Editar perfil</button>
+      <button class="btn o" data-a="th">Tema: ${{auto:'Automático',dark:'Oscuro',light:'Claro'}[S.theme]}</button>
+      <a class="btn o" href="#/hist">Historial</a>
+      <button class="btn o" data-a="out">Cerrar sesión</button>
+    </div>
+    <h2>Tus vídeos</h2>
+    ${myVideos.length?grid(myVideos):'<div class="em">Todavía no has subido vídeos.</div>'}
+    <h2>Guardados</h2>
+    ${savedVideos.length?grid(savedVideos):'<div class="em">No has guardado nada todavía.</div>'}
+  </div>`;
 }
 
+/* ---------- PERFIL PÚBLICO (CORREGIDO) ---------- */
 async function publicProfile(userId){
   if(!userId)return;
   const me=await getMyId();
@@ -1061,7 +1115,34 @@ async function publicProfile(userId){
   const p=await getProfile(userId);
   if(!p){$('#m').innerHTML='<div class="em">Usuario no encontrado.</div>';return}
   const [counts, following]=await Promise.all([getFollowCounts(userId), isFollowing(userId)]);
-  const videos=S.meta.filter(v=>v.userId===userId);
+
+  // Traer SOLO los vídeos de ese usuario desde Supabase
+  let videos=[];
+  try{
+    const {data:rows}=await sb.from('videos')
+      .select('id,description,video_url,user_id,username')
+      .eq('user_id',userId)
+      .order('id',{ascending:false});
+    videos=(rows||[]).map(v=>({
+      id:String(v.id),
+      d:v.description||'Vídeo',
+      tags:[],t:0,src:v.video_url,
+      f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+      userId:v.user_id,
+      username:v.username||p.username,
+      likeCount:0,commentCount:0,saveCount:0
+    }));
+    if(videos.length){try{await loadSocialState(videos.map(v=>v.id))}catch(e){}
+      videos.forEach(v=>{
+        const fromMeta=vid(v.id);
+        if(fromMeta){
+          v.likeCount=fromMeta.likeCount||0;
+          v.commentCount=fromMeta.commentCount||0;
+        }
+      });
+    }
+  }catch(e){console.error(e)}
+
   $('#m').innerHTML=`<div class="pg">
     <div class="pfhead">
       ${avt(96,p.username)}
