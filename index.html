@@ -934,11 +934,13 @@ function toast(t){const e=document.createElement('div');e.className='tt';e.setAt
 const go=h=>{H=h;try{history.replaceState(null,'',h)}catch(e){}route()};
 const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi" href="#/v/${v.id}"><video src="${esc(v.src)}" muted playsinline preload="metadata"></video><span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
 
+/* FIX: rail ahora lleva al perfil del AUTOR */
 const rail=v=>{
   const lk=v.likeCount??(S.liked[v.id]?1:0);
   const cm=v.commentCount??0;
-  const isMine=!v.remote||(v.userId&&supabaseUser&&v.userId===supabaseUser.id);
-  return `<a href="#/profile" aria-label="Perfil">${avt(46)}</a>
+  const isMine=v.userId&&supabaseUser&&v.userId===supabaseUser.id;
+  const profileHref=v.userId?`#/u/${esc(v.userId)}`:'#/profile';
+  return `<a href="${profileHref}" aria-label="Perfil del autor">${avt(46)}</a>
 <button data-a="like" class="${S.liked[v.id]?'act':''}" aria-label="Me gusta"><b>${ic('heart',24,S.liked[v.id])}</b><span>${lk}</span></button>
 <button data-a="cm" aria-label="Comentarios"><b>${ic('chat')}</b><span>${cm}</span></button>
 <button data-a="sv" class="${S.saved[v.id]?'act':''}" aria-label="Guardar"><b>${ic('mark',24,S.saved[v.id])}</b><span>${S.saved[v.id]?'Guardado':'Guardar'}</span></button>
@@ -1042,7 +1044,7 @@ function discover(){
 
 function tagPage(a){$('#m').innerHTML=`<div class="pg"><h2>#${esc(a)}</h2>${grid(S.meta.filter(v=>v.tags.includes('#'+a)))}</div>`}
 
-/* ---------- PERFIL PROPIO (CORREGIDO) ---------- */
+/* ---------- PERFIL PROPIO ---------- */
 async function profile(){
   document.body.classList.remove('nl');
   const me=await getMyId();
@@ -1050,7 +1052,6 @@ async function profile(){
 
   $('#m').innerHTML=`<div class="pg"><div class="em">Cargando tu perfil…</div></div>`;
 
-  // Traer SOLO mis vídeos desde Supabase
   const {data:mine,error}=await sb.from('videos')
     .select('id,description,video_url,user_id,username')
     .eq('user_id',me)
@@ -1106,7 +1107,7 @@ async function profile(){
   </div>`;
 }
 
-/* ---------- PERFIL PÚBLICO (CORREGIDO) ---------- */
+/* ---------- PERFIL PÚBLICO ---------- */
 async function publicProfile(userId){
   if(!userId)return;
   const me=await getMyId();
@@ -1116,7 +1117,6 @@ async function publicProfile(userId){
   if(!p){$('#m').innerHTML='<div class="em">Usuario no encontrado.</div>';return}
   const [counts, following]=await Promise.all([getFollowCounts(userId), isFollowing(userId)]);
 
-  // Traer SOLO los vídeos de ese usuario desde Supabase
   let videos=[];
   try{
     const {data:rows}=await sb.from('videos')
@@ -1547,7 +1547,6 @@ function editor(f,fl=''){
   };
 }
 
-/* ---------- Paneles ---------- */
 const closeSheet=()=>{curC=null;currentCommentsVideoId=null;$('#ov').innerHTML=''};
 function sheet(t,body,foot=''){
   $('#ov').innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(t)}"><div class="sh"><span>${esc(t)}</span><button data-a="x" aria-label="Cerrar">${ic('x',20)}</button></div><div class="sb">${body}</div>${foot}</div>`;
@@ -1687,7 +1686,6 @@ function route(){
   }
 }
 
-/* ---------- Bienvenida ---------- */
 function welcome(){
   document.body.classList.add('nl');closeSheet();
   const ov=document.getElementById('nova-loading'); ov&&ov.remove();
@@ -1737,7 +1735,6 @@ function welcome(){
   $('#wf').onkeydown=e=>{e.key==='Enter'&&enter()};
 }
 
-/* ---------- Realtime global ---------- */
 async function subscribeCloudFeed(){
   if(!sb||cloudFeedChannel)return;
   cloudFeedChannel=sb.channel('nova-public-feed')
@@ -1760,7 +1757,6 @@ async function subscribeSocial(){
 function applyLikeDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.likeCount=Math.max(0,(v.likeCount||0)+delta);refresh(videoId)}
 function applyCommentDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.commentCount=Math.max(0,(v.commentCount||0)+delta);refresh(videoId)}
 
-/* ---------- Arranque ---------- */
 (async()=>{
   const loading=document.getElementById('nova-loading');
   const hideLoading=()=>{loading&&loading.classList.add('gone');setTimeout(()=>loading&&loading.remove(),700)};
