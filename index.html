@@ -16,7 +16,8 @@ nav{display:flex;justify-content:space-around;background:var(--bg);border-top:1p
 nav a{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--mu);padding:4px 10px}nav a.on{color:var(--tx)}
 nav a b{display:grid;place-items:center;height:30px;font-weight:400}nav a.mk b{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-radius:12px;width:44px}
 body.nl nav{display:none}
-.feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}.feed::-webkit-scrollbar{display:none}
+.feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}.feed-live-banner{position:relative;z-index:20;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 8px;background:linear-gradient(180deg,rgba(7,7,12,.98),rgba(7,7,12,.82),transparent);overflow-x:auto;scrollbar-width:none;display:flex;gap:10px}.feed-live-banner::-webkit-scrollbar{display:none}.feed-live-card{flex:0 0 auto;min-width:190px;max-width:235px;padding:9px 11px;border:1px solid rgba(255,38,61,.34);border-radius:18px;background:rgba(20,10,18,.72);backdrop-filter:blur(14px);display:flex;align-items:center;gap:9px;box-shadow:0 0 22px rgba(255,38,61,.08);cursor:pointer}.feed-live-card:active{transform:scale(.97)}.feed-live-card .live-thumb{position:relative;flex:none}.feed-live-card .live-thumb .av{border:2px solid #ff263d;box-shadow:0 0 12px rgba(255,38,61,.5)}.feed-live-card .live-copy{min-width:0;display:flex;flex-direction:column;gap:2px}.feed-live-card .live-copy b,.feed-live-card .live-copy span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.feed-live-card .live-copy b{font-size:13px}.feed-live-card .live-copy span{font-size:11px;color:#d8cfe0}.feed-live-card .live-now-label{display:flex;align-items:center;gap:5px;color:#ff6b7a;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.feed-live-card .live-viewers{font-size:10px;color:#aaa}.feed-live-empty{font-size:11px;color:var(--mu);padding:5px 2px}.live-profile-badge{display:inline-flex;align-items:center;gap:6px;margin:4px 0 0;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,38,61,.35);background:rgba(255,38,61,.08);color:#ff7180;font-size:11px;font-weight:800}.live-profile-badge .live-live-dot{width:8px;height:8px}.profile-live-link{display:inline-flex;align-items:center;gap:7px;margin:4px 0 12px;padding:8px 12px;border-radius:999px;background:rgba(255,38,61,.1);border:1px solid rgba(255,38,61,.32);color:#ff7180;font-weight:800;font-size:12px}.profile-live-link:active{transform:scale(.97)}
+.feed::-webkit-scrollbar{display:none}
 .v{height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:grid;place-items:center}
 .card{position:relative;width:100%;max-width:calc((100dvh - 70px)*9/16);height:100%;overflow:hidden;background:#000;color:#fff;user-select:none;touch-action:pan-y}
 .card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
@@ -134,7 +135,7 @@ input:disabled{opacity:.5}
 .person .pact{display:flex;gap:6px}
 .person .pact button{padding:6px 12px;font-size:12px}
 .sec-t{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);margin:16px 0 6px}
-.profile-banner{position:relative;width:100%;height:150px;border-radius:22px;overflow:hidden;margin:-2px 0 14px;background:radial-gradient(circle at 20% 20%,rgba(139,123,255,.72),transparent 35%),radial-gradient(circle at 80% 70%,rgba(53,208,255,.55),transparent 38%),linear-gradient(135deg,#17122e,#080812 58%,#10233b);border:1px solid rgba(255,255,255,.12);box-shadow:0 12px 40px rgba(53,208,255,.12)}.profile-banner img{width:100%;height:100%;object-fit:cover}.profile-banner:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.32));pointer-events:none}.banner-stars{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 1.5px);background-size:34px 34px;opacity:.28;animation:bannerTwinkle 3.5s ease-in-out infinite alternate}@keyframes bannerTwinkle{from{opacity:.18}to{opacity:.38}}.banner-tools{position:absolute;right:10px;bottom:10px;z-index:2}.profile-banner.empty{display:grid;place-items:center;color:#dcd6ff}.profile-banner.empty b{font-size:16px}.pfhead{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0}
+.profile-banner{position:relative;width:100%;height:165px;border-radius:22px;overflow:hidden;margin:-2px 0 30px;background:radial-gradient(circle at 20% 20%,rgba(139,123,255,.72),transparent 35%),radial-gradient(circle at 80% 70%,rgba(53,208,255,.55),transparent 38%),linear-gradient(135deg,#17122e,#080812 58%,#10233b);border:1px solid rgba(255,255,255,.12);box-shadow:0 12px 40px rgba(53,208,255,.12)}.profile-banner img{width:100%;height:100%;object-fit:contain;object-position:center;background:radial-gradient(circle at 20% 20%,#17122e,#080812 58%,#10233b);padding:0}.profile-banner:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.32));pointer-events:none}.banner-stars{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 1.5px);background-size:34px 34px;opacity:.28;animation:bannerTwinkle 3.5s ease-in-out infinite alternate}@keyframes bannerTwinkle{from{opacity:.18}to{opacity:.38}}.banner-tools{position:absolute;right:10px;bottom:10px;z-index:2}.profile-banner.empty{display:grid;place-items:center;color:#dcd6ff}.profile-banner.empty b{font-size:16px}.pfhead{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0}
 .pfhead .av{width:96px;height:96px;font-size:40px}
 .pfstats{display:flex;gap:28px;justify-content:center;margin:12px 0}
 .pfstats .s{text-align:center}.pfstats .s b{display:block;font-size:20px}.pfstats .s span{font-size:12px;color:var(--mu)}
@@ -252,7 +253,8 @@ input:disabled{opacity:.5}
 .gift-burst{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);z-index:12;width:min(88vw,360px);pointer-events:none;animation:giftEnter .45s cubic-bezier(.2,.9,.2,1) both}.gift-burst video{display:block;width:100%;max-height:31vh;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(139,123,255,.55));border-radius:18px}.gift-burst .gift-label{margin-top:6px;text-align:center;font-weight:900;font-size:14px;text-shadow:0 2px 10px #000;background:rgba(8,7,18,.72);border:1px solid rgba(170,150,255,.45);border-radius:999px;padding:7px 12px;backdrop-filter:blur(10px)}.gift-burst .sound-btn{position:absolute;right:8px;top:8px;border-radius:999px;padding:7px 10px;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.25);font-size:11px;font-weight:800;pointer-events:auto}.gift-burst .sound-btn.on{background:rgba(139,123,255,.75)}
 @keyframes giftEnter{0%{opacity:0;transform:translate(-50%,35%) scale(.72)}65%{opacity:1;transform:translate(-50%,-4%) scale(1.05)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
 .card.photo-card .photo-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gi.photo{background:#000}.gi.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.create-menu{position:fixed;inset:0;z-index:75;background:rgba(4,3,12,.78);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;padding:18px}.create-menu .create-box{width:min(520px,100%);background:var(--sf);border:1px solid var(--bd);border-radius:26px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.55);animation:up .25s}.create-option{width:100%;display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:rgba(139,123,255,.08);border:1px solid rgba(170,150,255,.2);margin-top:10px;text-align:left}.create-option:first-child{margin-top:4px}.create-option .co-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(139,123,255,.6),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.4),transparent 60%),#151027;box-shadow:0 0 18px rgba(139,123,255,.25)}.create-option b{display:block;font-size:16px}.create-option span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
+.create-menu{position:fixed;inset:0;z-index:75;background:rgba(4,3,12,.78);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;padding:18px}.create-menu .create-box{width:min(520px,100%);background:var(--sf);border:1px solid var(--bd);border-radius:26px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.55);animation:up .25s}.camera-sticker{background:linear-gradient(135deg,#8b7bff,#35d0ff,#ff5c8a);box-shadow:0 0 22px rgba(53,208,255,.28);border-radius:18px;padding:8px}.camera-sticker svg{stroke:#fff!important;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.camera-sticker .nv-star{stroke:#fff!important}
+.create-option{width:100%;display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:rgba(139,123,255,.08);border:1px solid rgba(170,150,255,.2);margin-top:10px;text-align:left}.create-option:first-child{margin-top:4px}.create-option .co-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(139,123,255,.6),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.4),transparent 60%),#151027;box-shadow:0 0 18px rgba(139,123,255,.25)}.create-option b{display:block;font-size:16px}.create-option span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -583,7 +585,7 @@ function photoEditor(file){
 }
 function createMenu(){
   document.body.classList.add('nl');
-  $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon">${ic('live',28)}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
+  $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon camera-sticker">${sticker('camera','lg')}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
   $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>open(true); $('#createLive').onclick=()=>go('#/live'); $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files[0];if(f)photoEditor(f)};
 }
 
@@ -1040,6 +1042,8 @@ async function livePage(){
   $('#liveGiftBtn').onclick=toggleGiftPanel;
   await refreshLiveList();
   const v=$('#liveCam'); if(v)v.srcObject=liveStream||null;
+  const liveId=decodeURIComponent((H.slice(2).split('/')[1]||''));
+  if(liveId){setTimeout(()=>joinLive(liveId),0)}
 }
 async function refreshLiveList(){
   const box=$('#liveList'); if(!box||!sb)return;
@@ -1085,7 +1089,7 @@ const go=h=>{H=h;try{history.replaceState(null,'',h)}catch(e){}route()};
 const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi ${v.isPhoto?'photo':''}" href="#/v/${v.id}">${v.isPhoto?`<img src="${esc(v.src)}" alt="">`:`<video src="${esc(v.src)}" muted playsinline preload="metadata"></video>`}${v.views>0?`<span class="vws">${sticker('eye','sm')} ${v.views}</span>`:''}<span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
 
 function sticker(type,size=''){
- const paths={fire:'M12 2c1.8 3.3-.2 5.2 2.4 7.1 1.3 1 2.1 2.4 2.1 4.1 0 3.1-2.3 5.4-5.4 5.4S5.6 16.3 5.6 13c0-2.5 1.6-4.5 3.5-6.2-.1 2.2.8 3.1 1.8 3.7.2-2.8.5-5.1 1.1-8.5Z',coin:'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z',mission:'M6 4h12v16H6zM9 8h6M9 12h6M9 16h4',store:'M4 9h16v11H4zM3 9l2-5h14l2 5M8 9v3M16 9v3',heart:'M12 20.5C5 15.5 3 12 3 8.8A4.8 4.8 0 0 1 12 6.5a4.8 4.8 0 0 1 9 2.3c0 3.2-2 6.7-9 11.7Z',eye:'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Zm10-3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',gift:'M4 8h16v12H4zM3 8h18v4H3zM12 8v12M8.5 8C6 8 5 6.5 5 5s1.5-2 3-2c2 0 4 3 4 5M15.5 8c2.5 0 3.5-1.5 3.5-3s-1.5-2-3-2c-2 0-4 3-4 5',chat:'M4 5.5h16v10.5H10l-4.5 3.5V16H4z',star:'M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z'};
+ const paths={fire:'M12 2c1.8 3.3-.2 5.2 2.4 7.1 1.3 1 2.1 2.4 2.1 4.1 0 3.1-2.3 5.4-5.4 5.4S5.6 16.3 5.6 13c0-2.5 1.6-4.5 3.5-6.2-.1 2.2.8 3.1 1.8 3.7.2-2.8.5-5.1 1.1-8.5Z',coin:'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z',mission:'M6 4h12v16H6zM9 8h6M9 12h6M9 16h4',store:'M4 9h16v11H4zM3 9l2-5h14l2 5M8 9v3M16 9v3',heart:'M12 20.5C5 15.5 3 12 3 8.8A4.8 4.8 0 0 1 12 6.5a4.8 4.8 0 0 1 9 2.3c0 3.2-2 6.7-9 11.7Z',eye:'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Zm10-3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',gift:'M4 8h16v12H4zM3 8h18v4H3zM12 8v12M8.5 8C6 8 5 6.5 5 5s1.5-2 3-2c2 0 4 3 4 5M15.5 8c2.5 0 3.5-1.5 3.5-3s-1.5-2-3-2c-2 0-4 3-4 5',chat:'M4 5.5h16v10.5H10l-4.5 3.5V16H4z',star:'M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z',camera:'M4 8h3l2-2h6l2 2h3v10H4zM12 10a3.2 3.2 0 1 0 0 6.4A3.2 3.2 0 0 0 12 10Z'};
  const p=paths[type]||paths.star; return `<span class="nv-sticker ${size||''}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="url(#nvGrad)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="nvGrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8b7bff"/><stop offset=".55" stop-color="#35d0ff"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="${p}"/><path class="nv-star" d="M4 3.5v2M3 4.5h2M20 18v2M19 19h2" stroke="#fff"/></svg></span>`;
 }
 
@@ -1116,12 +1120,36 @@ const slide=v=>{
   return `<section class="v"><div class="card ${v.isPhoto?'photo-card':''}" data-id="${v.id}" data-uid="${esc(v.userId||'')}" data-uname="${esc(authorName)}">${mediaHtml}<div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><a href="${profileHref}" style="display:flex;align-items:center;gap:8px">${authorAvatar}<b>@${esc(authorName)}</b>${isMine?'<span class="mu" style="font-size:11px">· tú</span>':''}${viewsHtml}</a><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
 };
 
-function feed(first){
+async function getActiveLives(){
+  if(!sb)return [];
+  try{
+    const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count').eq('status','live').order('started_at',{ascending:false}).limit(20);
+    if(error||!data?.length)return [];
+    const ids=[...new Set(data.map(x=>x.user_id).filter(Boolean))];
+    let profiles=[];
+    if(ids.length){const r=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);profiles=r.data||[]}
+    const pm=new Map(profiles.map(p=>[p.id,p]));
+    return data.map(x=>({...x,profile:pm.get(x.user_id)||{username:'usuario',display_name:'Usuario',avatar_url:null}}));
+  }catch(e){return []}
+}
+function renderFeedLives(lives){
+  if(!lives?.length)return '';
+  return `<div class="feed-live-banner" aria-label="Lives en directo">${lives.map(x=>{const p=x.profile||{};return `<button type="button" class="feed-live-card" data-open-live="${esc(x.id)}"><span class="live-thumb">${avt(48,p.username||'usuario',p.avatar_url)}</span><span class="live-copy"><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span><b>@${esc(p.username||'usuario')}</b><span>${esc(x.title||'Live')} · ${Number(x.viewer_count||0)} espectadores</span></span></button>`}).join('')}</div>`;
+}
+async function openLiveFromFeed(id){
+  if(!id)return;
+  go('#/live/'+encodeURIComponent(id));
+}
+
+async function feed(first){
   let l=[...S.meta];
   if(first){const f=vid(first);if(f)l=[f,...l.filter(v=>v!=f)]}
-  $('#m').innerHTML=l.length
-    ?`<div class="feed" id="fd" tabindex="0">${l.map(slide).join('')}</div>`
-    :`<div class="em" style="padding-top:28vh"><b>${ic('play',44)}</b><h2>Aquí aparecerán los vídeos</h2><p>Todavía no se ha publicado nada.</p><div class="chips c"><button class="btn o" id="reloadCloud">Actualizar</button><a class="btn" href="#/create">Crear vídeo</a></div></div>`;
+  const activeLives=await getActiveLives();
+  const liveHtml=renderFeedLives(activeLives);
+  $('#m').innerHTML=(l.length
+    ?`${liveHtml}<div class="feed" id="fd" tabindex="0">${l.map(slide).join('')}</div>`
+    :`${liveHtml}<div class="em" style="padding-top:28vh"><b>${ic('play',44)}</b><h2>Aquí aparecerán los vídeos</h2><p>Todavía no se ha publicado nada.</p><div class="chips c"><button class="btn o" id="reloadCloud">Actualizar</button><a class="btn" href="#/create">Crear vídeo</a></div></div>`);
+  document.querySelectorAll('[data-open-live]').forEach(b=>b.onclick=()=>openLiveFromFeed(b.dataset.openLive));
   const fd=$('#fd');
   if(!fd){const rb=$('#reloadCloud');rb&&(rb.onclick=refreshCloudFeed);return}
   const io=new IntersectionObserver(es=>es.forEach(e=>{
@@ -1207,6 +1235,7 @@ async function profile(){
 
   const savedVideos=S.meta.filter(v=>S.saved[v.id]);
   const totalViews=myVideos.reduce((s,v)=>s+(v.views||0),0);
+  let ownLive=null; try{const r=await sb.from('lives').select('id,title,viewer_count').eq('user_id',me).eq('status','live').order('started_at',{ascending:false}).limit(1).maybeSingle(); ownLive=r.data||null}catch(e){}
 
   $('#m').innerHTML=`<div class="pg">
     ${profileBannerHtml()}
@@ -1218,6 +1247,7 @@ async function profile(){
     </div>
     <p>${esc(ME.bio||'Nuevo en Nova')}</p>
     <div class="st"><span><b>${myVideos.length}</b>Vídeos</span><span><b>${lk}</b>Likes</span><span><b>${totalViews}</b>Vistas</span></div>
+    ${ownLive?`<a class="profile-live-link" href="#/live/${esc(ownLive.id)}"><i class="live-live-dot" aria-hidden="true"></i> En directo · ${Number(ownLive.viewer_count||0)} espectadores</a>`:''}
     <h2>Tus vídeos</h2>${myVideos.length?grid(myVideos):'<div class="em">Todavía no has subido vídeos.</div>'}
     <h2>Guardados</h2>${savedVideos.length?grid(savedVideos):'<div class="em">No has guardado nada todavía.</div>'}
   </div>`;
@@ -1234,6 +1264,7 @@ async function publicProfile(userId){
   const p=await getProfile(userId);
   if(!p){$('#m').innerHTML='<div class="em">Usuario no encontrado.</div>';return}
   const [counts, following]=await Promise.all([getFollowCounts(userId), isFollowing(userId)]);
+  let publicLive=null; try{const r=await sb.from('lives').select('id,title,viewer_count').eq('user_id',userId).eq('status','live').order('started_at',{ascending:false}).limit(1).maybeSingle(); publicLive=r.data||null}catch(e){}
   let videos=[];
   try{
     const {data:rows}=await sb.from('videos').select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites').eq('user_id',userId).order('id',{ascending:false});
@@ -1254,6 +1285,7 @@ async function publicProfile(userId){
   $('#m').innerHTML=`<div class="pg">
     ${p.banner_url?`<div class="profile-banner"><img src="${esc(p.banner_url)}" alt="Banner de ${esc(p.username)}"></div>`:''}
     <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0">${esc(p.display_name||p.username)}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
+    ${publicLive?`<a class="profile-live-link" href="#/live/${esc(publicLive.id)}"><i class="live-live-dot" aria-hidden="true"></i> En directo · ${Number(publicLive.viewer_count||0)} espectadores</a>`:''}
     <div class="pfstats"><div class="s"><b>${videos.length}</b><span>Vídeos</span></div><div class="s"><b>${counts.followers}</b><span>Seguidores</span></div><div class="s"><b>${counts.following}</b><span>Siguiendo</span></div></div>
     <div class="chips c"><button class="btn${following?' o':''}" id="followBtn">${following?'Siguiendo':'Seguir'}</button><button class="btn" id="msgBtn">Mensaje</button></div>
     <h2>Vídeos</h2>${videos.length?grid(videos):'<div class="em">Todavía no ha subido vídeos.</div>'}
@@ -1680,7 +1712,10 @@ async function readBanner(f){
     try{
       const c=document.createElement('canvas'); c.width=1200; c.height=400;
       const ctx=c.getContext('2d');
-      const scale=Math.max(c.width/i.width,c.height/i.height),w=i.width*scale,h=i.height*scale;
+      // Fondo ampliado y desenfocado para evitar recortar/zoomear demasiado la foto principal.
+      const bgScale=Math.max(c.width/i.width,c.height/i.height),bw=i.width*bgScale,bh=i.height*bgScale;
+      ctx.save(); ctx.filter='blur(24px) brightness(.55)'; ctx.drawImage(i,(c.width-bw)/2,(c.height-bh)/2,bw,bh); ctx.restore();
+      const scale=Math.min(c.width/i.width,c.height/i.height)*.94,w=i.width*scale,h=i.height*scale;
       ctx.drawImage(i,(c.width-w)/2,(c.height-h)/2,w,h);
       const data=c.toDataURL('image/jpeg',.88);
       URL.revokeObjectURL(u);
