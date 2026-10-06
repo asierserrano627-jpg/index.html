@@ -16,7 +16,7 @@ nav{display:flex;justify-content:space-around;background:var(--bg);border-top:1p
 nav a{display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--mu);padding:4px 10px}nav a.on{color:var(--tx)}
 nav a b{display:grid;place-items:center;height:30px;font-weight:400}nav a.mk b{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-radius:12px;width:44px}
 body.nl nav{display:none}
-.feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}.feed-live-banner{position:relative;z-index:20;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 8px;background:linear-gradient(180deg,rgba(7,7,12,.98),rgba(7,7,12,.82),transparent);overflow-x:auto;scrollbar-width:none;display:flex;gap:10px}.feed-live-banner::-webkit-scrollbar{display:none}.feed-live-card{flex:0 0 auto;min-width:190px;max-width:235px;padding:9px 11px;border:1px solid rgba(255,38,61,.34);border-radius:18px;background:rgba(20,10,18,.72);backdrop-filter:blur(14px);display:flex;align-items:center;gap:9px;box-shadow:0 0 22px rgba(255,38,61,.08);cursor:pointer}.feed-live-card:active{transform:scale(.97)}.feed-live-card .live-thumb{position:relative;flex:none}.feed-live-card .live-thumb .av{border:2px solid #ff263d;box-shadow:0 0 12px rgba(255,38,61,.5)}.feed-live-card .live-copy{min-width:0;display:flex;flex-direction:column;gap:2px}.feed-live-card .live-copy b,.feed-live-card .live-copy span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.feed-live-card .live-copy b{font-size:13px}.feed-live-card .live-copy span{font-size:11px;color:#d8cfe0}.feed-live-card .live-now-label{display:flex;align-items:center;gap:5px;color:#ff6b7a;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}.feed-live-card .live-viewers{font-size:10px;color:#aaa}.feed-live-empty{font-size:11px;color:var(--mu);padding:5px 2px}.live-profile-badge{display:inline-flex;align-items:center;gap:6px;margin:4px 0 0;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,38,61,.35);background:rgba(255,38,61,.08);color:#ff7180;font-size:11px;font-weight:800}.live-profile-badge .live-live-dot{width:8px;height:8px}.profile-live-link{display:inline-flex;align-items:center;gap:7px;margin:4px 0 12px;padding:8px 12px;border-radius:999px;background:rgba(255,38,61,.1);border:1px solid rgba(255,38,61,.32);color:#ff7180;font-weight:800;font-size:12px}.profile-live-link:active{transform:scale(.97)}
+.feed{height:100%;overflow-y:auto;scroll-snap-type:y mandatory;scrollbar-width:none;overscroll-behavior:contain}.feed-live-slide{height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:grid;place-items:center}.feed-live-card{position:relative;width:100%;height:100%;overflow:hidden;background:#050507;color:#fff}.feed-live-card video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:radial-gradient(circle at 50% 42%,#261d4d,#050507 68%)}.feed-live-card .live-placeholder{position:absolute;inset:0;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,#261d4d,#050507 68%);text-align:center}.feed-live-card .live-placeholder .av{border:3px solid #ff263d;box-shadow:0 0 28px rgba(255,38,61,.55);width:86px!important;height:86px!important;font-size:32px!important}.feed-live-card .live-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.62),transparent 28%,transparent 55%,rgba(0,0,0,.78));pointer-events:none}.feed-live-card .live-top{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;z-index:3;display:flex;justify-content:space-between;align-items:center}.feed-live-card .live-user{display:flex;align-items:center;gap:9px;padding:6px 12px 6px 6px;border-radius:999px;background:rgba(0,0,0,.42);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.16)}.feed-live-card .live-user .av{border:2px solid #ff263d}.feed-live-card .live-now-label{display:flex;align-items:center;gap:6px;color:#fff;font-weight:900;font-size:12px;text-transform:uppercase;letter-spacing:.04em}.feed-live-card .live-info{position:absolute;left:14px;right:84px;bottom:22px;z-index:3}.feed-live-card .live-info b{display:block;font-size:17px;margin-bottom:3px}.feed-live-card .live-info span{display:block;color:#e8e5ee;font-size:13px}.feed-live-card .live-enter{position:absolute;right:14px;bottom:24px;z-index:4;border:1px solid rgba(255,255,255,.2);background:linear-gradient(135deg,#ff263d,#8b7bff);color:#fff;border-radius:999px;padding:10px 13px;font-weight:850;box-shadow:0 8px 24px rgba(255,38,61,.22)}.feed-live-card .live-enter:active{transform:scale(.95)}.feed-live-card .live-badge{display:inline-flex;align-items:center;gap:6px;margin-bottom:7px;padding:5px 9px;border-radius:999px;background:rgba(255,38,61,.2);border:1px solid rgba(255,93,111,.42);font-size:11px;font-weight:900}.feed-live-card .live-badge .live-live-dot{width:8px;height:8px}.live-profile-badge{display:inline-flex;align-items:center;gap:6px;margin:4px 0 0;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,38,61,.35);background:rgba(255,38,61,.08);color:#ff7180;font-size:11px;font-weight:800}.live-profile-badge .live-live-dot{width:8px;height:8px}.profile-live-link{display:inline-flex;align-items:center;gap:7px;margin:4px 0 12px;padding:8px 12px;border-radius:999px;background:rgba(255,38,61,.1);border:1px solid rgba(255,38,61,.32);color:#ff7180;font-weight:800;font-size:12px}.profile-live-link:active{transform:scale(.97)}
 .feed::-webkit-scrollbar{display:none}
 .v{height:100%;scroll-snap-align:start;scroll-snap-stop:always;display:grid;place-items:center}
 .card{position:relative;width:100%;max-width:calc((100dvh - 70px)*9/16);height:100%;overflow:hidden;background:#000;color:#fff;user-select:none;touch-action:pan-y}
@@ -912,7 +912,7 @@ async function subscribeLive(liveId){
     }
   });
 }
-function getLiveVideo(){return $('#liveCam')}
+function getLiveVideo(){return $('#feedLiveVideo')||$('#liveCam')}
 function rtcConfig(){return {iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}}
 function cleanupRTCPeers(){
   rtcPeers.forEach(pc=>{try{pc.close()}catch(e){}});rtcPeers.clear();rtcRole='';
@@ -1129,16 +1129,41 @@ async function getActiveLives(){
     let profiles=[];
     if(ids.length){const r=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);profiles=r.data||[]}
     const pm=new Map(profiles.map(p=>[p.id,p]));
-    return data.map(x=>({...x,profile:pm.get(x.user_id)||{username:'usuario',display_name:'Usuario',avatar_url:null}}));
+    return data.filter(x=>!supabaseUser||x.user_id!==supabaseUser.id).map(x=>({...x,profile:pm.get(x.user_id)||{username:'usuario',display_name:'Usuario',avatar_url:null}}));
   }catch(e){return []}
 }
 function renderFeedLives(lives){
   if(!lives?.length)return '';
-  return `<div class="feed-live-banner" aria-label="Lives en directo">${lives.map(x=>{const p=x.profile||{};return `<button type="button" class="feed-live-card" data-open-live="${esc(x.id)}"><span class="live-thumb">${avt(48,p.username||'usuario',p.avatar_url)}</span><span class="live-copy"><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span><b>@${esc(p.username||'usuario')}</b><span>${esc(x.title||'Live')} · ${Number(x.viewer_count||0)} espectadores</span></span></button>`}).join('')}</div>`;
+  const x=lives[0];
+  const p=x.profile||{};
+  return `<section class="feed-live-slide" data-feed-live-id="${esc(x.id)}"><div class="feed-live-card"><video id="feedLiveVideo" playsinline autoplay muted></video><div class="live-placeholder" id="feedLivePlaceholder">${avt(86,p.username||'usuario',p.avatar_url)}<div style="position:absolute;margin-top:140px;color:#ddd;font-size:13px">Conectando al directo…</div></div><div class="live-overlay"></div><div class="live-top"><div class="live-user">${avt(38,p.username||'usuario',p.avatar_url)}<div><b style="display:block;font-size:13px">@${esc(p.username||'usuario')}</b><span style="display:block;font-size:11px;color:#ddd">${Number(x.viewer_count||0)} espectadores</span></div></div><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span></div><div class="live-info"><span class="live-badge"><i class="live-live-dot" aria-hidden="true"></i> LIVE</span><b>${esc(x.title||'Mi directo')}</b><span>Desliza para seguir viendo vídeos</span></div><button type="button" class="live-enter" data-open-live="${esc(x.id)}">Entrar</button></div></section>`;
 }
 async function openLiveFromFeed(id){
   if(!id)return;
   go('#/live/'+encodeURIComponent(id));
+}
+async function activateFeedLive(id){
+  if(!id||currentLive?.id===id)return;
+  try{
+    if(liveChannel){await sb.removeChannel(liveChannel);liveChannel=null}
+    cleanupRTCPeers();
+    const {data,error}=await sb.from('lives').select('*').eq('id',id).eq('status','live').maybeSingle();
+    if(error||!data)return;
+    currentLive=data;
+    const me=await getMyId();
+    if(data.user_id===me){currentLive=null;return}
+    await sb.rpc('join_live',{p_live:id}).catch(()=>{});
+    await subscribeLive(id);
+    await joinLiveRTC();
+  }catch(e){console.warn('Feed Live:',e)}
+}
+async function deactivateFeedLive(id){
+  if(!currentLive||String(currentLive.id)!==String(id))return;
+  if(liveChannel){await sb.removeChannel(liveChannel);liveChannel=null}
+  cleanupRTCPeers();
+  currentLive=null;
+  const v=$('#feedLiveVideo');if(v){v.pause();v.srcObject=null}
+  const ph=$('#feedLivePlaceholder');if(ph)ph.style.display='grid';
 }
 
 async function feed(first){
@@ -1146,13 +1171,16 @@ async function feed(first){
   if(first){const f=vid(first);if(f)l=[f,...l.filter(v=>v!=f)]}
   const activeLives=await getActiveLives();
   const liveHtml=renderFeedLives(activeLives);
-  $('#m').innerHTML=(l.length
-    ?`${liveHtml}<div class="feed" id="fd" tabindex="0">${l.map(slide).join('')}</div>`
-    :`${liveHtml}<div class="em" style="padding-top:28vh"><b>${ic('play',44)}</b><h2>Aquí aparecerán los vídeos</h2><p>Todavía no se ha publicado nada.</p><div class="chips c"><button class="btn o" id="reloadCloud">Actualizar</button><a class="btn" href="#/create">Crear vídeo</a></div></div>`);
+  $('#m').innerHTML=`<div class="feed" id="fd" tabindex="0">${liveHtml}${l.map(slide).join('')||(!liveHtml?`<div class="em" style="height:100%;padding-top:28vh"><b>${ic('play',44)}</b><h2>Aquí aparecerán los vídeos</h2><p>Todavía no se ha publicado nada.</p><div class="chips c"><button class="btn o" id="reloadCloud">Actualizar</button><a class="btn" href="#/create">Crear vídeo</a></div></div>`:'')}</div>`;
   document.querySelectorAll('[data-open-live]').forEach(b=>b.onclick=()=>openLiveFromFeed(b.dataset.openLive));
   const fd=$('#fd');
-  if(!fd){const rb=$('#reloadCloud');rb&&(rb.onclick=refreshCloudFeed);return}
-  const io=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!fd)return;
+  const io=new IntersectionObserver(es=>es.forEach(async e=>{
+    if(e.target.matches('.feed-live-slide')){
+      const id=e.target.dataset.feedLiveId;
+      if(e.isIntersecting){await activateFeedLive(id)}else{await deactivateFeedLive(id)}
+      return;
+    }
     const vd=e.target.querySelector('video');
     const cd=e.target.querySelector('.card');
     const m=vid(cd.dataset.id)||{};
@@ -1166,7 +1194,7 @@ async function feed(first){
       cd._t=setTimeout(()=>{if(!S.hist.includes(m.id)){S.hist.unshift(m.id);S.hist=S.hist.slice(0,50);save()}},2000);
     }else{clearTimeout(cd._t);vd.pause()}
   }),{root:fd,threshold:.6});
-  fd.querySelectorAll('.v').forEach(s=>io.observe(s));
+  fd.querySelectorAll('.v,.feed-live-slide').forEach(s=>io.observe(s));
 }
 function refresh(id){const c=document.querySelector(`.card[data-id="${id}"]`);c&&(c.querySelector('.rail').innerHTML=rail(vid(id)))}
 
@@ -1909,6 +1937,12 @@ async function subscribeCloudFeed(){
   cloudFeedChannel=sb.channel('nova-public-feed')
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'videos'},async()=>{await refreshCloudFeed()})
     .on('postgres_changes',{event:'DELETE',schema:'public',table:'videos'},async()=>{await refreshCloudFeed()})
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'lives'},async()=>{
+      if(location.hash==='#/'||location.hash==='#')await refreshCloudFeed();
+    })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'lives',filter:'status=eq.ended'},async()=>{
+      if(location.hash==='#/'||location.hash==='#')await refreshCloudFeed();
+    })
     .subscribe(s=>console.log('Feed Realtime:',s));
 }
 async function subscribeSocial(){
