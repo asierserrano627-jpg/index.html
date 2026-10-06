@@ -852,6 +852,8 @@ const NOVA_GIFT_VIDEO='https://github.com/asierserrano627-jpg/index.html/raw/mai
 let giftCombo={senderId:null,count:0,lastAt:0};
 let giftPanelOpen=false;
 let giftOverlayTimer=null;
+let liveRtcConnected=false;
+let liveJoinTimer=null;
 function isLiveOwner(){return !!(currentLive&&supabaseUser&&currentLive.user_id===supabaseUser.id)}
 function openGiftPanel(){const p=$('#giftPanel');if(!p)return;p.remove();giftPanelOpen=false}
 function toggleGiftPanel(){const p=$('#giftPanel');if(p){p.remove();giftPanelOpen=false;return} if(isLiveOwner())return; const host=$('.live-stage');if(!host)return; giftPanelOpen=true; const el=document.createElement('div');el.id='giftPanel';el.className='gift-sheet';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><b>Regalos</b><div class="gift-legend">Legendario</div></div><button class="btn o" id="closeGiftPanel">Cerrar</button></div><div class="gift-item"><div class="gift-icon">${sticker('gift','lg')}</div><div class="gift-meta"><b>Pistola de Dinero Nova</b><span>100 monedas · regalo gratis</span></div><button class="btn" id="sendNovaGift">Regalar</button></div>`;host.append(el);$('#closeGiftPanel').onclick=openGiftPanel;$('#sendNovaGift').onclick=sendNovaGift}
@@ -923,6 +925,13 @@ async function subscribeLive(liveId){
       liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}});
     }
   });
+  // Si el canal ya estaba suscrito o el estado del rol cambió justo antes de suscribir,
+  // el viewer-join se vuelve a enviar de forma segura.
+  setTimeout(()=>{
+    if(liveChannel && liveChannel.state==='joined' && rtcRole==='viewer' && currentLive?.id===liveId){
+      liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}}).catch(()=>{});
+    }
+  },350);
 }
 function getLiveVideo(){return $('#feedLiveVideo')||$('#liveCam')}
 function rtcConfig(){return {iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}}
@@ -954,7 +963,7 @@ async function handleRTCSignal(msg){
     const pc=new RTCPeerConnection(rtcConfig()); rtcPeers.set('broadcaster',pc);
     pc.ontrack=e=>{
       const v=getLiveVideo();
-      if(v&&e.streams[0]){v.srcObject=e.streams[0];v.muted=false;v.controls=false;v.style.display='';v.play().catch(()=>{});const off=$('#liveCamOff');if(off)off.style.display='none'}
+      if(v&&e.streams[0]){liveRtcConnected=true;if(liveJoinTimer){clearTimeout(liveJoinTimer);liveJoinTimer=null}v.srcObject=e.streams[0];v.muted=false;v.controls=false;v.style.display='';v.play().catch(()=>{});const off=$('#liveCamOff');if(off)off.style.display='none'}
     };
     pc.onicecandidate=e=>{if(e.candidate)sendRTC({type:'ice',to:msg.from,from:rtcClientId,candidate:e.candidate})};
     pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))toast('Se perdió el Live')};
@@ -994,7 +1003,8 @@ async function startLive(){
     const user=await ensureSupabaseUser(); await ensureSupabaseProfile(user);
     await startLiveCamera();
     // Cierra cualquier fila antigua de este mismo usuario antes de crear el Live nuevo.
-    await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('user_id',user.id).eq('status','live').catch(()=>{});
+    const oldLiveClose=await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('user_id',user.id).eq('status','live');
+    if(oldLiveClose.error) console.warn('Nova: no se pudieron cerrar Lives antiguos:',oldLiveClose.error);
     const {data,error}=await sb.from('lives').insert({user_id:user.id,type:'live',title:'Mi directo',status:'live'}).select().single();
     if(error)throw error;
     currentLive=data; giftCombo={senderId:null,count:0,lastAt:0};
@@ -1010,13 +1020,17 @@ async function joinLive(id){
   try{
     const {data,error}=await sb.from('lives').select('*').eq('id',id).single();
     if(error)throw error;
-    currentLive=data; giftCombo={senderId:null,count:0,lastAt:0}; const vc=$('#liveViewerCount'); if(vc)vc.textContent=Number(data.viewer_count||0); stopLiveCamera(); cleanupRTCPeers();
-    const me=await getMyId(); await sb.rpc('join_live',{p_live:id}).catch(()=>{}); const uname=await getUsername(me); await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}).catch(()=>{});
+    if(data.status!=='live')throw new Error('Ese directo ya no está disponible');
+    currentLive=data; liveRtcConnected=false; if(liveJoinTimer)clearTimeout(liveJoinTimer); giftCombo={senderId:null,count:0,lastAt:0}; const vc=$('#liveViewerCount'); if(vc)vc.textContent=Number(data.viewer_count||0); stopLiveCamera(); cleanupRTCPeers();
+    const me=await getMyId();
+    if(String(data.user_id)===String(me)){return}
+    await sb.rpc('join_live',{p_live:id}).catch(()=>{}); const uname=await getUsername(me); await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}).catch(()=>{});
     const off=$('#liveCamOff');if(off)off.style.display='grid';
-    await loadLiveMessages(id); await subscribeLive(id); await joinLiveRTC();
+    await loadLiveMessages(id); await joinLiveRTC(); await subscribeLive(id);
     $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; $('#liveStatusPill').style.display='grid';
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none'; const gb=$('#liveGiftBtn');if(gb)gb.style.display=isLiveOwner()?'none':'flex';
-    toast('Conectado');
+    liveJoinTimer=setTimeout(()=>{if(currentLive&&String(currentLive.id)===String(id)&&!liveRtcConnected){toast('El Live no está disponible ahora');if(liveChannel){sb.removeChannel(liveChannel);liveChannel=null}cleanupRTCPeers();currentLive=null;const ph=$('#liveCamOff');if(ph)ph.innerHTML='<div><b>Live no disponible</b><span>El creador ya no está transmitiendo.</span></div>';}},12000);
+    toast('Conectando al Live…');
   }catch(e){toast('No se pudo: '+(e.message||''))}
 }
 function startLiveHeartbeat(){
@@ -1025,10 +1039,11 @@ function startLiveHeartbeat(){
   const beat=async()=>{
     if(!currentLive||!isLiveOwner())return;
     // Mantiene viva la fila y, además, permite detectar directos abandonados.
-    await sb.from('lives').update({started_at:new Date().toISOString()}).eq('id',currentLive.id).eq('status','live').catch(()=>{});
+    const beatRes=await sb.from('lives').update({started_at:new Date().toISOString()}).eq('id',currentLive.id).eq('status','live');
+    if(beatRes.error) console.warn('Nova: heartbeat del Live:',beatRes.error);
   };
   beat();
-  liveHeartbeatTimer=setInterval(beat,15000);
+  liveHeartbeatTimer=setInterval(beat,10000);
 }
 function stopLiveHeartbeat(){clearInterval(liveHeartbeatTimer);liveHeartbeatTimer=null}
 
@@ -1056,13 +1071,6 @@ async function livePage(){
       if(liveRow?.user_id)liveProfile=await getProfile(liveRow.user_id);
       // Si el directo ya terminó o la cuenta ya no existe, jamás renderizar una pantalla falsa.
       if(!liveRow || !liveProfile){
-        toast('Ese directo ya no está disponible');
-        go('#/');
-        return;
-      }
-      const started=Date.parse(liveRow.started_at||'');
-      if(!Number.isFinite(started) || Date.now()-started>=45*1000){
-        await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('id',liveId).eq('status','live').catch(()=>{});
         toast('Ese directo ya no está disponible');
         go('#/');
         return;
@@ -1197,12 +1205,12 @@ async function getActiveLives(){
     if(pe)return [];
     const pm=new Map((profiles||[]).map(p=>[String(p.id),p]));
     const valid=data.filter(x=>{
-      if(!x.user_id||String(x.user_id)===String(me))return false;
+      if(!x.user_id)return false;
       if(!pm.has(String(x.user_id)))return false;
       // Evita que una fila antigua que quedó como "live" aparezca eternamente.
       const started=Date.parse(x.started_at||'');
       if(!Number.isFinite(started))return false;
-      return Date.now()-started < 45*1000;
+      return Date.now()-started < 2*60*1000;
     }).map(x=>({...x,profile:pm.get(String(x.user_id))}));
     return valid;
   }catch(e){return []}
@@ -1213,7 +1221,7 @@ function renderFeedLives(lives){
   const p=x.profile||{};
   const display=p.display_name||p.username||'Usuario';
   const username=p.username||'usuario';
-  return `<section class="feed-live-slide" data-feed-live-id="${esc(x.id)}"><div class="feed-live-card"><video id="feedLiveVideo" playsinline autoplay muted></video><div class="live-placeholder" id="feedLivePlaceholder">${avt(86,username,p.avatar_url)}<div style="position:absolute;margin-top:140px;color:#ddd;font-size:13px">Conectando al directo…</div></div><div class="live-overlay"></div><div class="live-top"><div class="live-user">${avt(38,username,p.avatar_url)}<div><b style="display:block;font-size:13px">${esc(display)}</b><span style="display:block;font-size:11px;color:#ddd">@${esc(username)}</span><span class="live-viewers"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="feedLiveViewerCount">${Number(x.viewer_count||0)}</span> espectadores</span></div></div><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span></div><div class="live-info"><span class="live-badge"><i class="live-live-dot" aria-hidden="true"></i> LIVE</span><b>${esc(x.title||'Mi directo')}</b><span>Desliza para seguir viendo vídeos</span></div><button type="button" class="live-enter" data-open-live="${esc(x.id)}">Entrar</button></div></section>`;
+  return `<section class="feed-live-slide" data-feed-live-id="${esc(x.id)}"><div class="feed-live-card"><video id="feedLiveVideo" playsinline autoplay muted></video><div class="live-placeholder" id="feedLivePlaceholder">${avt(86,username,p.avatar_url)}<div style="position:absolute;margin-top:140px;color:#ddd;font-size:13px">Conectando al directo…</div></div><div class="live-overlay"></div><div class="live-top"><div class="live-user">${avt(38,username,p.avatar_url)}<div><b style="display:block;font-size:13px">${esc(display)}</b><span style="display:block;font-size:11px;color:#ddd">@${esc(username)}</span><span class="live-viewers"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="feedLiveViewerCount">${Number(x.viewer_count||0)}</span> espectadores</span></div></div><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span></div><div class="live-info"><span class="live-badge"><i class="live-live-dot" aria-hidden="true"></i> LIVE</span><b>${esc(x.title||'Mi directo')}</b><span>Desliza para seguir viendo vídeos</span></div>${String(x.user_id)===String(supabaseUser?.id)?'<span class="live-enter" style="pointer-events:none;opacity:.72">Tu Live</span>':`<button type="button" class="live-enter" data-open-live="${esc(x.id)}">Entrar</button>`}</div></section>`;
 }
 async function openLiveFromFeed(id){
   if(!id)return;
@@ -1228,10 +1236,13 @@ async function activateFeedLive(id){
     if(error||!data)return;
     currentLive=data;
     const me=await getMyId();
-    if(data.user_id===me){currentLive=null;return}
+    if(String(data.user_id)===String(me)){
+      const v=$('#feedLiveVideo'); if(v&&liveStream){v.srcObject=liveStream;v.muted=true;v.play().catch(()=>{});const ph=$('#feedLivePlaceholder');if(ph)ph.style.display='none';}
+      return;
+    }
     await sb.rpc('join_live',{p_live:id}).catch(()=>{});
-    await subscribeLive(id);
     await joinLiveRTC();
+    await subscribeLive(id);
   }catch(e){console.warn('Feed Live:',e)}
 }
 async function deactivateFeedLive(id){
