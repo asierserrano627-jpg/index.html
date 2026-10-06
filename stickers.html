@@ -1,135 +1,402 @@
-<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <!-- Piel de la mano con volumen -->
-    <radialGradient id="piel1" cx="35%" cy="30%" r="80%">
-      <stop offset="0%" stop-color="#ffe4c4"/>
-      <stop offset="35%" stop-color="#f5c199"/>
-      <stop offset="70%" stop-color="#d99a70"/>
-      <stop offset="100%" stop-color="#a86a45"/>
-    </radialGradient>
-    <radialGradient id="piel2" cx="40%" cy="30%" r="80%">
-      <stop offset="0%" stop-color="#ffe9cf"/>
-      <stop offset="40%" stop-color="#eebd94"/>
-      <stop offset="80%" stop-color="#c98a5e"/>
-      <stop offset="100%" stop-color="#8e5632"/>
-    </radialGradient>
-    <!-- Sombra proyectada -->
-    <radialGradient id="sombraMano" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#000" stop-opacity=".35"/>
-      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
-    </radialGradient>
-    <!-- Ondas de choque con brillo -->
-    <radialGradient id="ondaBrillo" cx="50%" cy="50%" r="50%">
-      <stop offset="60%" stop-color="#ffd700" stop-opacity="0"/>
-      <stop offset="85%" stop-color="#ffe27a" stop-opacity=".8"/>
-      <stop offset="100%" stop-color="#ff9500" stop-opacity="0"/>
-    </radialGradient>
-    <!-- Filtros -->
-    <filter id="softBlur" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="2.5"/>
-    </filter>
-    <filter id="shadowBlur" x="-50%" y="-50%" width="200%" height="200%">
-      <feGaussianBlur stdDeviation="4"/>
-    </filter>
-    <filter id="innerGlow">
-      <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur"/>
-      <feOffset in="blur" dx="0" dy="1" result="off"/>
-      <feComposite in="SourceGraphic" in2="off" operator="atop"/>
-    </filter>
-  </defs>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aplauso realista</title>
+<style>
+  body{
+    background:#111;
+    margin:0;
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    font-family:system-ui,sans-serif;
+    color:#fff;
+  }
+  .sticker-box{
+    width:280px;
+    height:280px;
+    display:grid;
+    place-items:center;
+    cursor:pointer;
+  }
+  .sticker-box svg{width:100%;height:100%}
+  .hint{margin-top:10px;font-size:13px;color:#888;text-align:center}
+</style>
+</head>
+<body>
 
-  <!-- Fondo: sombra circular suave -->
-  <ellipse cx="100" cy="185" rx="55" ry="8" fill="url(#sombraMano)"/>
+<div class="sticker-box" id="clapBox">
+  <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- ========== PIEL REALISTA ========== -->
+      <radialGradient id="pielBase" cx="35%" cy="28%" r="85%">
+        <stop offset="0%"  stop-color="#ffe1c0"/>
+        <stop offset="25%" stop-color="#f7c79c"/>
+        <stop offset="55%" stop-color="#e0a574"/>
+        <stop offset="80%" stop-color="#b87a4d"/>
+        <stop offset="100%" stop-color="#7a4a28"/>
+      </radialGradient>
+      <radialGradient id="pielSombra" cx="60%" cy="70%" r="60%">
+        <stop offset="0%" stop-color="#8a5a34" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="#8a5a34" stop-opacity="0"/>
+      </radialGradient>
 
-  <!-- Ondas de choque (anillos) -->
-  <g>
-    <circle cx="100" cy="95" r="25" fill="none" stroke="#ffe27a" stroke-width="3" opacity=".9" filter="url(#softBlur)">
-      <animate attributeName="r" values="15;75" dur="1.4s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values=".9;0" dur="1.4s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="100" cy="95" r="15" fill="none" stroke="#fff" stroke-width="2" opacity=".7">
-      <animate attributeName="r" values="5;60" dur="1.4s" begin=".3s" repeatCount="indefinite"/>
-      <animate attributeName="opacity" values=".8;0" dur="1.4s" begin=".3s" repeatCount="indefinite"/>
-    </circle>
-  </g>
+      <!-- Brillo especular de la piel -->
+      <radialGradient id="pielBrillo" cx="30%" cy="20%" r="40%">
+        <stop offset="0%" stop-color="#fff" stop-opacity=".7"/>
+        <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
 
-  <!-- MANO IZQUIERDA -->
-  <g transform="translate(60,90) rotate(-25)">
-    <!-- Sombra base -->
-    <ellipse cx="0" cy="10" rx="26" ry="42" fill="#000" opacity=".3" filter="url(#shadowBlur)"/>
-    <!-- Palma -->
-    <ellipse cx="0" cy="0" rx="26" ry="42" fill="url(#piel1)"/>
-    <!-- Sombra interior (borde derecho más oscuro) -->
-    <ellipse cx="6" cy="4" rx="22" ry="38" fill="url(#piel2)" opacity=".55"/>
-    <!-- Línea de la palma -->
-    <path d="M-14 -12 Q 0 -3 14 -12" fill="none" stroke="#8e5632" stroke-width="1.3" opacity=".55" stroke-linecap="round"/>
-    <path d="M-16 5 Q 0 14 16 5" fill="none" stroke="#8e5632" stroke-width="1" opacity=".4" stroke-linecap="round"/>
-    <!-- Dedos (4) -->
-    <g>
-      <!-- Índice -->
-      <ellipse cx="-16" cy="-32" rx="7" ry="18" fill="url(#piel1)"/>
-      <ellipse cx="-15" cy="-34" rx="5" ry="14" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="-18" cy="-42" rx="3.5" ry="3" fill="#fff" opacity=".35"/>
-      <!-- Medio -->
-      <ellipse cx="-5" cy="-38" rx="7" ry="20" fill="url(#piel1)"/>
-      <ellipse cx="-4" cy="-40" rx="5" ry="16" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="-7" cy="-50" rx="3.5" ry="3" fill="#fff" opacity=".35"/>
-      <!-- Anular -->
-      <ellipse cx="6" cy="-36" rx="7" ry="19" fill="url(#piel1)"/>
-      <ellipse cx="7" cy="-38" rx="5" ry="15" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="4" cy="-47" rx="3.5" ry="3" fill="#fff" opacity=".35"/>
-      <!-- Meñique -->
-      <ellipse cx="17" cy="-30" rx="6.5" ry="15" fill="url(#piel1)"/>
-      <ellipse cx="18" cy="-32" rx="4.5" ry="12" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="15" cy="-39" rx="3" ry="2.5" fill="#fff" opacity=".35"/>
+      <!-- Uña realista -->
+      <linearGradient id="unaGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#fff6ea"/>
+        <stop offset="60%" stop-color="#ffe0c4"/>
+        <stop offset="100%" stop-color="#d8a67e"/>
+      </linearGradient>
+
+      <!-- Ondas de choque -->
+      <radialGradient id="ondaGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="60%" stop-color="#fff8b0" stop-opacity="0"/>
+        <stop offset="85%" stop-color="#ffe27a" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="#ff9500" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Filtros -->
+      <filter id="sombraSuelo" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="6"/>
+      </filter>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="3" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+      <filter id="softShadow" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000" flood-opacity=".45"/>
+      </filter>
+    </defs>
+
+    <!-- Sombra en el suelo -->
+    <ellipse cx="150" cy="270" rx="80" ry="10" fill="#000" opacity=".35" filter="url(#sombraSuelo)">
+      <animate attributeName="rx" values="80;60;80" dur="1.4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values=".35;.2;.35" dur="1.4s" repeatCount="indefinite"/>
+    </ellipse>
+
+    <!-- ONDAS DE CHOQUE (aparecen al chocar) -->
+    <g id="ondas">
+      <circle cx="150" cy="150" r="10" fill="none" stroke="#fff8b0" stroke-width="3" opacity="0">
+        <animate attributeName="r" values="10;90" dur="1.4s" keyTimes="0;1" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0;0;.9;0" keyTimes="0;.25;.35;.5;1" dur="1.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="150" cy="150" r="5" fill="none" stroke="#ffe27a" stroke-width="2" opacity="0">
+        <animate attributeName="r" values="5;120" dur="1.4s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0;0;0;.7;0" keyTimes="0;.3;.4;.55;1" dur="1.4s" repeatCount="indefinite"/>
+      </circle>
     </g>
-    <!-- Uñas sutiles -->
-    <ellipse cx="-16" cy="-47" rx="3" ry="4" fill="#ffe9cf" opacity=".6"/>
-    <ellipse cx="-5" cy="-55" rx="3" ry="4" fill="#ffe9cf" opacity=".6"/>
-    <ellipse cx="6" cy="-52" rx="3" ry="4" fill="#ffe9cf" opacity=".6"/>
-    <ellipse cx="17" cy="-43" rx="2.5" ry="3.5" fill="#ffe9cf" opacity=".6"/>
-  </g>
 
-  <!-- MANO DERECHA (espejada) -->
-  <g transform="translate(140,90) rotate(25)">
-    <ellipse cx="0" cy="10" rx="26" ry="42" fill="#000" opacity=".3" filter="url(#shadowBlur)"/>
-    <ellipse cx="0" cy="0" rx="26" ry="42" fill="url(#piel1)"/>
-    <ellipse cx="-6" cy="4" rx="22" ry="38" fill="url(#piel2)" opacity=".55"/>
-    <path d="M-14 -12 Q 0 -3 14 -12" fill="none" stroke="#8e5632" stroke-width="1.3" opacity=".55" stroke-linecap="round"/>
-    <path d="M-16 5 Q 0 14 16 5" fill="none" stroke="#8e5632" stroke-width="1" opacity=".4" stroke-linecap="round"/>
-    <g>
-      <ellipse cx="16" cy="-32" rx="7" ry="18" fill="url(#piel1)"/>
-      <ellipse cx="15" cy="-34" rx="5" ry="14" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="18" cy="-42" rx="3.5" ry="3" fill="#fff" opacity=".35"/>
-      <ellipse cx="5" cy="-38" rx="7" ry="20" fill="url(#piel1)"/>
-      <ellipse cx="4" cy="-40" rx="5" ry="16" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="7" cy="-50" rx="3.5" ry="3" fill="#fff" opacity=".35"/>
-      <ellipse cx="-6" cy="-36" rx="7" ry="19" fill="url(#piel1)"/>
-      <ellipse cx="-7" cy="-38" rx="5" ry="15" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="-4" cy="-47" rx="3.5" ry="3" fill="#fff" opacity=".35"/>
-      <ellipse cx="-17" cy="-30" rx="6.5" ry="15" fill="url(#piel1)"/>
-      <ellipse cx="-18" cy="-32" rx="4.5" ry="12" fill="url(#piel2)" opacity=".5"/>
-      <ellipse cx="-15" cy="-39" rx="3" ry="2.5" fill="#fff" opacity=".35"/>
+    <!-- ============ MANO IZQUIERDA ============ -->
+    <g id="manoIzq">
+      <animateTransform attributeName="transform" type="translate"
+        values="-70,0; -70,0; 0,0; 0,0; -70,0"
+        keyTimes="0;.2;.5;.6;1"
+        dur="1.4s"
+        repeatCount="indefinite"
+        calcMode="spline"
+        keySplines="0 0 1 1; .4 0 .3 1.2; 0 0 1 1; .3 0 .5 1"/>
+      <animateTransform attributeName="transform" type="rotate"
+        values="-15; -15; 0; 8; -15"
+        keyTimes="0;.2;.5;.6;1"
+        dur="1.4s" repeatCount="indefinite" additive="sum"/>
+      <g filter="url(#softShadow)">
+        <!-- Palma -->
+        <path d="M 60 100
+                 Q 50 140, 70 190
+                 Q 90 220, 120 210
+                 Q 145 200, 140 160
+                 Q 138 120, 120 100
+                 Q 100 80, 60 100 Z"
+              fill="url(#pielBase)"/>
+        <!-- Sombra interior de la palma -->
+        <path d="M 60 100
+                 Q 50 140, 70 190
+                 Q 90 220, 120 210
+                 Q 145 200, 140 160
+                 Q 138 120, 120 100
+                 Q 100 80, 60 100 Z"
+              fill="url(#pielSombra)" opacity=".7"/>
+        <!-- Brillo especular -->
+        <ellipse cx="80" cy="130" rx="18" ry="26" fill="url(#pielBrillo)"/>
+
+        <!-- Líneas de la palma -->
+        <path d="M 70 140 Q 95 155 135 145" stroke="#8a5a34" stroke-width="1.4" fill="none" opacity=".55" stroke-linecap="round"/>
+        <path d="M 65 165 Q 100 175 130 165" stroke="#8a5a34" stroke-width="1.2" fill="none" opacity=".45" stroke-linecap="round"/>
+        <path d="M 78 130 Q 90 155 95 185" stroke="#8a5a34" stroke-width="1" fill="none" opacity=".35" stroke-linecap="round"/>
+
+        <!-- DEDOS (con 3 falanges cada uno) -->
+        <!-- Índice -->
+        <g>
+          <path d="M 60 105 Q 50 70 58 40 Q 62 25 75 28 Q 85 32 82 50 Q 80 75 78 105 Z"
+                fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 60 105 Q 50 70 58 40 Q 62 25 75 28 Q 85 32 82 50 Q 80 75 78 105 Z"
+                fill="url(#pielSombra)" opacity=".4"/>
+          <!-- nudillos -->
+          <line x1="60" y1="80" x2="80" y2="80" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="58" y1="55" x2="79" y2="55" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <!-- uña -->
+          <ellipse cx="70" cy="34" rx="7" ry="9" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="68" cy="31" rx="3" ry="4" fill="#fff" opacity=".5"/>
+        </g>
+        <!-- Medio -->
+        <g>
+          <path d="M 80 105 Q 75 65 82 32 Q 86 15 100 18 Q 110 22 108 42 Q 105 70 102 105 Z"
+                fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 80 105 Q 75 65 82 32 Q 86 15 100 18 Q 110 22 108 42 Q 105 70 102 105 Z"
+                fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="82" y1="78" x2="103" y2="78" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="84" y1="50" x2="105" y2="50" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="95" cy="24" rx="7" ry="9" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="93" cy="21" rx="3" ry="4" fill="#fff" opacity=".5"/>
+        </g>
+        <!-- Anular -->
+        <g>
+          <path d="M 103 108 Q 102 72 108 40 Q 112 25 125 28 Q 133 32 130 50 Q 128 75 122 108 Z"
+                fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 103 108 Q 102 72 108 40 Q 112 25 125 28 Q 133 32 130 50 Q 128 75 122 108 Z"
+                fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="104" y1="80" x2="124" y2="80" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="106" y1="55" x2="126" y2="55" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="118" cy="34" rx="6" ry="8" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="116" cy="31" rx="2.5" ry="3.5" fill="#fff" opacity=".5"/>
+        </g>
+        <!-- Meñique -->
+        <g>
+          <path d="M 122 115 Q 122 88 128 62 Q 132 48 143 50 Q 151 54 148 70 Q 145 90 140 118 Z"
+                fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 122 115 Q 122 88 128 62 Q 132 48 143 50 Q 151 54 148 70 Q 145 90 140 118 Z"
+                fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="123" y1="90" x2="142" y2="90" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="125" y1="68" x2="144" y2="68" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="137" cy="55" rx="5.5" ry="7" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="135" cy="52" rx="2" ry="3" fill="#fff" opacity=".5"/>
+        </g>
+        <!-- Pulgar (lateral, apuntando hacia dentro) -->
+        <g>
+          <path d="M 60 155 Q 40 165 30 180 Q 22 195 35 205 Q 50 210 65 195 Q 75 185 70 165 Z"
+                fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 60 155 Q 40 165 30 180 Q 22 195 35 205 Q 50 210 65 195 Q 75 185 70 165 Z"
+                fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="45" y1="185" x2="62" y2="172" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="33" cy="196" rx="7" ry="9" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5" transform="rotate(-40 33 196)"/>
+        </g>
+      </g>
     </g>
-    <ellipse cx="16" cy="-47" rx="3" ry="4" fill="#ffe9cf" opacity=".6"/>
-    <ellipse cx="5" cy="-55" rx="3" ry="4" fill="#ffe9cf" opacity=".6"/>
-    <ellipse cx="-6" cy="-52" rx="3" ry="4" fill="#ffe9cf" opacity=".6"/>
-    <ellipse cx="-17" cy="-43" rx="2.5" ry="3.5" fill="#ffe9cf" opacity=".6"/>
-  </g>
 
-  <!-- Destellos voladores -->
-  <g>
-    <path d="M40 40 L 42 46 L 48 48 L 42 50 L 40 56 L 38 50 L 32 48 L 38 46 Z" fill="#fff">
-      <animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/>
-    </path>
-    <path d="M160 40 L 162 46 L 168 48 L 162 50 L 160 56 L 158 50 L 152 48 L 158 46 Z" fill="#fff">
-      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin=".9s" repeatCount="indefinite"/>
-    </path>
-    <circle cx="70" cy="40" r="2.5" fill="#fff">
-      <animate attributeName="opacity" values="0;1;0" dur="1.2s" repeatCount="indefinite"/>
-    </circle>
-    <circle cx="130" cy="45" r="2" fill="#fff">
-      <animate attributeName="opacity" values="0;1;0" dur="1.2s" begin=".5s" repeatCount="indefinite"/>
-    </circle>
-  </g>
-</svg>
+    <!-- ============ MANO DERECHA (espejada) ============ -->
+    <g id="manoDer">
+      <animateTransform attributeName="transform" type="translate"
+        values="70,0; 70,0; 0,0; 0,0; 70,0"
+        keyTimes="0;.2;.5;.6;1"
+        dur="1.4s"
+        repeatCount="indefinite"
+        calcMode="spline"
+        keySplines="0 0 1 1; .4 0 .3 1.2; 0 0 1 1; .3 0 .5 1"/>
+      <animateTransform attributeName="transform" type="rotate"
+        values="15; 15; 0; -8; 15"
+        keyTimes="0;.2;.5;.6;1"
+        dur="1.4s" repeatCount="indefinite" additive="sum"/>
+      <g filter="url(#softShadow)" transform="translate(300,0) scale(-1,1)">
+        <!-- Palma espejada -->
+        <path d="M 60 100
+                 Q 50 140, 70 190
+                 Q 90 220, 120 210
+                 Q 145 200, 140 160
+                 Q 138 120, 120 100
+                 Q 100 80, 60 100 Z"
+              fill="url(#pielBase)"/>
+        <path d="M 60 100
+                 Q 50 140, 70 190
+                 Q 90 220, 120 210
+                 Q 145 200, 140 160
+                 Q 138 120, 120 100
+                 Q 100 80, 60 100 Z"
+              fill="url(#pielSombra)" opacity=".7"/>
+        <ellipse cx="80" cy="130" rx="18" ry="26" fill="url(#pielBrillo)"/>
+        <path d="M 70 140 Q 95 155 135 145" stroke="#8a5a34" stroke-width="1.4" fill="none" opacity=".55" stroke-linecap="round"/>
+        <path d="M 65 165 Q 100 175 130 165" stroke="#8a5a34" stroke-width="1.2" fill="none" opacity=".45" stroke-linecap="round"/>
+        <path d="M 78 130 Q 90 155 95 185" stroke="#8a5a34" stroke-width="1" fill="none" opacity=".35" stroke-linecap="round"/>
+
+        <g>
+          <path d="M 60 105 Q 50 70 58 40 Q 62 25 75 28 Q 85 32 82 50 Q 80 75 78 105 Z" fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 60 105 Q 50 70 58 40 Q 62 25 75 28 Q 85 32 82 50 Q 80 75 78 105 Z" fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="60" y1="80" x2="80" y2="80" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="58" y1="55" x2="79" y2="55" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="70" cy="34" rx="7" ry="9" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="68" cy="31" rx="3" ry="4" fill="#fff" opacity=".5"/>
+        </g>
+        <g>
+          <path d="M 80 105 Q 75 65 82 32 Q 86 15 100 18 Q 110 22 108 42 Q 105 70 102 105 Z" fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 80 105 Q 75 65 82 32 Q 86 15 100 18 Q 110 22 108 42 Q 105 70 102 105 Z" fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="82" y1="78" x2="103" y2="78" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="84" y1="50" x2="105" y2="50" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="95" cy="24" rx="7" ry="9" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="93" cy="21" rx="3" ry="4" fill="#fff" opacity=".5"/>
+        </g>
+        <g>
+          <path d="M 103 108 Q 102 72 108 40 Q 112 25 125 28 Q 133 32 130 50 Q 128 75 122 108 Z" fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 103 108 Q 102 72 108 40 Q 112 25 125 28 Q 133 32 130 50 Q 128 75 122 108 Z" fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="104" y1="80" x2="124" y2="80" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="106" y1="55" x2="126" y2="55" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="118" cy="34" rx="6" ry="8" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="116" cy="31" rx="2.5" ry="3.5" fill="#fff" opacity=".5"/>
+        </g>
+        <g>
+          <path d="M 122 115 Q 122 88 128 62 Q 132 48 143 50 Q 151 54 148 70 Q 145 90 140 118 Z" fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 122 115 Q 122 88 128 62 Q 132 48 143 50 Q 151 54 148 70 Q 145 90 140 118 Z" fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="123" y1="90" x2="142" y2="90" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <line x1="125" y1="68" x2="144" y2="68" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="137" cy="55" rx="5.5" ry="7" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5"/>
+          <ellipse cx="135" cy="52" rx="2" ry="3" fill="#fff" opacity=".5"/>
+        </g>
+        <g>
+          <path d="M 60 155 Q 40 165 30 180 Q 22 195 35 205 Q 50 210 65 195 Q 75 185 70 165 Z" fill="url(#pielBase)" stroke="#a06a44" stroke-width=".8"/>
+          <path d="M 60 155 Q 40 165 30 180 Q 22 195 35 205 Q 50 210 65 195 Q 75 185 70 165 Z" fill="url(#pielSombra)" opacity=".4"/>
+          <line x1="45" y1="185" x2="62" y2="172" stroke="#a06a44" stroke-width="1" opacity=".6"/>
+          <ellipse cx="33" cy="196" rx="7" ry="9" fill="url(#unaGrad)" stroke="#b88a68" stroke-width=".5" transform="rotate(-40 33 196)"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- Destellos en el punto de choque -->
+    <g id="destellos" filter="url(#glow)">
+      <path d="M 150 150 L 155 145 L 160 150 L 165 145 L 170 150 L 165 155 L 170 160 L 165 165 L 160 160 L 155 165 L 150 160 L 145 165 L 140 160 L 145 155 L 140 150 L 145 145 Z" fill="#fff">
+        <animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0;.4;.48;.55;.75" dur="1.4s" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="scale" values="0.5;0.5;0.5;1.5;2" keyTimes="0;.4;.48;.55;.75" dur="1.4s" repeatCount="indefinite" additive="sum"/>
+      </path>
+      <circle cx="130" cy="140" r="3" fill="#fff">
+        <animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0;.4;.5;1;1" dur="1.4s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="170" cy="160" r="2.5" fill="#fff">
+        <animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0;.4;.5;1;1" dur="1.4s" begin=".1s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="155" cy="175" r="2" fill="#fff">
+        <animate attributeName="opacity" values="0;0;0;1;0" keyTimes="0;.4;.5;1;1" dur="1.4s" begin=".2s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+  </svg>
+</div>
+
+<div class="hint">Toca para activar el sonido</div>
+
+<script>
+// Sistema de sonido con Web Audio API (sin archivos externos)
+let audioCtx = null;
+let audioEnabled = false;
+
+function initAudio(){
+  if(!audioCtx){
+    try{
+      audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+      audioEnabled = true;
+    }catch(e){console.warn('Sin audio:', e)}
+  }
+  if(audioCtx && audioCtx.state === 'suspended'){
+    audioCtx.resume();
+  }
+}
+
+// Sonido de palmada realista: ruido blanco filtrado + envolvente
+function clapSound(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+
+  // Capa 1: ruido blanco (el "chasquido" de la piel)
+  const bufferSize = audioCtx.sampleRate * 0.15;
+  const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i = 0; i < bufferSize; i++){
+    // Ruido con envolvente exponencial
+    const t = i / bufferSize;
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, 3);
+  }
+
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = buffer;
+
+  // Filtro bandpass para que suene "seco"
+  const filter = audioCtx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = 1800;
+  filter.Q.value = 1.5;
+
+  // Envolvente rápida (ataque agudo, caída rápida)
+  const gain = audioCtx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.9, now + 0.005);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(audioCtx.destination);
+  noise.start(now);
+  noise.stop(now + 0.15);
+
+  // Capa 2: "pop" de cuerpo (tono muy bajo)
+  const pop = audioCtx.createOscillator();
+  const popGain = audioCtx.createGain();
+  pop.type = 'sine';
+  pop.frequency.setValueAtTime(180, now);
+  pop.frequency.exponentialRampToValueAtTime(60, now + 0.08);
+  popGain.gain.setValueAtTime(0.0001, now);
+  popGain.gain.exponentialRampToValueAtTime(0.4, now + 0.003);
+  popGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+  pop.connect(popGain);
+  popGain.connect(audioCtx.destination);
+  pop.start(now);
+  pop.stop(now + 0.12);
+
+  // Capa 3: "tick" agudo (el impacto seco)
+  const tick = audioCtx.createOscillator();
+  const tickGain = audioCtx.createGain();
+  tick.type = 'triangle';
+  tick.frequency.setValueAtTime(2800, now);
+  tickGain.gain.setValueAtTime(0.0001, now);
+  tickGain.gain.exponentialRampToValueAtTime(0.25, now + 0.002);
+  tickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+  tick.connect(tickGain);
+  tickGain.connect(audioCtx.destination);
+  tick.start(now);
+  tick.stop(now + 0.05);
+}
+
+// Reproducir clap cada vez que las manos chocan
+// El ciclo dura 1.4s, las manos chocan en el centro en ~0.7s (50% del ciclo)
+function startClapLoop(){
+  const cycleMs = 1400;
+  const clapOffset = 700; // cuando las manos se juntan
+  const tick = () => {
+    if(!audioEnabled) return;
+    setTimeout(() => clapSound(), clapOffset);
+    setTimeout(tick, cycleMs);
+  };
+  tick();
+}
+
+// Activación al primer toque (los navegadores bloquean autoplay)
+document.getElementById('clapBox').addEventListener('click', () => {
+  initAudio();
+  if(!window.__clapStarted){
+    window.__clapStarted = true;
+    startClapLoop();
+    document.querySelector('.hint').textContent = '¡Sonando! 👏';
+  } else {
+    clapSound(); // clic manual = un clap extra
+  }
+});
+
+// También activar al primer toque en cualquier parte
+document.addEventListener('touchstart', initAudio, {once:true});
+document.addEventListener('click', initAudio, {once:true});
+</script>
+
+</body>
+</html>
