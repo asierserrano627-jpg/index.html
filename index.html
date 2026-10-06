@@ -115,7 +115,7 @@ input:disabled{opacity:.5}
 .live-me{display:flex;align-items:center;gap:9px;padding:5px 11px 5px 5px;border-radius:999px;background:rgba(0,0,0,.38);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.18);text-shadow:0 1px 5px #000;cursor:pointer}
 .live-me .av{border:2px solid #fff}
 .live-me .live-name{display:flex;flex-direction:column;line-height:1.08}.live-name b{font-size:13px}.live-name span{font-size:11px;color:#ddd}
-.live-actions{display:flex;gap:7px}.live-pill{min-width:42px;height:36px;padding:0 11px;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);display:grid;place-items:center;font-weight:800;backdrop-filter:blur(12px)}
+.live-actions{display:flex;gap:7px}.live-live-dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#ff263d;box-shadow:0 0 0 2px rgba(255,38,61,.18),0 0 12px rgba(255,38,61,.85);animation:novaLivePulse 1.15s ease-in-out infinite}.live-pill.live-now{gap:7px}.live-pill.live-now .live-live-dot{flex:none}@keyframes novaLivePulse{0%,100%{transform:scale(.82);opacity:.72}50%{transform:scale(1.15);opacity:1}}.live-pill{min-width:42px;height:36px;padding:0 11px;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);display:grid;place-items:center;font-weight:800;backdrop-filter:blur(12px)}
 .live-chat{position:absolute;left:12px;right:12px;bottom:calc(74px + env(safe-area-inset-bottom,0px));height:45%;z-index:4;display:flex;flex-direction:column;justify-content:flex-end;pointer-events:none}
 .live-msgs{display:flex;flex-direction:column;align-items:flex-start;gap:5px;max-height:100%;overflow:auto;scrollbar-width:none;padding-bottom:7px}.live-msgs::-webkit-scrollbar{display:none}
 .live-msg{max-width:min(82%,430px);display:flex;align-items:flex-start;gap:7px;padding:5px 9px;border-radius:16px;background:rgba(0,0,0,.38);backdrop-filter:blur(8px);font-size:14px;text-shadow:0 1px 3px #000;animation:livein .18s ease-out}.live-msg .av{margin-top:1px}.live-msg-body{min-width:0}.live-msg-user{font-size:11px;font-weight:800;color:#e6dcff}.live-msg-text{word-break:break-word}
@@ -134,7 +134,7 @@ input:disabled{opacity:.5}
 .person .pact{display:flex;gap:6px}
 .person .pact button{padding:6px 12px;font-size:12px}
 .sec-t{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);margin:16px 0 6px}
-.pfhead{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0}
+.profile-banner{position:relative;width:100%;height:150px;border-radius:22px;overflow:hidden;margin:-2px 0 14px;background:radial-gradient(circle at 20% 20%,rgba(139,123,255,.72),transparent 35%),radial-gradient(circle at 80% 70%,rgba(53,208,255,.55),transparent 38%),linear-gradient(135deg,#17122e,#080812 58%,#10233b);border:1px solid rgba(255,255,255,.12);box-shadow:0 12px 40px rgba(53,208,255,.12)}.profile-banner img{width:100%;height:100%;object-fit:cover}.profile-banner:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.32));pointer-events:none}.banner-stars{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.8) 0 1px,transparent 1.5px);background-size:34px 34px;opacity:.28;animation:bannerTwinkle 3.5s ease-in-out infinite alternate}@keyframes bannerTwinkle{from{opacity:.18}to{opacity:.38}}.banner-tools{position:absolute;right:10px;bottom:10px;z-index:2}.profile-banner.empty{display:grid;place-items:center;color:#dcd6ff}.profile-banner.empty b{font-size:16px}.pfhead{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px 0}
 .pfhead .av{width:96px;height:96px;font-size:40px}
 .pfstats{display:flex;gap:28px;justify-content:center;margin:12px 0}
 .pfstats .s{text-align:center}.pfstats .s b{display:block;font-size:20px}.pfstats .s span{font-size:12px;color:var(--mu)}
@@ -402,8 +402,9 @@ async function getUsername(userId){
 }
 async function getProfile(userId){
   if(!userId)return null;
-  const {data}=await sb.from('profiles').select('id,username,display_name,bio,avatar_url').eq('id',userId).maybeSingle();
-  return data;
+  let res=await sb.from('profiles').select('id,username,display_name,bio,avatar_url,banner_url').eq('id',userId).maybeSingle();
+  if(res.error){res=await sb.from('profiles').select('id,username,display_name,bio,avatar_url').eq('id',userId).maybeSingle()}
+  return res.data||null;
 }
 async function getMyId(){
   if(supabaseUser)return supabaseUser.id;
@@ -550,7 +551,7 @@ async function publishCloudVideo(file, description){
     d:res.data.description||description||'Mi vídeo',
     tags:[],t:Date.now(),src:res.data.video_url,
     f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
-    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(res.data.video_url),
+    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(v.video_url),
     userId:res.data.user_id,
     username:res.data.username||username,
     avatarUrl:res.data.avatar_url||ME.av||null,
@@ -899,13 +900,15 @@ async function subscribeLive(liveId){
         const m=payload.new;m.__username=await getUsername(m.user_id);
         renderLiveMessage(m);const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
       })
-    .on('broadcast',{event:'rtc'},async ({payload})=>{try{await handleRTCSignal(payload)}catch(e){}})
-    .subscribe(status=>{
-      if(status==='SUBSCRIBED'&&rtcRole==='viewer'){
-        liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}});
-      }
-    });
+    .on('broadcast',{event:'rtc'},async ({payload})=>{try{await handleRTCSignal(payload)}catch(e){}});
+  // Supabase Realtime no permite añadir callbacks postgres_changes después de subscribe().
+  // Registramos el listener de regalos ANTES de suscribir el canal.
   await subscribeLiveGifts(liveId);
+  liveChannel.subscribe(status=>{
+    if(status==='SUBSCRIBED'&&rtcRole==='viewer'){
+      liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}});
+    }
+  });
 }
 function getLiveVideo(){return $('#liveCam')}
 function rtcConfig(){return {iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}}
@@ -980,7 +983,7 @@ async function startLive(){
     if(error)throw error;
     currentLive=data; giftCombo={senderId:null,count:0,lastAt:0};
     const off=$('#liveCamOff');if(off)off.style.display='none';
-    $('#liveStatusPill').textContent='EN DIRECTO';
+    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; 
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display=''; const gb=$('#liveGiftBtn');if(gb)gb.style.display='none';
     await loadLiveMessages(data.id); await subscribeLive(data.id); await startLiveRTC();
     toast('Live iniciado');
@@ -994,7 +997,7 @@ async function joinLive(id){
     const me=await getMyId(); await sb.rpc('join_live',{p_live:id}).catch(()=>{}); const uname=await getUsername(me); await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}).catch(()=>{});
     const off=$('#liveCamOff');if(off)off.style.display='grid';
     await loadLiveMessages(id); await subscribeLive(id); await joinLiveRTC();
-    $('#liveStatusPill').textContent='VIENDO LIVE';
+    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; 
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none'; const gb=$('#liveGiftBtn');if(gb)gb.style.display=isLiveOwner()?'none':'flex';
     toast('Conectado');
   }catch(e){toast('No se pudo: '+(e.message||''))}
@@ -1006,7 +1009,7 @@ async function endLive(){
     if(error)throw error;
     if(liveChannel){await sb.removeChannel(liveChannel);liveChannel=null}
     currentLive=null; giftCombo={senderId:null,count:0,lastAt:0}; openGiftPanel(); cleanupRTCPeers(); stopLiveCamera();
-    $('#liveStatusPill').textContent='LIVE'; $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
+    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>';  $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
     toast('Live terminado'); livePage();
   }catch(e){toast('No se pudo terminar')}
 }
@@ -1020,7 +1023,7 @@ async function livePage(){
     <div class="live-dark"></div>
     <div class="live-head">
       <a class="live-me" href="#/profile">${avt(40)}<span class="live-name"><b>${esc(me.n)}</b><span>@${esc(me.u)}</span></span></a>
-      <div class="live-actions"><span class="live-pill" id="liveStatusPill">LIVE</span><button class="live-pill" id="openLiveList" type="button">Lives</button></div>
+      <div class="live-actions"><span class="live-pill live-now" id="liveStatusPill"><i class="live-live-dot" aria-hidden="true"></i><span>En directo</span></span><button class="live-pill" id="openLiveList" type="button">Lives</button></div>
     </div>
     <div class="live-chat"><div id="liveMessages" class="live-msgs"><div class="live-msg"><span class="av" style="width:28px;height:28px;font-size:12px">N</span><div class="live-msg-body"><div class="live-msg-user">@Nova</div><div class="live-msg-text">Los mensajes aparecerán aquí</div></div></div></div></div>
     <button class="live-gift-fab" id="liveGiftBtn" style="display:none">${sticker('gift')} Regalar</button>
@@ -1188,7 +1191,7 @@ async function profile(){
   const myVideos=(mine||[]).map(v=>({
     id:String(v.id),d:v.description||'Mi vídeo',tags:[],t:0,src:v.video_url,
     f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
-    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(res.data.video_url),
+    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(v.video_url),
     userId:v.user_id,username:v.username||ME.u,
     avatarUrl:v.avatar_url||ME.av||null,
     views:v.views||0,
@@ -1206,6 +1209,7 @@ async function profile(){
   const totalViews=myVideos.reduce((s,v)=>s+(v.views||0),0);
 
   $('#m').innerHTML=`<div class="pg">
+    ${profileBannerHtml()}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
       <div style="display:flex;gap:14px;align-items:center;flex:1">${avt(80)}<div><h2 style="margin:0">${esc(ME.n)}</h2><span class="mu">@${esc(ME.u)}</span></div></div>
       <button class="settings-wheel" id="openSettings" aria-label="Ajustes">
@@ -1218,6 +1222,7 @@ async function profile(){
     <h2>Guardados</h2>${savedVideos.length?grid(savedVideos):'<div class="em">No has guardado nada todavía.</div>'}
   </div>`;
   $('#openSettings').onclick=openSettings;
+  const bannerBtn=$('#bannerEditBtn'); if(bannerBtn) bannerBtn.onclick=openBannerEditor;
 }
 
 /* ---------- PERFIL PÚBLICO ---------- */
@@ -1247,6 +1252,7 @@ async function publicProfile(userId){
     }
   }catch(e){console.error(e)}
   $('#m').innerHTML=`<div class="pg">
+    ${p.banner_url?`<div class="profile-banner"><img src="${esc(p.banner_url)}" alt="Banner de ${esc(p.username)}"></div>`:''}
     <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0">${esc(p.display_name||p.username)}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
     <div class="pfstats"><div class="s"><b>${videos.length}</b><span>Vídeos</span></div><div class="s"><b>${counts.followers}</b><span>Seguidores</span></div><div class="s"><b>${counts.following}</b><span>Siguiendo</span></div></div>
     <div class="chips c"><button class="btn${following?' o':''}" id="followBtn">${following?'Siguiendo':'Seguir'}</button><button class="btn" id="msgBtn">Mensaje</button></div>
@@ -1662,6 +1668,54 @@ const closeSheet=()=>{curC=null;currentCommentsVideoId=null;$('#ov').innerHTML='
 function sheet(t,body,foot=''){
   $('#ov').innerHTML=`<div class="sheet" role="dialog" aria-label="${esc(t)}"><div class="sh"><span>${esc(t)}</span><button data-a="x">${ic('x',20)}</button></div><div class="sb">${body}</div>${foot}</div>`;
 }
+function openBannerEditor(){
+  sheet('Crear banner',`<div class="profile-banner" style="height:120px;margin:0 0 14px">${ME?.banner?`<img src="${esc(ME.banner)}" alt="Banner actual">`:'<div class="banner-stars"></div><div class="empty"><b>Banner de Nova</b></div>'}</div><p class="mu">Elige una imagen de tu galería o crea un banner galáctico.</p><input id="bannerFile" type="file" accept="image/*" hidden><div class="chips" style="margin-top:12px"><button class="btn" id="bannerGallery" type="button">Elegir imagen</button><button class="btn o" id="bannerGalaxy" type="button">Crear galáctico</button></div>`);
+  $('#bannerGallery').onclick=()=>$('#bannerFile').click();
+  $('#bannerFile').onchange=e=>{const f=e.target.files?.[0];if(f)readBanner(f)};
+  $('#bannerGalaxy').onclick=()=>{closeSheet();createGalaxyBanner()};
+}
+async function readBanner(f){
+  const u=URL.createObjectURL(f),i=new Image();
+  i.onload=async()=>{
+    try{
+      const c=document.createElement('canvas'); c.width=1200; c.height=400;
+      const ctx=c.getContext('2d');
+      const scale=Math.max(c.width/i.width,c.height/i.height),w=i.width*scale,h=i.height*scale;
+      ctx.drawImage(i,(c.width-w)/2,(c.height-h)/2,w,h);
+      const data=c.toDataURL('image/jpeg',.88);
+      URL.revokeObjectURL(u);
+      ME.banner=data; S.acct=ME; save();
+      if(sb&&supabaseUser){
+        try{
+          const blob=await new Promise(resolve=>c.toBlob(resolve,'image/jpeg',.88));
+          const path=`profile-banners/${supabaseUser.id}.jpg`;
+          const up=await sb.storage.from(VIDEO_BUCKET).upload(path,blob,{contentType:'image/jpeg',upsert:true});
+          if(!up.error){
+            const pub=sb.storage.from(VIDEO_BUCKET).getPublicUrl(path).data.publicUrl;
+            ME.banner=pub; S.acct=ME; save();
+            const pr=await sb.from('profiles').update({banner_url:pub}).eq('id',supabaseUser.id);
+            if(pr.error && !/banner_url|column/i.test(String(pr.error.message||''))) console.warn(pr.error);
+          }
+        }catch(e){console.warn('Banner cloud:',e)}
+      }
+      const pv=$('#profileBannerPreview');if(pv)pv.outerHTML=profileBannerHtml();
+      toast('Banner actualizado');
+    }catch(e){toast('No se pudo crear el banner')}
+  };
+  i.onerror=()=>toast('No se pudo leer la imagen'); i.src=u;
+}
+function createGalaxyBanner(){
+  const c=document.createElement('canvas');c.width=1200;c.height=400;const x=c.getContext('2d');
+  const g=x.createLinearGradient(0,0,1200,400);g.addColorStop(0,'#0a0618');g.addColorStop(.45,'#25145f');g.addColorStop(1,'#07334a');x.fillStyle=g;x.fillRect(0,0,c.width,c.height);
+  const blobs=[['#8b7bff',210,110,170],['#35d0ff',930,290,210],['#d86cff',620,40,100]];
+  blobs.forEach(([col,cx,cy,r])=>{const q=x.createRadialGradient(cx,cy,0,cx,cy,r);q.addColorStop(0,col+'cc');q.addColorStop(1,'transparent');x.fillStyle=q;x.fillRect(cx-r,cy-r,r*2,r*2)});
+  for(let i=0;i<85;i++){const px=Math.random()*1200,py=Math.random()*400,sz=Math.random()*2+.4;x.fillStyle=`rgba(255,255,255,${.25+Math.random()*.7})`;x.beginPath();x.arc(px,py,sz,0,Math.PI*2);x.fill()}
+  c.toBlob(b=>{if(b){const f=new File([b],'nova-banner.jpg',{type:'image/jpeg'});readBanner(f)}},'image/jpeg',.9);
+}
+function profileBannerHtml(){
+  const b=ME?.banner;
+  return `<div id="profileBannerPreview" class="profile-banner${b?'':' empty'}">${b?`<img src="${esc(b)}" alt="Banner de perfil">`:`<div><b>Crea tu banner de perfil</b></div>`}<div class="banner-tools"><button class="btn o" id="bannerEditBtn" type="button">Editar banner</button></div></div>`;
+}
 function readAv(f){
   const u=URL.createObjectURL(f),i=new Image();
   i.onload=()=>{
@@ -1720,8 +1774,9 @@ const A={
     const ln=t=>t?Math.max(0,Math.ceil((t+D7-Date.now())/864e5)):0;
     const a=ln(ME.nAt),b=ln(ME.uAt);
     const nt=d=>d?'En '+d+(d>1?' días':' día'):'Una vez cada 7 días';
-    sheet('Editar perfil',`<div style="text-align:center"><button id="ap" data-a="pk">${avt(96)}</button><p><button class="btn o" data-a="pk">Cambiar foto</button></p></div><label for="en">Nombre</label><p><input id="en" value="${esc(ME.n)}" maxlength="24" ${a?'disabled':''}></p><p class="mu" style="font-size:12px">${nt(a)}</p><label for="eu">Usuario</label><p><input id="eu" value="${esc(ME.u)}" maxlength="20" ${b?'disabled':''}></p><p class="mu" style="font-size:12px">${nt(b)}</p><label for="bi">Bio</label><p><input id="bi" value="${esc(ME.bio||'')}" maxlength="120"></p><input id="pf" type="file" accept="image/*" hidden><button class="btn" data-a="bios">Guardar</button>`);
+    sheet('Editar perfil',`${profileBannerHtml()}<div style="text-align:center"><button id="ap" data-a="pk">${avt(96)}</button><p><button class="btn o" data-a="pk">Cambiar foto</button></p></div><label for="en">Nombre</label><p><input id="en" value="${esc(ME.n)}" maxlength="24" ${a?'disabled':''}></p><p class="mu" style="font-size:12px">${nt(a)}</p><label for="eu">Usuario</label><p><input id="eu" value="${esc(ME.u)}" maxlength="20" ${b?'disabled':''}></p><p class="mu" style="font-size:12px">${nt(b)}</p><label for="bi">Bio</label><p><input id="bi" value="${esc(ME.bio||'')}" maxlength="120"></p><input id="pf" type="file" accept="image/*" hidden><button class="btn" data-a="bios">Guardar</button>`);
     $('#pf').onchange=e=>{const f=e.target.files[0];f&&readAv(f)};
+    const be=$('#bannerEditBtn');if(be)be.onclick=openBannerEditor;
   },
   bios:async()=>{
     const n=$('#en').value.trim(),u=cl($('#eu').value);
@@ -1868,7 +1923,7 @@ function applyCommentDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.co
           const u=session.user;
           const n=u.user_metadata?.full_name||u.user_metadata?.name||'Nova';
           const base=cl(u.user_metadata?.preferred_username||u.user_metadata?.user_name||u.email?.split('@')[0]||'nova');
-          ME=S.acct={n,u:base.slice(0,20)||'nova',bio:''};
+          const oldAcct=S.acct||{}; ME=S.acct={...oldAcct,n:oldAcct.n||n,u:base.slice(0,20)||oldAcct.u||'nova',bio:oldAcct.bio||''};
           save();
           try{await ensureSupabaseProfile(u)}catch(e){}
         }
