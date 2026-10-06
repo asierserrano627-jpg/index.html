@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nova Legendario</title>
+<style>
+  body{
+    background:#06040f;
+    margin:0;
+    min-height:100vh;
+    display:grid;
+    place-items:center;
+    font-family:system-ui,sans-serif;
+    color:#fff;
+    overflow:hidden;
+  }
+  .stage{
+    width:340px;
+    height:340px;
+    position:relative;
+    display:grid;
+    place-items:center;
+  }
+  .stage svg{
+    width:100%;
+    height:100%;
+    filter:drop-shadow(0 0 30px rgba(139,123,255,.6));
+  }
+  .hint{
+    position:fixed;
+    bottom:20px;
+    left:0;right:0;
+    text-align:center;
+    font-size:13px;
+    color:#8b7bff;
+    opacity:.8;
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- ====== GALAXIA DE FONDO ====== -->
+    <radialGradient id="galaxia1" cx="30%" cy="30%" r="70%">
+      <stop offset="0%"  stop-color="#3a1d80" stop-opacity=".9"/>
+      <stop offset="50%" stop-color="#1a0d40" stop-opacity=".7"/>
+      <stop offset="100%" stop-color="#05030f" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="galaxia2" cx="75%" cy="75%" r="60%">
+      <stop offset="0%"  stop-color="#0a4f78" stop-opacity=".8"/>
+      <stop offset="60%" stop-color="#0a1a30" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#05030f" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ====== CAJA 3D ====== -->
+    <!-- Cara frontal con degradado Nova -->
+    <linearGradient id="caraFrontal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#8b7bff"/>
+      <stop offset="50%"  stop-color="#6a5aff"/>
+      <stop offset="100%" stop-color="#35d0ff"/>
+    </linearGradient>
+    <!-- Cara superior (más clara) -->
+    <linearGradient id="caraSup" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#c4b8ff"/>
+      <stop offset="100%" stop-color="#8b7bff"/>
+    </linearGradient>
+    <!-- Cara lateral (más oscura) -->
+    <linearGradient id="caraLat" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"  stop-color="#5a4ad9"/>
+      <stop offset="100%" stop-color="#2a1a80"/>
+    </linearGradient>
+
+    <!-- Brillo de la caja -->
+    <linearGradient id="brilloCaja" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#fff" stop-opacity=".55"/>
+      <stop offset="50%"  stop-color="#fff" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- ====== TEXTO NOVA ====== -->
+    <linearGradient id="textoNova" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="40%"  stop-color="#c4b8ff"/>
+      <stop offset="70%"  stop-color="#8b7bff"/>
+      <stop offset="100%" stop-color="#35d0ff"/>
+    </linearGradient>
+
+    <!-- ====== AURA ====== -->
+    <radialGradient id="aura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#8b7bff" stop-opacity=".7"/>
+      <stop offset="40%"  stop-color="#6a5aff" stop-opacity=".4"/>
+      <stop offset="100%" stop-color="#35d0ff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ====== ESTRELLA ====== -->
+    <radialGradient id="estrella" cx="50%" cy="50%" r="50%">
+      <stop offset="0%"   stop-color="#fff"/>
+      <stop offset="50%"  stop-color="#c4b8ff"/>
+      <stop offset="100%" stop-color="#8b7bff" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- ====== FILTROS ====== -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glowFuerte" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softBlur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2"/>
+    </filter>
+    <filter id="particleGlow">
+      <feGaussianBlur stdDeviation="2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- ============ FONDO GALAXIA ============ -->
+  <rect x="0" y="0" width="400" height="400" fill="#06040f"/>
+  <rect x="0" y="0" width="400" height="400" fill="url(#galaxia1)"/>
+  <rect x="0" y="0" width="400" height="400" fill="url(#galaxia2)"/>
+
+  <!-- Estrellas estáticas -->
+  <g fill="#fff" opacity=".7">
+    <circle cx="30" cy="50" r="1.2"/>
+    <circle cx="80" cy="20" r="1"/>
+    <circle cx="340" cy="60" r="1.3"/>
+    <circle cx="370" cy="120" r="1"/>
+    <circle cx="50" cy="330" r="1.1"/>
+    <circle cx="90" cy="370" r="1.4"/>
+    <circle cx="320" cy="340" r="1.2"/>
+    <circle cx="360" cy="380" r="1"/>
+    <circle cx="200" cy="40" r="1"/>
+    <circle cx="180" cy="370" r="1.3"/>
+    <circle cx="20" cy="180" r="1"/>
+    <circle cx="380" cy="200" r="1.1"/>
+  </g>
+
+  <!-- Estrellas que titilan -->
+  <g fill="#fff">
+    <circle cx="70" cy="120" r="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="320" cy="90" r="1.5">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" begin=".5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="150" cy="60" r="1.2">
+      <animate attributeName="opacity" values="0;1;0" dur="1.6s" begin="1s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="260" cy="330" r="1.3">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin=".3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="60" cy="260" r="1.2">
+      <animate attributeName="opacity" values="0;1;0" dur="1.5s" begin=".8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Aura central pulsante -->
+  <circle cx="200" cy="200" r="130" fill="url(#aura)" filter="url(#softBlur)">
+    <animate attributeName="r" values="120;150;120" dur="2.5s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values=".5;.9;.5" dur="2.5s" repeatCount="indefinite"/>
+  </circle>
+
+  <!-- ============ CAJA NOVA ============ -->
+  <g filter="url(#glowFuerte)">
+    <g>
+      <!-- Rotación suave flotando -->
+      <animateTransform attributeName="transform" type="rotate" values="-3 200 200;3 200 200;-3 200 200" dur="3s" repeatCount="indefinite"/>
+      <!-- Flotar arriba/abajo -->
+      <animateTransform attributeName="transform" type="translate" values="0,-5;0,5;0,-5" dur="2.5s" repeatCount="indefinite" additive="sum"/>
+
+      <!-- Cara superior (perspectiva) -->
+      <polygon points="140,140 260,140 280,125 160,125" fill="url(#caraSup)"/>
+      <!-- Cara lateral derecha -->
+      <polygon points="260,140 280,125 280,245 260,260" fill="url(#caraLat)"/>
+      <!-- Cara frontal -->
+      <rect x="140" y="140" width="120" height="120" rx="8" fill="url(#caraFrontal)"/>
+
+      <!-- Brillo superior de la cara frontal -->
+      <rect x="140" y="140" width="120" height="60" rx="8" fill="url(#brilloCaja)" opacity=".6"/>
+
+      <!-- Borde luminoso -->
+      <rect x="140" y="140" width="120" height="120" rx="8" fill="none" stroke="#c4b8ff" stroke-width="1.5" opacity=".8"/>
+
+      <!-- ============ TEXTO NOVA ============ -->
+      <text x="200" y="215" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="900" font-size="46" letter-spacing="-2" fill="url(#textoNova)" style="filter:drop-shadow(0 0 10px rgba(139,123,255,.9))">Nova</text>
+
+      <!-- Reflejo del texto -->
+      <text x="200" y="230" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-weight="900" font-size="46" letter-spacing="-2" fill="#ffffff" opacity=".15" transform="scale(1,-1) translate(0,-455)">Nova</text>
+    </g>
+  </g>
+
+  <!-- ============ PARTÍCULAS ORBITANDO ============ -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="0 200 200;360 200 200" dur="6s" repeatCount="indefinite"/>
+    <circle cx="200" cy="80" r="3" fill="#35d0ff" filter="url(#particleGlow)"/>
+    <circle cx="200" cy="320" r="2.5" fill="#8b7bff" filter="url(#particleGlow)"/>
+    <circle cx="80" cy="200" r="2" fill="#c4b8ff" filter="url(#particleGlow)"/>
+    <circle cx="320" cy="200" r="2.8" fill="#35d0ff" filter="url(#particleGlow)"/>
+  </g>
+
+  <!-- Segunda órbita más rápida -->
+  <g>
+    <animateTransform attributeName="transform" type="rotate" values="360 200 200;0 200 200" dur="4s" repeatCount="indefinite"/>
+    <circle cx="200" cy="60" r="2" fill="#fff" filter="url(#particleGlow)"/>
+    <circle cx="200" cy="340" r="2" fill="#8b7bff" filter="url(#particleGlow)"/>
+  </g>
+
+  <!-- ============ DESTELLOS ============ -->
+  <g filter="url(#glow)">
+    <path d="M 130 120 L 132 130 L 142 132 L 132 134 L 130 144 L 128 134 L 118 132 L 128 130 Z" fill="#fff">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" values=".8;1.3;.8" dur="1.8s" repeatCount="indefinite" additive="sum"/>
+    </path>
+    <path d="M 270 270 L 272 280 L 282 282 L 272 284 L 270 294 L 268 284 L 258 282 L 268 280 Z" fill="#fff">
+      <animate attributeName="opacity" values="0;1;0" dur="1.8s" begin=".9s" repeatCount="indefinite"/>
+      <animateTransform attributeName="transform" type="scale" values=".8;1.3;.8" dur="1.8s" begin=".9s" repeatCount="indefinite" additive="sum"/>
+    </path>
+    <path d="M 300 130 L 301 137 L 308 138 L 301 139 L 300 146 L 299 139 L 292 138 L 299 137 Z" fill="#35d0ff">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" begin=".4s" repeatCount="indefinite"/>
+    </path>
+    <path d="M 100 280 L 101 287 L 108 288 L 101 289 L 100 296 L 99 289 L 92 288 L 99 287 Z" fill="#8b7bff">
+      <animate attributeName="opacity" values="0;1;0" dur="2s" begin="1.2s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <!-- Estrella grande parpadeante -->
+  <g transform="translate(200,200)">
+    <animateTransform attributeName="transform" type="scale" values="0.9;1.1;0.9" dur="3s" repeatCount="indefinite" additive="sum"/>
+  </g>
+
+  <!-- Rayo de luz diagonal atravesando -->
+  <path d="M 60 340 L 340 60" stroke="#fff" stroke-width="1" opacity=".15" filter="url(#softBlur)">
+    <animate attributeName="opacity" values="0;.3;0" dur="4s" repeatCount="indefinite"/>
+  </path>
+  <path d="M 80 360 L 360 80" stroke="#8b7bff" stroke-width="0.8" opacity=".2" filter="url(#softBlur)">
+    <animate attributeName="opacity" values="0;.25;0" dur="4s" begin="1s" repeatCount="indefinite"/>
+  </path>
+</svg>
+</div>
+
+<div class="hint">Sticker legendario · Nova</div>
+
+<script>
+// Efecto de partículas extra al hacer clic (opcional)
+document.body.addEventListener('click', (e)=>{
+  for(let i=0;i<12;i++){
+    const p = document.createElement('div');
+    p.style.cssText = `
+      position:fixed;
+      left:${e.clientX}px;
+      top:${e.clientY}px;
+      width:6px;height:6px;
+      border-radius:50%;
+      background:${['#8b7bff','#35d0ff','#c4b8ff','#fff'][i%4]};
+      box-shadow:0 0 10px currentColor;
+      pointer-events:none;
+      transform:translate(-50%,-50%);
+      transition:all .9s cubic-bezier(.2,.8,.2,1);
+      z-index:9999;
+    `;
+    document.body.appendChild(p);
+    const angle = Math.random()*Math.PI*2;
+    const dist = 60 + Math.random()*80;
+    requestAnimationFrame(()=>{
+      p.style.left = (e.clientX + Math.cos(angle)*dist) + 'px';
+      p.style.top = (e.clientY + Math.sin(angle)*dist) + 'px';
+      p.style.opacity = '0';
+      p.style.transform = 'translate(-50%,-50%) scale(.2)';
+    });
+    setTimeout(()=>p.remove(), 900);
+  }
+});
+</script>
+
+</body>
+</html>
