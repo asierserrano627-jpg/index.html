@@ -380,6 +380,7 @@ const sb=(window.supabase&&window.supabase.createClient)
   : null;
 
 let liveChannel=null, currentLive=null, supabaseUser=null, cloudFeedChannel=null, socialChannel=null, chatChannel=null;
+let liveHeartbeatTimer=null;
 const rtcPeers=new Map();
 const rtcClientId=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
 let rtcRole='';
@@ -590,7 +591,7 @@ function photoEditor(file){
 function createMenu(){
   document.body.classList.add('nl');
   $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon camera-sticker">${sticker('camera','lg')}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
-  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>open(true); $('#createLive').onclick=()=>go('#/live'); $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files[0];if(f)photoEditor(f)};
+  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>openCameraCreate(true); $('#createLive').onclick=()=>go('#/live'); $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files?.[0];if(f)photoEditor(f)};
 }
 
 async function incrementView(videoId){
@@ -992,6 +993,8 @@ async function startLive(){
   try{
     const user=await ensureSupabaseUser(); await ensureSupabaseProfile(user);
     await startLiveCamera();
+    // Cierra cualquier fila antigua de este mismo usuario antes de crear el Live nuevo.
+    await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('user_id',user.id).eq('status','live').catch(()=>{});
     const {data,error}=await sb.from('lives').insert({user_id:user.id,type:'live',title:'Mi directo',status:'live'}).select().single();
     if(error)throw error;
     currentLive=data; giftCombo={senderId:null,count:0,lastAt:0};
@@ -999,6 +1002,7 @@ async function startLive(){
     $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; $('#liveStatusPill').style.display='grid';
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display=''; const gb=$('#liveGiftBtn');if(gb)gb.style.display='none';
     await loadLiveMessages(data.id); await subscribeLive(data.id); await startLiveRTC();
+    startLiveHeartbeat();
     toast('Live iniciado');
   }catch(e){stopLiveCamera();cleanupRTCPeers();toast('No se pudo: '+(e.message||''))}
 }
@@ -1015,13 +1019,27 @@ async function joinLive(id){
     toast('Conectado');
   }catch(e){toast('No se pudo: '+(e.message||''))}
 }
+function startLiveHeartbeat(){
+  clearInterval(liveHeartbeatTimer);
+  if(!currentLive||!sb)return;
+  const beat=async()=>{
+    if(!currentLive||!isLiveOwner())return;
+    // Mantiene viva la fila y, además, permite detectar directos abandonados.
+    await sb.from('lives').update({started_at:new Date().toISOString()}).eq('id',currentLive.id).eq('status','live').catch(()=>{});
+  };
+  beat();
+  liveHeartbeatTimer=setInterval(beat,15000);
+}
+function stopLiveHeartbeat(){clearInterval(liveHeartbeatTimer);liveHeartbeatTimer=null}
+
 async function endLive(){
   if(!currentLive)return;
   try{
     const {error}=await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('id',currentLive.id);
     if(error)throw error;
     if(liveChannel){await sb.removeChannel(liveChannel);liveChannel=null}
-    currentLive=null; giftCombo={senderId:null,count:0,lastAt:0}; openGiftPanel(); cleanupRTCPeers(); stopLiveCamera();
+    stopLiveHeartbeat();
+    currentLive=null; giftCombo={senderId:null,count:0,lastAt:0}; cleanupRTCPeers(); stopLiveCamera();
     $('#liveStatusPill').style.display='none'; $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
     toast('Live terminado'); livePage();
   }catch(e){toast('No se pudo terminar')}
@@ -1033,10 +1051,27 @@ async function livePage(){
   let liveProfile=null, liveRow=null;
   if(liveId&&sb){
     try{
-      const r=await sb.from('lives').select('id,title,user_id,status,viewer_count').eq('id',liveId).eq('status','live').maybeSingle();
+      const r=await sb.from('lives').select('id,title,user_id,status,viewer_count,started_at').eq('id',liveId).eq('status','live').maybeSingle();
       liveRow=r.data||null;
       if(liveRow?.user_id)liveProfile=await getProfile(liveRow.user_id);
-    }catch(e){}
+      // Si el directo ya terminó o la cuenta ya no existe, jamás renderizar una pantalla falsa.
+      if(!liveRow || !liveProfile){
+        toast('Ese directo ya no está disponible');
+        go('#/');
+        return;
+      }
+      const started=Date.parse(liveRow.started_at||'');
+      if(!Number.isFinite(started) || Date.now()-started>=45*1000){
+        await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('id',liveId).eq('status','live').catch(()=>{});
+        toast('Ese directo ya no está disponible');
+        go('#/');
+        return;
+      }
+    }catch(e){
+      toast('Ese directo ya no está disponible');
+      go('#/');
+      return;
+    }
   }
   const liveDisplay=liveProfile?.display_name||liveProfile?.username||me.n;
   const liveUsername=liveProfile?.username||me.u;
@@ -1153,13 +1188,23 @@ async function getActiveLives(){
   if(!sb)return [];
   try{
     const me=await getMyId();
-    const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count').eq('status','live').order('started_at',{ascending:false}).limit(20);
+    const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count,status').eq('status','live').order('started_at',{ascending:false}).limit(30);
     if(error||!data?.length)return [];
+    // Un directo solo es mostrable si la cuenta sigue teniendo perfil.
     const ids=[...new Set(data.map(x=>x.user_id).filter(Boolean))];
-    let profiles=[];
-    if(ids.length){const r=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);profiles=r.data||[]}
-    const pm=new Map(profiles.map(p=>[p.id,p]));
-    return data.filter(x=>String(x.user_id)!==String(me)).map(x=>({...x,profile:pm.get(x.user_id)||{username:'usuario',display_name:'Usuario',avatar_url:null}}));
+    if(!ids.length)return [];
+    const {data:profiles,error:pe}=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);
+    if(pe)return [];
+    const pm=new Map((profiles||[]).map(p=>[String(p.id),p]));
+    const valid=data.filter(x=>{
+      if(!x.user_id||String(x.user_id)===String(me))return false;
+      if(!pm.has(String(x.user_id)))return false;
+      // Evita que una fila antigua que quedó como "live" aparezca eternamente.
+      const started=Date.parse(x.started_at||'');
+      if(!Number.isFinite(started))return false;
+      return Date.now()-started < 45*1000;
+    }).map(x=>({...x,profile:pm.get(String(x.user_id))}));
+    return valid;
   }catch(e){return []}
 }
 function renderFeedLives(lives){
@@ -1658,7 +1703,7 @@ function camOff(){
   st&&st.getTracks().forEach(t=>t.stop());
   st=null;mr=null;
 }
-async function open(first){
+async function openCameraCreate(first){
   if(first)cam();
   const nocam=(msg)=>{st=null;const v=$('#cv'),n=$('#nc'),er=$('#nce');v&&(v.style.display='none');n&&(n.style.display='flex');er&&(er.textContent=msg||'Permite el acceso a la cámara.')};
   if(!(window.MediaRecorder&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia))return nocam('Tu navegador no admite la cámara.');
@@ -1698,14 +1743,14 @@ function cam(){
   <div class="brow"><button class="gal" id="gb">${ic('gal',22)}</button><button class="rec" id="rb"></button><span></span></div></div><input id="gf" type="file" accept="video/*" hidden>`;
   att();
   $('#cx').onclick=()=>go('#/');
-  $('#ncretry').onclick=()=>open(false);
-  $('#fp').onclick=async()=>{if(!st)return toast('Cámara primero');if(mr)return toast('Para antes');const next=fc=='user'?'environment':'user';const track=st.getVideoTracks&&st.getVideoTracks()[0];if(track&&track.applyConstraints){try{await track.applyConstraints({facingMode:{exact:next}});fc=next;att();return}catch(e){}}fc=next;try{if(st)st.getTracks().forEach(t=>t.stop());await new Promise(r=>setTimeout(r,180));await open(false)}catch(e){toast('No se pudo')}};
+  $('#ncretry').onclick=()=>openCameraCreate(false);
+  $('#fp').onclick=async()=>{if(!st)return toast('Cámara primero');if(mr)return toast('Para antes');const next=fc=='user'?'environment':'user';const track=st.getVideoTracks&&st.getVideoTracks()[0];if(track&&track.applyConstraints){try{await track.applyConstraints({facingMode:{exact:next}});fc=next;att();return}catch(e){}}fc=next;try{if(st)st.getTracks().forEach(t=>t.stop());await new Promise(r=>setTimeout(r,180));await openCameraCreate(false)}catch(e){toast('No se pudo')}};
   $('#fz').onclick=()=>{const t=st&&st.getVideoTracks()[0];if(!t||!(t.getCapabilities&&t.getCapabilities().torch))return toast('Sin flash');tor=!tor;t.applyConstraints({advanced:[{torch:!!tor}]}).catch(()=>{});$('#fz').classList.toggle('on',!!tor)};
   $('#tmr').onclick=()=>{tim={0:3,3:10,10:0}[tim];toast(tim?'Timer: '+tim+' s':'Timer off');$('#tmr').classList.toggle('on',!!tim)};
   $('#fxn').onclick=()=>{setF(FL[(fxi+1)%FL.length][0]);toast('Filtro: '+FL[fxi][1])};
   document.querySelectorAll('.durs [data-d]').forEach(b=>b.onclick=()=>{if(mr)return;dur=+b.dataset.d;document.querySelectorAll('.durs [data-d]').forEach(x=>x.classList.toggle('on',x==b))});
   $('#gb').onclick=()=>$('#gf').click();
-  $('#gf').onchange=e=>{const f=e.target.files[0];f&&editor(f,cf)};
+  $('#gf').onchange=e=>{const f=e.target.files?.[0];if(f){editor(f,cf)}e.target.value=''};
   $('#rb').onclick=()=>{if(!st)return toast('Cámara primero');if(mr)return stop();if(cdv){clearInterval(cdv);cdv=null;$('#cd').style.display='none';return}cnt()};
 }
 function start(){
@@ -1723,7 +1768,7 @@ function review(){
   camOff();
   const u=URL.createObjectURL(blob);
   $('#m').innerHTML=`<div class="rv"><video style="${esc(safeFilter(cf))}" src="${u}" playsinline controls loop autoplay></video><div class="pn"><div class="chips c"><button class="btn o" id="rt">Repetir</button><button class="btn" id="nx">Siguiente</button></div></div></div>`;
-  $('#rt').onclick=()=>open(true);
+  $('#rt').onclick=()=>openCameraCreate(true);
   $('#nx').onclick=()=>editor(new File([blob],'grabacion.webm',{type:blob.type}),cf);
 }
 function editor(f,fl=''){
@@ -1909,7 +1954,7 @@ function route(){
   closeSheet();camOff();
   document.body.classList.remove('nl');
   document.querySelectorAll('video').forEach(v=>{try{v.pause()}catch(e){}});
-  if(r!=='live'){if(liveChannel){sb&&sb.removeChannel(liveChannel);liveChannel=null}currentLive=null;cleanupRTCPeers();stopLiveCamera()}
+  if(r!=='live'){if(liveChannel){sb&&sb.removeChannel(liveChannel);liveChannel=null}stopLiveHeartbeat();currentLive=null;cleanupRTCPeers();stopLiveCamera()}
   if(r!=='c'){if(chatChannel){sb&&sb.removeChannel(chatChannel);chatChannel=null}currentChat={convId:null,otherUser:null,otherUsername:null}}
   document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.r==(r=='v'||r=='t'||r=='u'||r=='c'?'':r)));
   try{
