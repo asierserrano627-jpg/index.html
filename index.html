@@ -250,13 +250,13 @@ input:disabled{opacity:.5}
 .live-gift-fab{position:absolute;right:12px;bottom:calc(132px + env(safe-area-inset-bottom,0px));z-index:7;height:48px;padding:0 16px;border-radius:999px;background:linear-gradient(135deg,rgba(139,123,255,.9),rgba(53,208,255,.9));box-shadow:0 0 22px rgba(139,123,255,.55);display:flex;align-items:center;gap:7px;font-weight:800}
 .gift-sheet{position:absolute;left:10px;right:10px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:10;border:1px solid rgba(170,150,255,.45);border-radius:22px;background:rgba(12,10,25,.96);backdrop-filter:blur(18px);padding:14px;box-shadow:0 15px 50px rgba(0,0,0,.55);animation:giftUp .25s ease-out}
 @keyframes giftUp{from{opacity:0;transform:translateY(20px) scale(.96)}}.gift-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:rgba(139,123,255,.12);border:1px solid rgba(170,150,255,.25)}.gift-item .gift-icon{width:56px;height:56px;flex:none}.gift-item .gift-meta{flex:1}.gift-item .gift-meta b{display:block}.gift-item .gift-meta span{font-size:12px;color:#c9c1ff}.gift-legend{color:#d7ccff;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
-.gift-burst{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);z-index:12;width:min(88vw,360px);pointer-events:none;animation:giftEnter .45s cubic-bezier(.2,.9,.2,1) both}.gift-video-crop{position:relative;width:100%;height:min(34vh,330px);overflow:hidden;display:grid;place-items:center;isolation:isolate}.gift-burst video{display:block;width:145%;height:145%;max-width:none;max-height:none;object-fit:cover;object-position:50% 50%;transform:scale(1.12);mix-blend-mode:screen;filter:drop-shadow(0 10px 30px rgba(139,123,255,.55));border-radius:18px}.gift-burst .gift-label{margin-top:6px;text-align:center;font-weight:900;font-size:14px;text-shadow:0 2px 10px #000;background:rgba(8,7,18,.72);border:1px solid rgba(170,150,255,.45);border-radius:999px;padding:7px 12px;backdrop-filter:blur(10px)}.gift-burst .sound-btn{position:absolute;right:8px;top:8px;border-radius:999px;padding:7px 10px;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.25);font-size:11px;font-weight:800;pointer-events:auto}.gift-burst .sound-btn.on{background:rgba(139,123,255,.75)}
+.gift-burst{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);z-index:12;width:min(88vw,360px);pointer-events:none;animation:giftEnter .45s cubic-bezier(.2,.9,.2,1) both}.gift-video-crop{position:relative;width:100%;height:min(34vh,330px);overflow:hidden;display:grid;place-items:center;isolation:isolate}.gift-burst video{display:block;width:170%;height:170%;max-width:none;max-height:none;object-fit:cover;object-position:50% 50%;transform:scale(1.18);mix-blend-mode:screen;filter:drop-shadow(0 10px 30px rgba(139,123,255,.55));border-radius:18px}.gift-burst .gift-label{display:none}.gift-burst .sound-btn{position:absolute;right:8px;top:8px;border-radius:999px;padding:7px 10px;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.25);font-size:11px;font-weight:800;pointer-events:auto}.gift-burst .sound-btn.on{background:rgba(139,123,255,.75)}
 @keyframes giftEnter{0%{opacity:0;transform:translate(-50%,35%) scale(.72)}65%{opacity:1;transform:translate(-50%,-4%) scale(1.05)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
 .card.photo-card .photo-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gi.photo{background:#000}.gi.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .create-menu{position:fixed;inset:0;z-index:75;background:rgba(4,3,12,.78);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;padding:18px}.create-menu .create-box{width:min(520px,100%);background:var(--sf);border:1px solid var(--bd);border-radius:26px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.55);animation:up .25s}.camera-sticker{background:linear-gradient(135deg,#8b7bff,#35d0ff,#ff5c8a);box-shadow:0 0 22px rgba(53,208,255,.28);border-radius:18px;padding:8px}.camera-sticker svg{stroke:#fff!important;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.camera-sticker .nv-star{stroke:#fff!important}
 .create-option{width:100%;display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:rgba(139,123,255,.08);border:1px solid rgba(170,150,255,.2);margin-top:10px;text-align:left}.create-option:first-child{margin-top:4px}.create-option .co-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(139,123,255,.6),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.4),transparent 60%),#151027;box-shadow:0 0 18px rgba(139,123,255,.25)}.create-option b{display:block;font-size:16px}.create-option span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
 
-.live-viewers{display:flex;align-items:center;gap:4px;margin-top:2px;color:#ddd;font-size:11px}.live-eye-sticker{display:inline-flex;vertical-align:middle}.live-eye-sticker .nv-sticker{width:15px!important;height:15px!important}.live-viewer-pill{min-width:46px;height:36px;padding:0 9px;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;backdrop-filter:blur(12px)}.live-viewer-pill .nv-sticker{width:16px!important;height:16px!important}.live-end-top{background:rgba(255,38,61,.18)!important;border-color:rgba(255,93,111,.55)!important;color:#ff8b98!important}
+.live-viewers{display:flex;align-items:center;gap:4px;margin-top:2px;color:#ddd;font-size:11px}.live-eye-sticker{display:inline-flex;vertical-align:middle}.live-eye-sticker .nv-sticker{width:15px!important;height:15px!important}.live-viewer-pill{min-width:46px;height:36px;padding:0 9px;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;backdrop-filter:blur(12px)}.live-viewer-pill .nv-sticker{width:16px!important;height:16px!important}.live-end-top{background:rgba(255,38,61,.18)!important;border-color:rgba(255,93,111,.55)!important;color:#ff8b98!important}.live-sound-btn{position:absolute;right:12px;top:62px;z-index:8;height:38px;padding:0 12px;border-radius:999px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:800;backdrop-filter:blur(10px)}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -854,6 +854,8 @@ let giftPanelOpen=false;
 let giftOverlayTimer=null;
 let liveRtcConnected=false;
 let liveJoinTimer=null;
+let liveViewerRetryTimer=null;
+const rtcPendingIce=new Map();
 function isLiveOwner(){return !!(currentLive&&supabaseUser&&currentLive.user_id===supabaseUser.id)}
 function openGiftPanel(){const p=$('#giftPanel');if(!p)return;p.remove();giftPanelOpen=false}
 function toggleGiftPanel(){const p=$('#giftPanel');if(p){p.remove();giftPanelOpen=false;return} if(isLiveOwner())return; const host=$('.live-stage');if(!host)return; giftPanelOpen=true; const el=document.createElement('div');el.id='giftPanel';el.className='gift-sheet';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><b>Regalos</b><div class="gift-legend">Legendario</div></div><button class="btn o" id="closeGiftPanel">Cerrar</button></div><div class="gift-item"><div class="gift-icon">${sticker('gift','lg')}</div><div class="gift-meta"><b>Pistola de Dinero Nova</b><span>100 monedas · regalo gratis</span></div><button class="btn" id="sendNovaGift">Regalar</button></div>`;host.append(el);$('#closeGiftPanel').onclick=openGiftPanel;$('#sendNovaGift').onclick=sendNovaGift}
@@ -864,8 +866,8 @@ async function sendNovaGift(){
 }
 function showNovaGift(combo=1,senderId){
   const host=$('.live-stage');if(!host)return; const old=$('#giftBurst');if(old)old.remove(); if(giftOverlayTimer)clearTimeout(giftOverlayTimer);
-  const wrap=document.createElement('div');wrap.id='giftBurst';wrap.className='gift-burst';wrap.innerHTML=`<div class="gift-video-crop"><video id="giftVideo" src="${NOVA_GIFT_VIDEO}" muted playsinline preload="auto"></video></div><button class="sound-btn" id="giftSound">Activar sonido</button><div class="gift-label">Pistola de Dinero Nova · ${100*combo} monedas${combo>1?` · COMBO x${combo}`:''}</div>`;host.append(wrap);
-  const v=$('#giftVideo');const b=$('#giftSound'); b.onclick=()=>{v.muted=false;v.volume=1;v.play().catch(()=>{});b.textContent='Sonido activado';b.classList.add('on')};
+  const wrap=document.createElement('div');wrap.id='giftBurst';wrap.className='gift-burst';wrap.innerHTML=`<div class="gift-video-crop"><video id="giftVideo" src="${NOVA_GIFT_VIDEO}" muted playsinline preload="auto"></video></div>`;host.append(wrap);
+  const v=$('#giftVideo');
   v.play().catch(()=>{}); giftOverlayTimer=setTimeout(()=>wrap.remove(),Math.max(3500,Math.min(5000,(v.duration&&isFinite(v.duration)?v.duration*1000:4200))));
 }
 async function subscribeLiveGifts(liveId){
@@ -907,7 +909,14 @@ async function sendLiveMessage(){
     if(!check.data||check.data.status!=='live')throw new Error('El Live ya ha terminado');
     const user=await ensureSupabaseUser(); await ensureSupabaseProfile(user);
     const {error}=await sb.from('live_messages').insert({live_id:liveId,user_id:user.id,message});
-    if(error)throw error; input.value='';
+    if(error){
+      console.warn('Nova: live_messages insert no disponible, usando chat realtime:',error);
+      if(liveChannel&&liveChannel.state==='joined') await liveChannel.send({type:'broadcast',event:'live-chat',payload:{liveId,userId:user.id,username:ME?.u||'usuario',message,clientId:rtcClientId}});
+      else throw error;
+    }
+    // Muestra el mensaje al propio emisor inmediatamente cuando se usa el fallback realtime.
+    if(error){renderLiveMessage({liveId,user_id:user.id,message,__username:ME?.u||'usuario'});}
+    input.value='';
   }catch(e){console.error('Nova Live message:',e);toast('No se pudo enviar: '+(e.message||'Comprueba los permisos de live_messages'))}
 }
 async function subscribeLive(liveId){
@@ -919,6 +928,12 @@ async function subscribeLive(liveId){
         const m=payload.new;m.__username=await getUsername(m.user_id);
         renderLiveMessage(m);const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
       })
+    .on('broadcast',{event:'live-chat'},payload=>{
+      const m=payload.payload||{};
+      if(String(m.liveId)!==String(liveId)||!m.message||!m.userId)return;
+      if(String(m.clientId)===String(rtcClientId))return;
+      m.__username=m.username||'usuario';renderLiveMessage(m);const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
+    })
     .on('postgres_changes',{event:'UPDATE',schema:'public',table:'lives',filter:'id=eq.'+liveId},payload=>{
       const row=payload.new||{};
       if(currentLive&&String(currentLive.id)===String(liveId))currentLive=row;
@@ -946,12 +961,27 @@ async function subscribeLive(liveId){
 function getLiveVideo(){return $('#feedLiveVideo')||$('#liveCam')}
 function rtcConfig(){return {iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}}
 function cleanupRTCPeers(){
-  rtcPeers.forEach(pc=>{try{pc.close()}catch(e){}});rtcPeers.clear();rtcRole='';
+  if(liveViewerRetryTimer){clearInterval(liveViewerRetryTimer);liveViewerRetryTimer=null}
+  rtcPeers.forEach(pc=>{try{pc.close()}catch(e){}});rtcPeers.clear();rtcPendingIce.clear();rtcRole='';
   const v=getLiveVideo(); if(v&&v.srcObject&&v.srcObject!==liveStream)v.srcObject=null;
 }
 async function sendRTC(payload){
   if(!liveChannel)return;
   try{await liveChannel.send({type:'broadcast',event:'rtc',payload:{...payload,liveId:currentLive?.id}})}catch(e){}
+}
+function queueOrAddIce(key,pc,candidate){
+  if(!candidate||!pc)return;
+  if(pc.remoteDescription&&pc.remoteDescription.type){pc.addIceCandidate(candidate).catch(()=>{});return}
+  const q=rtcPendingIce.get(key)||[];q.push(candidate);rtcPendingIce.set(key,q);
+}
+async function flushIce(key,pc){
+  const q=rtcPendingIce.get(key)||[];rtcPendingIce.delete(key);
+  for(const c of q){try{await pc.addIceCandidate(c)}catch(e){}}
+}
+function sendViewerJoin(){
+  if(liveChannel&&liveChannel.state==='joined'&&rtcRole==='viewer'&&currentLive?.id){
+    liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId,liveId:currentLive.id}}).catch(()=>{});
+  }
 }
 async function makeBroadcasterPeer(viewerId){
   if(!liveStream||!liveChannel)return;
@@ -959,38 +989,54 @@ async function makeBroadcasterPeer(viewerId){
   const pc=new RTCPeerConnection(rtcConfig()); rtcPeers.set(viewerId,pc);
   liveStream.getTracks().forEach(track=>pc.addTrack(track,liveStream));
   pc.onicecandidate=e=>{if(e.candidate)sendRTC({type:'ice',to:viewerId,from:rtcClientId,candidate:e.candidate})};
-  pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState)){try{pc.close()}catch(e){};rtcPeers.delete(viewerId)}};
-  setTimeout(()=>{if(pc.connectionState!=='connected'){try{pc.close()}catch(e){};rtcPeers.delete(viewerId)}},15000);
+  pc.onconnectionstatechange=()=>{
+    if(['failed','closed'].includes(pc.connectionState)){try{pc.close()}catch(e){};rtcPeers.delete(viewerId)}
+  };
+  setTimeout(()=>{if(pc.connectionState!=='connected'){try{pc.close()}catch(e){};rtcPeers.delete(viewerId)}},30000);
   const offer=await pc.createOffer(); await pc.setLocalDescription(offer);
   await sendRTC({type:'offer',to:viewerId,from:rtcClientId,offer:pc.localDescription});
 }
 async function handleRTCSignal(msg){
-  if(!msg||msg.liveId!==currentLive?.id)return;
+  if(!msg||String(msg.liveId)!==String(currentLive?.id))return;
   if(msg.type==='viewer-join'&&rtcRole==='broadcaster'&&msg.from){await makeBroadcasterPeer(msg.from);return}
-  if(msg.type==='host-ready'&&rtcRole==='viewer'&&msg.from){
-    if(liveChannel&&liveChannel.state==='joined') liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId,liveId:currentLive?.id}}).catch(()=>{});
-    return;
-  }
+  if(msg.type==='host-ready'&&rtcRole==='viewer'&&msg.from){sendViewerJoin();return}
   if(msg.to&&msg.to!==rtcClientId)return;
   if(msg.type==='offer'&&rtcRole==='viewer'){
     const old=rtcPeers.get('broadcaster');if(old){try{old.close()}catch(e){}}
     const pc=new RTCPeerConnection(rtcConfig()); rtcPeers.set('broadcaster',pc);
     pc.ontrack=e=>{
       const v=getLiveVideo();
-      if(v&&e.streams[0]){liveRtcConnected=true;if(liveJoinTimer){clearTimeout(liveJoinTimer);liveJoinTimer=null}v.srcObject=e.streams[0];v.muted=false;v.controls=false;v.style.display='';v.play().catch(()=>{});const off=$('#liveCamOff');if(off)off.style.display='none'}
+      if(v&&e.streams[0]){
+        liveRtcConnected=true;
+        if(liveJoinTimer){clearTimeout(liveJoinTimer);liveJoinTimer=null}
+        v.srcObject=e.streams[0];
+        // Autoplay móvil es mucho más fiable en silencio. El espectador puede activar el audio con el botón.
+        v.muted=true;v.controls=false;v.style.display='';
+        v.play().catch(()=>{});
+        const off=$('#liveCamOff');if(off)off.style.display='none';
+        const sbt=$('#liveSoundBtn');if(sbt)sbt.style.display='block';
+      }
     };
     pc.onicecandidate=e=>{if(e.candidate)sendRTC({type:'ice',to:msg.from,from:rtcClientId,candidate:e.candidate})};
-    pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))toast('Se perdió el Live')};
+    pc.onconnectionstatechange=()=>{
+      if(['failed','closed'].includes(pc.connectionState)){
+        liveRtcConnected=false;
+        const off=$('#liveCamOff');if(off){off.style.display='grid';off.innerHTML='<div><b>Reconectando al Live…</b><span>Intentando recuperar la cámara.</span></div>';}
+        setTimeout(sendViewerJoin,700);
+      }
+    };
     await pc.setRemoteDescription(msg.offer);
+    await flushIce('broadcaster',pc);
     const answer=await pc.createAnswer(); await pc.setLocalDescription(answer);
     await sendRTC({type:'answer',to:msg.from,from:rtcClientId,answer:pc.localDescription});
     return;
   }
-  if(msg.type==='answer'&&rtcRole==='broadcaster'&&msg.from){const pc=rtcPeers.get(msg.from);if(!pc)return;await pc.setRemoteDescription(msg.answer);return}
+  if(msg.type==='answer'&&rtcRole==='broadcaster'&&msg.from){const pc=rtcPeers.get(msg.from);if(!pc)return;await pc.setRemoteDescription(msg.answer);await flushIce(msg.from,pc);return}
   if(msg.type==='ice'&&msg.from&&msg.candidate){
     const key=rtcRole==='broadcaster'?msg.from:'broadcaster';
-    const pc=rtcPeers.get(key);if(!pc)return;
-    try{await pc.addIceCandidate(msg.candidate)}catch(e){}
+    const pc=rtcPeers.get(key);
+    if(!pc){const q=rtcPendingIce.get(key)||[];q.push(msg.candidate);rtcPendingIce.set(key,q);return}
+    queueOrAddIce(key,pc,msg.candidate);
   }
 }
 async function startLiveRTC(){
@@ -1001,7 +1047,7 @@ async function startLiveRTC(){
 async function joinLiveRTC(){
   if(!window.RTCPeerConnection)throw new Error('Sin WebRTC.');
   rtcRole='viewer';
-  const v=getLiveVideo();if(v){v.srcObject=null;v.muted=false}
+  const v=getLiveVideo();if(v){v.srcObject=null;v.muted=true;v.style.display=''}
 }
 let liveStream=null;
 async function startLiveCamera(){
@@ -1071,7 +1117,14 @@ async function joinLive(id){
     await loadLiveMessages(id); await joinLiveRTC(); await subscribeLive(id);
     $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; $('#liveStatusPill').style.display='grid';
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none'; const gb=$('#liveGiftBtn');if(gb)gb.style.display=isLiveOwner()?'none':'flex';
-    liveJoinTimer=setTimeout(()=>{if(currentLive&&String(currentLive.id)===String(id)&&!liveRtcConnected){toast('El Live no está disponible ahora');if(liveChannel){sb.removeChannel(liveChannel);liveChannel=null}cleanupRTCPeers();currentLive=null;const ph=$('#liveCamOff');if(ph)ph.innerHTML='<div><b>Live no disponible</b><span>El creador ya no está transmitiendo.</span></div>';}},20000);
+    liveJoinTimer=setTimeout(()=>{if(currentLive&&String(currentLive.id)===String(id)&&!liveRtcConnected){sendViewerJoin();}},35000);
+    if(liveViewerRetryTimer)clearInterval(liveViewerRetryTimer);
+    let tries=0;
+    liveViewerRetryTimer=setInterval(()=>{
+      if(liveRtcConnected||!currentLive||String(currentLive.id)!==String(id)){clearInterval(liveViewerRetryTimer);liveViewerRetryTimer=null;return}
+      tries++;sendViewerJoin();
+      if(tries>=20){clearInterval(liveViewerRetryTimer);liveViewerRetryTimer=null}
+    },1500);
     toast('Conectando al Live…');
   }catch(e){toast('No se pudo: '+(e.message||''))}
 }
@@ -1132,6 +1185,7 @@ async function livePage(){
     <video id="liveCam" playsinline autoplay muted></video>
     <div id="liveCamOff" class="live-cam-off"><div><b>Tu cámara aparecerá aquí</b><span>Al iniciar el Live, Nova pedirá permiso.</span></div></div>
     <div class="live-dark"></div>
+    <button id="liveSoundBtn" class="live-sound-btn" type="button" style="display:none">Activar sonido</button>
     <div class="live-head">
       <a class="live-me" href="${liveHref}">${avt(40,liveUsername,liveAvatar)}<span class="live-name"><b>${esc(liveDisplay)}</b><span>@${esc(liveUsername)}</span><span class="live-viewers"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="liveViewerCountTop">${Number(liveRow?.viewer_count||0)}</span> espectadores</span></span></a>
       <div class="live-actions"><span class="live-pill live-now" id="liveStatusPill" style="display:none"><i class="live-live-dot" aria-hidden="true"></i><span>En directo</span></span><span class="live-viewer-pill" id="liveViewerPill"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="liveViewerCount">${Number(liveRow?.viewer_count||0)}</span></span><button class="live-pill" id="openLiveList" type="button">Lives</button><button class="live-pill live-end-top" id="endLiveBtn" type="button" style="display:none">Terminar</button></div>
@@ -1144,6 +1198,7 @@ async function livePage(){
   </div>`;
   $('#startLiveBtn').onclick=startLive;
   $('#endLiveBtn').onclick=endLive;
+  $('#liveSoundBtn').onclick=()=>{const v=$('#liveCam');if(!v)return;v.muted=false;v.volume=1;v.play().catch(()=>{});$('#liveSoundBtn').textContent='Sonido activado';$('#liveSoundBtn').classList.add('on')};
   $('#sendLiveBtn').onclick=sendLiveMessage;
   $('#liveInput').onkeydown=e=>{if(e.key==='Enter')sendLiveMessage()};
   $('#closeLiveList').onclick=()=>$('#liveListPanel').classList.remove('on');
