@@ -192,221 +192,54 @@ input:disabled{opacity:.5}
 .notif .meta{flex:1;min-width:0;font-size:14px}
 .notif .nicon{opacity:.6;flex:none}
 
-/* ===== GALAXY SETTINGS WHEEL ===== */
-.settings-wheel{
-  width:44px;height:44px;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,#3a1d80 0%,#1a0d40 50%,#06040f 100%);
-  border:1.5px solid rgba(170,150,255,.5);
-  display:grid;place-items:center;
-  position:relative;
-  overflow:hidden;
-  box-shadow:0 0 20px rgba(139,123,255,.6),inset 0 0 12px rgba(139,123,255,.3);
-  transition:transform .3s cubic-bezier(.3,1.7,.5,1);
-}
+.settings-wheel{width:44px;height:44px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#3a1d80 0%,#1a0d40 50%,#06040f 100%);border:1.5px solid rgba(170,150,255,.5);display:grid;place-items:center;position:relative;overflow:hidden;box-shadow:0 0 20px rgba(139,123,255,.6),inset 0 0 12px rgba(139,123,255,.3);transition:transform .3s cubic-bezier(.3,1.7,.5,1)}
 .settings-wheel:active{transform:scale(.9) rotate(45deg)}
-.settings-wheel::before{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(1.5px 1.5px at 25% 30%,#fff,transparent),
-    radial-gradient(1px 1px at 70% 20%,#fff,transparent),
-    radial-gradient(1px 1px at 40% 70%,#fff,transparent),
-    radial-gradient(1.5px 1.5px at 80% 60%,#fff,transparent),
-    radial-gradient(1px 1px at 15% 80%,#fff,transparent);
-  opacity:.9;
-  animation:twinkle 3s infinite;
-}
+.settings-wheel::before{content:'';position:absolute;inset:0;background:radial-gradient(1.5px 1.5px at 25% 30%,#fff,transparent),radial-gradient(1px 1px at 70% 20%,#fff,transparent),radial-gradient(1px 1px at 40% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 80% 60%,#fff,transparent),radial-gradient(1px 1px at 15% 80%,#fff,transparent);opacity:.9;animation:twinkle 3s infinite}
 @keyframes twinkle{0%,100%{opacity:.5}50%{opacity:1}}
-.settings-wheel::after{
-  content:'';position:absolute;width:140%;height:140%;
-  top:-20%;left:-20%;
-  background:conic-gradient(from 0deg,transparent,rgba(53,208,255,.6),transparent 40%,rgba(139,123,255,.6),transparent 80%);
-  animation:spin 6s linear infinite;
-  opacity:.5;
-  mix-blend-mode:screen;
-}
-.settings-wheel .gear{
-  width:20px;height:20px;
-  position:relative;z-index:2;
-  color:#fff;
-  filter:drop-shadow(0 0 4px rgba(53,208,255,.9));
-}
+.settings-wheel::after{content:'';position:absolute;width:140%;height:140%;top:-20%;left:-20%;background:conic-gradient(from 0deg,transparent,rgba(53,208,255,.6),transparent 40%,rgba(139,123,255,.6),transparent 80%);animation:spin 6s linear infinite;opacity:.5;mix-blend-mode:screen}
+.settings-wheel .gear{width:20px;height:20px;position:relative;z-index:2;color:#fff;filter:drop-shadow(0 0 4px rgba(53,208,255,.9))}
+.settings-group{margin-bottom:18px}
+.settings-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--bd)}
+.settings-row:last-child{border-bottom:0}
+.settings-row>span{font-size:14px;color:var(--tx)}
+.toggle-row>div{flex:1}
+.switch{position:relative;display:inline-block;width:44px;height:26px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch .slider{position:absolute;cursor:pointer;inset:0;background:#333;transition:.3s;border-radius:99px}
+.switch .slider:before{position:absolute;content:'';height:20px;width:20px;left:3px;bottom:3px;background:#fff;transition:.3s;border-radius:50%}
+.switch input:checked + .slider{background:linear-gradient(135deg,var(--ac),var(--ac2))}
+.switch input:checked + .slider:before{transform:translateX(18px)}
+.accent-dot{width:32px;height:32px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .15s}
+.accent-dot:active{transform:scale(.85)}
 
-/* ===== ADMIN PANEL ===== */
-.admin-fab{
-  position:fixed;top:calc(60px + env(safe-area-inset-top,0px));right:14px;
-  width:52px;height:52px;border-radius:50%;
-  z-index:80;
-  display:none;
-  place-items:center;
-  background:radial-gradient(circle at 30% 30%,#3a1d80 0%,#1a0d40 60%,#06040f 100%);
-  border:1.5px solid rgba(170,150,255,.6);
-  box-shadow:0 0 24px rgba(139,123,255,.7),inset 0 0 14px rgba(53,208,255,.3);
-  color:#fff;
-  transition:transform .25s;
-  overflow:hidden;
-}
+.admin-fab{position:fixed;top:calc(60px + env(safe-area-inset-top,0px));right:14px;width:52px;height:52px;border-radius:14px;z-index:80;display:none;place-items:center;background:radial-gradient(circle at 30% 30%,#3a1d80 0%,#1a0d40 60%,#06040f 100%);border:1.5px solid rgba(170,150,255,.6);box-shadow:0 0 24px rgba(139,123,255,.7),inset 0 0 14px rgba(53,208,255,.3);color:#fff;transition:transform .25s;overflow:hidden}
 .admin-fab.on{display:grid}
 .admin-fab:active{transform:scale(.9)}
-.admin-fab::before{
-  content:'';position:absolute;width:160%;height:160%;
-  background:conic-gradient(from 0deg,transparent,rgba(53,208,255,.7),transparent 35%,rgba(139,123,255,.7),transparent 70%);
-  animation:spin 4s linear infinite;
-  opacity:.6;
-  mix-blend-mode:screen;
-}
+.admin-fab::before{content:'';position:absolute;width:160%;height:160%;background:conic-gradient(from 0deg,transparent,rgba(53,208,255,.7),transparent 35%,rgba(139,123,255,.7),transparent 70%);animation:spin 4s linear infinite;opacity:.6;mix-blend-mode:screen}
 .admin-fab svg{position:relative;z-index:2;width:26px;height:26px;filter:drop-shadow(0 0 4px rgba(139,123,255,1))}
-
-.admin-panel{
-  position:fixed;top:calc(120px + env(safe-area-inset-top,0px));right:14px;
-  width:min(300px,calc(100vw - 28px));
-  max-height:calc(100vh - 200px);
-  border-radius:20px;
-  z-index:79;
-  display:none;
-  flex-direction:column;
-  overflow:hidden;
-  border:1.5px solid rgba(170,150,255,.5);
-  box-shadow:0 10px 40px rgba(0,0,0,.7),0 0 30px rgba(139,123,255,.5);
-  animation:adminIn .35s cubic-bezier(.3,1.7,.5,1);
-  background:#06040f;
-}
+.admin-panel{position:fixed;top:calc(120px + env(safe-area-inset-top,0px));right:14px;width:min(300px,calc(100vw - 28px));max-height:calc(100vh - 200px);border-radius:20px;z-index:79;display:none;flex-direction:column;overflow:hidden;border:1.5px solid rgba(170,150,255,.5);box-shadow:0 10px 40px rgba(0,0,0,.7),0 0 30px rgba(139,123,255,.5);animation:adminIn .35s cubic-bezier(.3,1.7,.5,1);background:#06040f}
 .admin-panel.on{display:flex}
-@keyframes adminIn{
-  from{opacity:0;transform:translateY(-20px) scale(.9)}
-  to{opacity:1;transform:none}
-}
-/* Fondo galaxia animado del panel */
-.admin-panel .bg{
-  position:absolute;inset:0;
-  z-index:0;
-  background:
-    radial-gradient(circle at 20% 15%, #3a1d80 0%, transparent 55%),
-    radial-gradient(circle at 85% 85%, #0a4f78 0%, transparent 55%),
-    #06040f;
-  overflow:hidden;
-}
-.admin-panel .bg::before{
-  content:'';position:absolute;inset:0;
-  background:
-    radial-gradient(1.5px 1.5px at 15% 25%,#fff,transparent),
-    radial-gradient(1px 1px at 75% 20%,#fff,transparent),
-    radial-gradient(1.5px 1.5px at 40% 55%,#fff,transparent),
-    radial-gradient(1px 1px at 85% 65%,#fff,transparent),
-    radial-gradient(1px 1px at 25% 80%,#fff,transparent),
-    radial-gradient(1.5px 1.5px at 60% 90%,#fff,transparent),
-    radial-gradient(1px 1px at 50% 35%,#fff,transparent),
-    radial-gradient(1px 1px at 90% 45%,#fff,transparent);
-  animation:twinkle 4s infinite;
-  opacity:.9;
-}
-.admin-panel .bg::after{
-  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
-  background:
-    radial-gradient(circle at 30% 40%, rgba(139,123,255,.35), transparent 40%),
-    radial-gradient(circle at 70% 60%, rgba(53,208,255,.3), transparent 40%);
-  animation:galaxyRotate 20s linear infinite;
-}
+@keyframes adminIn{from{opacity:0;transform:translateY(-20px) scale(.9)}to{opacity:1;transform:none}}
+.admin-panel .bg{position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 20% 15%,#3a1d80 0%,transparent 55%),radial-gradient(circle at 85% 85%,#0a4f78 0%,transparent 55%),#06040f;overflow:hidden}
+.admin-panel .bg::before{content:'';position:absolute;inset:0;background:radial-gradient(1.5px 1.5px at 15% 25%,#fff,transparent),radial-gradient(1px 1px at 75% 20%,#fff,transparent),radial-gradient(1.5px 1.5px at 40% 55%,#fff,transparent),radial-gradient(1px 1px at 85% 65%,#fff,transparent),radial-gradient(1px 1px at 25% 80%,#fff,transparent),radial-gradient(1.5px 1.5px at 60% 90%,#fff,transparent),radial-gradient(1px 1px at 50% 35%,#fff,transparent),radial-gradient(1px 1px at 90% 45%,#fff,transparent);animation:twinkle 4s infinite;opacity:.9}
+.admin-panel .bg::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 30% 40%,rgba(139,123,255,.35),transparent 40%),radial-gradient(circle at 70% 60%,rgba(53,208,255,.3),transparent 40%);animation:galaxyRotate 20s linear infinite}
 @keyframes galaxyRotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-
-.admin-head{
-  position:relative;z-index:2;
-  display:flex;justify-content:space-between;align-items:center;
-  padding:12px 14px;
-  border-bottom:1px solid rgba(170,150,255,.25);
-  background:linear-gradient(135deg,rgba(139,123,255,.15),rgba(53,208,255,.1));
-  backdrop-filter:blur(10px);
-}
-.admin-head b{
-  font-size:14px;
-  background:linear-gradient(135deg,#c4b8ff,#35d0ff);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  letter-spacing:.03em;
-}
-.admin-head .video-tag{
-  font-size:10px;
-  color:#8b7bff;
-  font-weight:600;
-  max-width:140px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  display:block;
-  margin-top:2px;
-}
-.admin-close{
-  width:28px;height:28px;border-radius:50%;
-  display:grid;place-items:center;
-  background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.15);
-  color:#fff;
-  transition:transform .15s;
-}
+.admin-head{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid rgba(170,150,255,.25);background:linear-gradient(135deg,rgba(139,123,255,.15),rgba(53,208,255,.1));backdrop-filter:blur(10px)}
+.admin-head b{font-size:14px;background:linear-gradient(135deg,#c4b8ff,#35d0ff);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:.03em}
+.admin-head .video-tag{font-size:10px;color:#8b7bff;font-weight:600;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;margin-top:2px}
+.admin-close{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:#fff;transition:transform .15s}
 .admin-close:active{transform:scale(.85)}
-
-.admin-body{
-  position:relative;z-index:2;
-  overflow-y:auto;
-  padding:12px 14px 16px;
-  scrollbar-width:none;
-  color:#fff;
-}
+.admin-body{position:relative;z-index:2;overflow-y:auto;padding:12px 14px 16px;scrollbar-width:none;color:#fff}
 .admin-body::-webkit-scrollbar{display:none}
-
-.admin-sec{
-  margin-bottom:14px;
-}
-.admin-sec h4{
-  font-size:11px;
-  text-transform:uppercase;
-  letter-spacing:.1em;
-  color:#c4b8ff;
-  margin-bottom:8px;
-  display:flex;align-items:center;gap:6px;
-}
-.admin-sec h4::before{
-  content:'';width:4px;height:4px;border-radius:50%;
-  background:#35d0ff;
-  box-shadow:0 0 8px #35d0ff;
-}
-.admin-row{
-  display:flex;gap:6px;flex-wrap:wrap;
-}
-.admin-btn{
-  flex:1;
-  min-width:60px;
-  padding:8px 6px;
-  border-radius:10px;
-  background:rgba(139,123,255,.18);
-  border:1px solid rgba(170,150,255,.4);
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  transition:transform .15s,background .2s;
-  backdrop-filter:blur(6px);
-  display:grid;place-items:center;
-  text-align:center;
-}
-.admin-btn:active{transform:scale(.9);background:rgba(139,123,255,.4)}
-.admin-btn.danger{background:rgba(255,60,90,.2);border-color:rgba(255,90,120,.5);color:#ff8aa0}
-.admin-btn.danger:active{background:rgba(255,60,90,.45)}
-.admin-input{
-  width:100%;
-  padding:9px 11px;
-  border-radius:10px;
-  background:rgba(0,0,0,.4);
-  border:1px solid rgba(170,150,255,.35);
-  color:#fff;
-  font-size:13px;
-  margin-bottom:8px;
-}
+.admin-sec{margin-bottom:14px}
+.admin-sec h4{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#c4b8ff;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.admin-sec h4::before{content:'';width:4px;height:4px;border-radius:50%;background:#35d0ff;box-shadow:0 0 8px #35d0ff}
+.admin-row{display:flex;gap:6px;flex-wrap:wrap}
+.admin-btn{width:100%;padding:9px 6px;border-radius:10px;background:rgba(139,123,255,.18);border:1px solid rgba(170,150,255,.4);color:#fff;font-size:12px;font-weight:700;transition:transform .15s,background .2s;backdrop-filter:blur(6px);display:grid;place-items:center;text-align:center;margin-top:6px}
+.admin-btn:active{transform:scale(.95);background:rgba(139,123,255,.4)}
+.admin-input{width:100%;padding:9px 11px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid rgba(170,150,255,.35);color:#fff;font-size:13px;margin-bottom:6px}
 .admin-input::placeholder{color:#8b7bff99}
-.admin-counter{
-  font-size:11px;
-  color:#c4b8ff;
-  text-align:center;
-  padding:4px 0 0;
-  font-weight:700;
-}
+.admin-counter{font-size:11px;color:#c4b8ff;text-align:center;padding:6px 0 0;font-weight:700}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -489,11 +322,12 @@ input:disabled{opacity:.5}
   </div>
 </div>
 
-<!-- Panel admin flotante -->
 <button class="admin-fab" id="adminFab" aria-label="Panel admin">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
-    <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+    <rect x="3" y="3" width="18" height="18" rx="3"/>
+    <path d="M9 9l-2 3 2 3"/>
+    <path d="M15 9l2 3-2 3"/>
+    <line x1="13" y1="8" x2="11" y2="16"/>
   </svg>
 </button>
 
@@ -614,7 +448,7 @@ const VIDEO_BUCKET='videos';
 async function loadCloudVideos(){
   if(!sb) throw new Error('Supabase no está disponible.');
   const {data:rows,error}=await sb.from('videos')
-    .select('id,description,video_url,user_id,username,views,avatar_url')
+    .select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites')
     .order('id',{ascending:false});
   if(error) throw error;
 
@@ -623,6 +457,13 @@ async function loadCloudVideos(){
   if(authorIds.length){
     const {data:profs}=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',authorIds);
     (profs||[]).forEach(p=>umap[p.id]={username:p.username,display_name:p.display_name,avatar_url:p.avatar_url});
+  }
+
+  const allIds=(rows||[]).map(v=>String(v.id));
+  let commentCounts={};
+  if(allIds.length){
+    const {data:cc}=await sb.from('comments').select('video_id').in('video_id',allIds);
+    (cc||[]).forEach(c=>commentCounts[c.video_id]=(commentCounts[c.video_id]||0)+1);
   }
 
   const remote=(rows||[]).filter(v=>v&&v.video_url).map(v=>{
@@ -636,7 +477,11 @@ async function loadCloudVideos(){
       username:v.username||prof.username||'usuario',
       avatarUrl:v.avatar_url||prof.avatar_url||null,
       views:v.views||0,
-      likeCount:0,commentCount:0,saveCount:0
+      adminLikes:v.admin_likes||0,
+      adminFavorites:v.admin_favorites||0,
+      likeCount:0,
+      commentCount:commentCounts[String(v.id)]||0,
+      saveCount:0
     };
   });
 
@@ -677,9 +522,11 @@ async function publishCloudVideo(file, description){
       user_id:user.id,
       username:username,
       avatar_url:ME.av||null,
-      views:0
+      views:0,
+      admin_likes:0,
+      admin_favorites:0
     })
-    .select('id,description,video_url,user_id,username,views,avatar_url').single();
+    .select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites').single();
   if(res.error){
     console.error('Nova: error guardando vídeo',res.error);
     await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});
@@ -694,6 +541,8 @@ async function publishCloudVideo(file, description){
     username:res.data.username||username,
     avatarUrl:res.data.avatar_url||ME.av||null,
     views:res.data.views||0,
+    adminLikes:res.data.admin_likes||0,
+    adminFavorites:res.data.admin_favorites||0,
     likeCount:0,commentCount:0,saveCount:0
   };
 }
@@ -726,9 +575,9 @@ async function loadSocialState(videoIds){
   S.meta.forEach(v=>{
     const key=String(v.id);
     if(!ids.includes(key))return;
-    v.likeCount=likeMap[key]||0;
+    v.likeCount=(likeMap[key]||0)+(v.adminLikes||0);
     v.commentCount=commentMap[key]||0;
-    v.saveCount=saveMap[key]||0;
+    v.saveCount=(saveMap[key]||0)+(v.adminFavorites||0);
   });
   if(uid){
     const [myLikes, mySaves]=await Promise.all([
@@ -775,7 +624,7 @@ async function toggleSave(videoId){
 async function loadComments(videoId){
   const {data,error}=await sb.from('comments')
     .select('id,content,created_at,user_id,profiles(username)')
-    .eq('video_id',String(videoId))
+    .eq('video_id',String(videoId).trim())
     .order('created_at',{ascending:false})
     .limit(100);
   if(error){console.error(error);return []}
@@ -784,7 +633,7 @@ async function loadComments(videoId){
 async function postComment(videoId,content){
   const user=await ensureSupabaseUser();
   await ensureSupabaseProfile(user);
-  const {error}=await sb.from('comments').insert({video_id:String(videoId),user_id:user.id,content});
+  const {error}=await sb.from('comments').insert({video_id:String(videoId).trim(),user_id:user.id,content});
   if(error)throw error;
   const v=vid(videoId);
   if(v)v.commentCount=(v.commentCount||0)+1;
@@ -927,10 +776,8 @@ function updateStreakPill(conv){
   pill.className='streak '+(s.count===0||!s.active?'off':lv.cls);
   pill.style.boxShadow=s.count>0&&s.active?lv.glow:'none';
   if(s.count>prev){
-    pill.classList.remove('bump');
-    void pill.offsetWidth;
-    pill.classList.add('bump');
-    burstFire(pill);
+    pill.classList.remove('bump');void pill.offsetWidth;
+    pill.classList.add('bump');burstFire(pill);
     toast('¡Racha subida! 🔥 '+s.count);
   }
 }
@@ -939,17 +786,14 @@ function burstFire(anchor){
   const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
   for(let i=0;i<10;i++){
     const p=document.createElement('div');
-    p.className='fire-particle';
-    p.textContent=i%2?'🔥':'✨';
-    const angle=(Math.PI*2)*(i/10);
-    const dist=40+Math.random()*40;
+    p.className='fire-particle';p.textContent=i%2?'🔥':'✨';
+    const angle=(Math.PI*2)*(i/10),dist=40+Math.random()*40;
     p.style.left=cx+'px';p.style.top=cy+'px';
     p.style.setProperty('--tx',Math.cos(angle)*dist+'px');
     p.style.setProperty('--ty',Math.sin(angle)*dist+'px');
     p.style.setProperty('--rot',(Math.random()*360-180)+'deg');
     p.style.fontSize=(10+Math.random()*10)+'px';
-    document.body.append(p);
-    setTimeout(()=>p.remove(),900);
+    document.body.append(p);setTimeout(()=>p.remove(),900);
   }
 }
 
@@ -959,7 +803,7 @@ async function loadLiveMessages(liveId){
   const {data,error}=await sb.from('live_messages')
     .select('id,user_id,message,created_at,profiles(username)')
     .eq('live_id',liveId).order('created_at',{ascending:true}).limit(100);
-  if(error){box.innerHTML='<p class="mu">No se pudieron cargar los mensajes.</p>';console.error(error);return}
+  if(error){box.innerHTML='<p class="mu">No se pudieron cargar los mensajes.</p>';return}
   box.innerHTML='';
   (data||[]).forEach(renderLiveMessage);
   box.scrollTop=box.scrollHeight;
@@ -970,8 +814,7 @@ function renderLiveMessage(m){
   const row=document.createElement('div');row.className='live-msg';
   const letter=String(username||'?').replace('@','')[0]?.toUpperCase()||'?';
   row.innerHTML=`<span class="av" style="width:28px;height:28px;font-size:12px">${letter}</span><div class="live-msg-body"><div class="live-msg-user">@${esc(username)}</div><div class="live-msg-text">${esc(m.message)}</div></div>`;
-  box.append(row);
-  while(box.children.length>80)box.firstElementChild.remove();
+  box.append(row);while(box.children.length>80)box.firstElementChild.remove();
 }
 async function sendLiveMessage(){
   const input=$('#liveInput'); if(!input||!currentLive)return;
@@ -979,8 +822,7 @@ async function sendLiveMessage(){
   try{
     const user=await ensureSupabaseUser(); await ensureSupabaseProfile(user);
     const {error}=await sb.from('live_messages').insert({live_id:currentLive.id,user_id:user.id,message});
-    if(error)throw error;
-    input.value='';
+    if(error)throw error; input.value='';
   }catch(e){console.error(e);toast('No se pudo enviar: '+(e.message||''))}
 }
 async function subscribeLive(liveId){
@@ -989,12 +831,10 @@ async function subscribeLive(liveId){
   liveChannel
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'live_messages',filter:'live_id=eq.'+liveId},
       async payload=>{
-        const m=payload.new;
-        m.__username=await getUsername(m.user_id);
-        renderLiveMessage(m);
-        const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
+        const m=payload.new;m.__username=await getUsername(m.user_id);
+        renderLiveMessage(m);const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
       })
-    .on('broadcast',{event:'rtc'},async ({payload})=>{try{await handleRTCSignal(payload)}catch(e){console.error(e)}})
+    .on('broadcast',{event:'rtc'},async ({payload})=>{try{await handleRTCSignal(payload)}catch(e){}})
     .subscribe(status=>{
       if(status==='SUBSCRIBED'&&rtcRole==='viewer'){
         liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}});
@@ -1031,14 +871,10 @@ async function handleRTCSignal(msg){
     const pc=new RTCPeerConnection(rtcConfig()); rtcPeers.set('broadcaster',pc);
     pc.ontrack=e=>{
       const v=getLiveVideo();
-      if(v&&e.streams[0]){
-        v.srcObject=e.streams[0];v.muted=false;v.controls=false;v.style.display='';
-        v.play().catch(()=>{});
-        const off=$('#liveCamOff');if(off)off.style.display='none';
-      }
+      if(v&&e.streams[0]){v.srcObject=e.streams[0];v.muted=false;v.controls=false;v.style.display='';v.play().catch(()=>{});const off=$('#liveCamOff');if(off)off.style.display='none'}
     };
     pc.onicecandidate=e=>{if(e.candidate)sendRTC({type:'ice',to:msg.from,from:rtcClientId,candidate:e.candidate})};
-    pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))toast('Se perdió la conexión del Live')};
+    pc.onconnectionstatechange=()=>{if(['failed','closed','disconnected'].includes(pc.connectionState))toast('Se perdió el Live')};
     await pc.setRemoteDescription(msg.offer);
     const answer=await pc.createAnswer(); await pc.setLocalDescription(answer);
     await sendRTC({type:'answer',to:msg.from,from:rtcClientId,answer:pc.localDescription});
@@ -1048,43 +884,41 @@ async function handleRTCSignal(msg){
   if(msg.type==='ice'&&msg.from&&msg.candidate){
     const key=rtcRole==='broadcaster'?msg.from:'broadcaster';
     const pc=rtcPeers.get(key);if(!pc)return;
-    try{await pc.addIceCandidate(msg.candidate)}catch(e){console.warn('ICE:',e)}
+    try{await pc.addIceCandidate(msg.candidate)}catch(e){}
   }
 }
 async function startLiveRTC(){
-  if(!window.RTCPeerConnection)throw new Error('Este navegador no admite WebRTC.');
+  if(!window.RTCPeerConnection)throw new Error('Sin WebRTC.');
   rtcRole='broadcaster';
   const v=getLiveVideo(); if(v){v.srcObject=liveStream;v.muted=true;v.play().catch(()=>{})}
 }
 async function joinLiveRTC(){
-  if(!window.RTCPeerConnection)throw new Error('Este navegador no admite WebRTC.');
+  if(!window.RTCPeerConnection)throw new Error('Sin WebRTC.');
   rtcRole='viewer';
   const v=getLiveVideo();if(v){v.srcObject=null;v.muted=false}
 }
 let liveStream=null;
 async function startLiveCamera(){
   if(liveStream)return liveStream;
-  if(!navigator.mediaDevices?.getUserMedia)throw new Error('Este navegador no permite usar la cámara aquí.');
+  if(!navigator.mediaDevices?.getUserMedia)throw new Error('Sin cámara.');
   liveStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1080},height:{ideal:1920}},audio:true});
   const v=getLiveVideo(); if(v){v.srcObject=liveStream;v.muted=true;await v.play().catch(()=>{})}
   return liveStream;
 }
 function stopLiveCamera(){if(liveStream){liveStream.getTracks().forEach(t=>t.stop());liveStream=null}const v=getLiveVideo();if(v)v.srcObject=null}
 async function startLive(){
-  const title='Mi directo';
   try{
     const user=await ensureSupabaseUser(); await ensureSupabaseProfile(user);
     await startLiveCamera();
-    const {data,error}=await sb.from('lives').insert({user_id:user.id,title,status:'live'}).select().single();
+    const {data,error}=await sb.from('lives').insert({user_id:user.id,title:'Mi directo',status:'live'}).select().single();
     if(error)throw error;
     currentLive=data;
     const off=$('#liveCamOff');if(off)off.style.display='none';
     $('#liveStatusPill').textContent='EN DIRECTO';
-    $('#startLiveBtn').style.display='none';
-    $('#endLiveBtn').style.display='';
+    $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='';
     await loadLiveMessages(data.id); await subscribeLive(data.id); await startLiveRTC();
     toast('Live iniciado');
-  }catch(e){console.error(e);stopLiveCamera();cleanupRTCPeers();toast('No se pudo iniciar el Live: '+(e.message||''))}
+  }catch(e){stopLiveCamera();cleanupRTCPeers();toast('No se pudo: '+(e.message||''))}
 }
 async function joinLive(id){
   try{
@@ -1095,8 +929,8 @@ async function joinLive(id){
     await loadLiveMessages(id); await subscribeLive(id); await joinLiveRTC();
     $('#liveStatusPill').textContent='VIENDO LIVE';
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none';
-    toast('Conectado al Live');
-  }catch(e){toast('No se pudo abrir el Live: '+(e.message||''))}
+    toast('Conectado');
+  }catch(e){toast('No se pudo: '+(e.message||''))}
 }
 async function endLive(){
   if(!currentLive)return;
@@ -1107,7 +941,7 @@ async function endLive(){
     currentLive=null; cleanupRTCPeers(); stopLiveCamera();
     $('#liveStatusPill').textContent='LIVE'; $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
     toast('Live terminado'); livePage();
-  }catch(e){toast('No se pudo terminar: '+(e.message||''))}
+  }catch(e){toast('No se pudo terminar')}
 }
 async function livePage(){
   document.body.classList.remove('nl');
@@ -1115,7 +949,7 @@ async function livePage(){
   $('#m').innerHTML=`
   <div class="live-stage">
     <video id="liveCam" playsinline autoplay muted></video>
-    <div id="liveCamOff" class="live-cam-off"><div><b>Tu cámara aparecerá aquí</b><span>Al iniciar el Live, Nova pedirá permiso para cámara y micrófono.</span></div></div>
+    <div id="liveCamOff" class="live-cam-off"><div><b>Tu cámara aparecerá aquí</b><span>Al iniciar el Live, Nova pedirá permiso.</span></div></div>
     <div class="live-dark"></div>
     <div class="live-head">
       <a class="live-me" href="#/profile">${avt(40)}<span class="live-name"><b>${esc(me.n)}</b><span>@${esc(me.u)}</span></span></a>
@@ -1137,15 +971,10 @@ async function livePage(){
 }
 async function refreshLiveList(){
   const box=$('#liveList'); if(!box||!sb)return;
-  const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count')
-    .eq('status','live').order('started_at',{ascending:false}).limit(20);
-  if(error){box.innerHTML='<p class="mu">No se pudieron cargar los Lives.</p>';return}
-  if(!data?.length){box.innerHTML='<p class="mu">No hay Lives activos todavía.</p>';return}
-  box.innerHTML=data.map(x=>`
-    <div style="padding:12px 0;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;gap:10px;align-items:center">
-      <div><b>${esc(x.title||'Live')}</b><div class="mu" style="font-size:12px">${x.viewer_count||0} espectadores</div></div>
-      <button class="btn o" data-live-id="${esc(x.id)}">Ver</button>
-    </div>`).join('');
+  const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count').eq('status','live').order('started_at',{ascending:false}).limit(20);
+  if(error){box.innerHTML='<p class="mu">Error.</p>';return}
+  if(!data?.length){box.innerHTML='<p class="mu">No hay Lives activos.</p>';return}
+  box.innerHTML=data.map(x=>`<div style="padding:12px 0;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;gap:10px;align-items:center"><div><b>${esc(x.title||'Live')}</b><div class="mu" style="font-size:12px">${x.viewer_count||0} espectadores</div></div><button class="btn o" data-live-id="${esc(x.id)}">Ver</button></div>`).join('');
   box.querySelectorAll('[data-live-id]').forEach(b=>b.onclick=()=>{$('#liveListPanel')?.classList.remove('on');joinLive(b.dataset.liveId)});
 }
 
@@ -1225,7 +1054,6 @@ function feed(first){
       vd.playbackRate=m.sp||1;
       vd.muted=S.muted||!!m.mu;
       vd.play().catch(()=>{});
-      // Marcar vídeo actual + incrementar vista
       currentVideoId=m.id;
       updateAdminPanelForVideo(m.id);
       incrementView(m.id);
@@ -1238,7 +1066,7 @@ function refresh(id){const c=document.querySelector(`.card[data-id="${id}"]`);c&
 
 function discover(){
   $('#m').innerHTML=`<div class="pg">
-    <input id="q" type="search" placeholder="Buscar vídeos, #hashtags o @personas…" aria-label="Buscar" autocomplete="off">
+    <input id="q" type="search" placeholder="Buscar vídeos, #hashtags o @personas…">
     <div id="res" style="margin-top:14px"></div>
   </div>`;
   const run=async()=>{
@@ -1248,38 +1076,19 @@ function discover(){
     let videosHtml=videos.length?`<div class="sec-t">Vídeos</div>${grid(videos)}`:'';
     let peopleHtml='';
     if(t.length>=2){
-      const {data,error}=await sb.from('profiles')
-        .select('id,username,display_name,avatar_url')
-        .or(`username.ilike.%${t}%,display_name.ilike.%${t}%`)
-        .limit(20);
+      const {data,error}=await sb.from('profiles').select('id,username,display_name,avatar_url').or(`username.ilike.%${t}%,display_name.ilike.%${t}%`).limit(20);
       if(!error&&data?.length){
         const rows=await Promise.all(data.map(async p=>{
           const {count}=await sb.from('follows').select('*',{count:'exact',head:true}).eq('following_id',p.id);
-          return `<div class="person" data-uid="${esc(p.id)}">
-            ${avt(44,p.username,p.avatar_url)}
-            <div class="pname"><b>${esc(p.display_name||p.username)}</b><span>@${esc(p.username)} · ${count||0} seguidores</span></div>
-            <div class="pact">
-              <button class="btn o" data-follow="${esc(p.id)}">Seguir</button>
-              <button class="btn" data-msg="${esc(p.id)}" data-uname="${esc(p.username)}">Mensaje</button>
-            </div>
-          </div>`;
+          return `<div class="person" data-uid="${esc(p.id)}">${avt(44,p.username,p.avatar_url)}<div class="pname"><b>${esc(p.display_name||p.username)}</b><span>@${esc(p.username)} · ${count||0} seguidores</span></div><div class="pact"><button class="btn o" data-follow="${esc(p.id)}">Seguir</button><button class="btn" data-msg="${esc(p.id)}">Mensaje</button></div></div>`;
         }));
         peopleHtml=`<div class="sec-t">Personas</div><div class="people">${rows.join('')}</div>`;
       }
     }
     $('#res').innerHTML=(peopleHtml||videosHtml)?(peopleHtml+videosHtml):'<div class="em">Nada por aquí.</div>';
-    $('#res').querySelectorAll('.person').forEach(el=>el.onclick=ev=>{
-      if(ev.target.closest('button'))return;
-      go('#/u/'+el.dataset.uid);
-    });
-    $('#res').querySelectorAll('[data-follow]').forEach(b=>b.onclick=async ev=>{
-      ev.stopPropagation();
-      try{const id=b.dataset.follow;const now=await toggleFollow(id);toast(now?'Siguiendo ✅':'Dejaste de seguir');b.textContent=now?'Siguiendo':'Seguir'}catch(e){toast('Error: '+e.message)}
-    });
-    $('#res').querySelectorAll('[data-msg]').forEach(b=>b.onclick=async ev=>{
-      ev.stopPropagation();
-      try{const id=b.dataset.msg;const convId=await getOrCreateConversation(id);go('#/c/'+convId)}catch(e){toast('Error: '+e.message)}
-    });
+    $('#res').querySelectorAll('.person').forEach(el=>el.onclick=ev=>{if(ev.target.closest('button'))return;go('#/u/'+el.dataset.uid)});
+    $('#res').querySelectorAll('[data-follow]').forEach(b=>b.onclick=async ev=>{ev.stopPropagation();try{const id=b.dataset.follow;const now=await toggleFollow(id);toast(now?'Siguiendo ✅':'Dejaste de seguir');b.textContent=now?'Siguiendo':'Seguir'}catch(e){toast('Error')}});
+    $('#res').querySelectorAll('[data-msg]').forEach(b=>b.onclick=async ev=>{ev.stopPropagation();try{const id=b.dataset.msg;const convId=await getOrCreateConversation(id);go('#/c/'+convId)}catch(e){toast('Error')}});
   };
   let tmr=null;
   $('#q').oninput=()=>{clearTimeout(tmr);tmr=setTimeout(run,250)};
@@ -1297,9 +1106,8 @@ async function profile(){
   $('#m').innerHTML=`<div class="pg"><div class="em">Cargando…</div></div>`;
 
   const {data:mine,error}=await sb.from('videos')
-    .select('id,description,video_url,user_id,username,views,avatar_url')
-    .eq('user_id',me)
-    .order('id',{ascending:false});
+    .select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites')
+    .eq('user_id',me).order('id',{ascending:false});
   if(error)console.error(error);
 
   const myVideos=(mine||[]).map(v=>({
@@ -1308,18 +1116,14 @@ async function profile(){
     userId:v.user_id,username:v.username||ME.u,
     avatarUrl:v.avatar_url||ME.av||null,
     views:v.views||0,
+    adminLikes:v.admin_likes||0,
+    adminFavorites:v.admin_favorites||0,
     likeCount:0,commentCount:0,saveCount:0
   }));
 
   if(myVideos.length){
     try{await loadSocialState(myVideos.map(v=>v.id))}catch(e){}
-    myVideos.forEach(v=>{
-      const fromMeta=vid(v.id);
-      if(fromMeta){
-        v.likeCount=fromMeta.likeCount||0;
-        v.commentCount=fromMeta.commentCount||0;
-      }
-    });
+    myVideos.forEach(v=>{const fromMeta=vid(v.id);if(fromMeta){v.likeCount=fromMeta.likeCount||0;v.commentCount=fromMeta.commentCount||0}});
   }
 
   const savedVideos=S.meta.filter(v=>S.saved[v.id]);
@@ -1327,32 +1131,16 @@ async function profile(){
 
   $('#m').innerHTML=`<div class="pg">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-      <div style="display:flex;gap:14px;align-items:center;flex:1">
-        ${avt(80)}
-        <div>
-          <h2 style="margin:0">${esc(ME.n)}</h2>
-          <span class="mu">@${esc(ME.u)}</span>
-        </div>
-      </div>
+      <div style="display:flex;gap:14px;align-items:center;flex:1">${avt(80)}<div><h2 style="margin:0">${esc(ME.n)}</h2><span class="mu">@${esc(ME.u)}</span></div></div>
       <button class="settings-wheel" id="openSettings" aria-label="Ajustes">
-        <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/>
-        </svg>
+        <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
     </div>
     <p>${esc(ME.bio||'Nuevo en Nova')}</p>
-    <div class="st">
-      <span><b>${myVideos.length}</b>Vídeos</span>
-      <span><b>${lk}</b>Likes</span>
-      <span><b>${totalViews}</b>Vistas</span>
-    </div>
-    <h2>Tus vídeos</h2>
-    ${myVideos.length?grid(myVideos):'<div class="em">Todavía no has subido vídeos.</div>'}
-    <h2>Guardados</h2>
-    ${savedVideos.length?grid(savedVideos):'<div class="em">No has guardado nada todavía.</div>'}
+    <div class="st"><span><b>${myVideos.length}</b>Vídeos</span><span><b>${lk}</b>Likes</span><span><b>${totalViews}</b>Vistas</span></div>
+    <h2>Tus vídeos</h2>${myVideos.length?grid(myVideos):'<div class="em">Todavía no has subido vídeos.</div>'}
+    <h2>Guardados</h2>${savedVideos.length?grid(savedVideos):'<div class="em">No has guardado nada todavía.</div>'}
   </div>`;
-
   $('#openSettings').onclick=openSettings;
 }
 
@@ -1361,59 +1149,37 @@ async function publicProfile(userId){
   if(!userId)return;
   const me=await getMyId();
   if(userId===me){return profile()}
-  $('#m').innerHTML=`<div class="pg"><div class="em"><b>${ic('user',44)}</b>Cargando perfil…</div></div>`;
+  $('#m').innerHTML=`<div class="pg"><div class="em">Cargando perfil…</div></div>`;
   const p=await getProfile(userId);
   if(!p){$('#m').innerHTML='<div class="em">Usuario no encontrado.</div>';return}
   const [counts, following]=await Promise.all([getFollowCounts(userId), isFollowing(userId)]);
-
   let videos=[];
   try{
-    const {data:rows}=await sb.from('videos')
-      .select('id,description,video_url,user_id,username,views,avatar_url')
-      .eq('user_id',userId).order('id',{ascending:false});
+    const {data:rows}=await sb.from('videos').select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites').eq('user_id',userId).order('id',{ascending:false});
     videos=(rows||[]).map(v=>({
       id:String(v.id),d:v.description||'Vídeo',tags:[],t:0,src:v.video_url,
       f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
       userId:v.user_id,username:v.username||p.username,
       avatarUrl:v.avatar_url||p.avatar_url||null,
       views:v.views||0,
+      adminLikes:v.admin_likes||0,
+      adminFavorites:v.admin_favorites||0,
       likeCount:0,commentCount:0,saveCount:0
     }));
     if(videos.length){try{await loadSocialState(videos.map(v=>v.id))}catch(e){}
       videos.forEach(v=>{const fromMeta=vid(v.id);if(fromMeta){v.likeCount=fromMeta.likeCount||0;v.commentCount=fromMeta.commentCount||0}});
     }
   }catch(e){console.error(e)}
-
   $('#m').innerHTML=`<div class="pg">
-    <div class="pfhead">
-      ${avt(96,p.username,p.avatar_url)}
-      <h2 style="margin:6px 0 0">${esc(p.display_name||p.username)}</h2>
-      <span class="mu">@${esc(p.username)}</span>
-      ${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}
-    </div>
-    <div class="pfstats">
-      <div class="s"><b>${videos.length}</b><span>Vídeos</span></div>
-      <div class="s"><b>${counts.followers}</b><span>Seguidores</span></div>
-      <div class="s"><b>${counts.following}</b><span>Siguiendo</span></div>
-    </div>
-    <div class="chips c">
-      <button class="btn${following?' o':''}" id="followBtn">${following?'Siguiendo':'Seguir'}</button>
-      <button class="btn" id="msgBtn">Mensaje</button>
-    </div>
+    <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0">${esc(p.display_name||p.username)}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
+    <div class="pfstats"><div class="s"><b>${videos.length}</b><span>Vídeos</span></div><div class="s"><b>${counts.followers}</b><span>Seguidores</span></div><div class="s"><b>${counts.following}</b><span>Siguiendo</span></div></div>
+    <div class="chips c"><button class="btn${following?' o':''}" id="followBtn">${following?'Siguiendo':'Seguir'}</button><button class="btn" id="msgBtn">Mensaje</button></div>
     <h2>Vídeos</h2>${videos.length?grid(videos):'<div class="em">Todavía no ha subido vídeos.</div>'}
   </div>`;
   $('#followBtn').onclick=async()=>{
-    try{
-      const now=await toggleFollow(userId);
-      $('#followBtn').textContent=now?'Siguiendo':'Seguir';
-      $('#followBtn').className='btn'+(now?' o':'');
-      const c=await getFollowCounts(userId);
-      document.querySelectorAll('.pfstats .s')[1].querySelector('b').textContent=c.followers;
-    }catch(e){toast('Error: '+e.message)}
+    try{const now=await toggleFollow(userId);$('#followBtn').textContent=now?'Siguiendo':'Seguir';$('#followBtn').className='btn'+(now?' o':'');const c=await getFollowCounts(userId);document.querySelectorAll('.pfstats .s')[1].querySelector('b').textContent=c.followers}catch(e){toast('Error')}
   };
-  $('#msgBtn').onclick=async()=>{
-    try{const convId=await getOrCreateConversation(userId);go('#/c/'+convId)}catch(e){toast('Error: '+e.message)}
-  };
+  $('#msgBtn').onclick=async()=>{try{const convId=await getOrCreateConversation(userId);go('#/c/'+convId)}catch(e){toast('Error')}};
 }
 
 /* ---------- AJUSTES ---------- */
@@ -1421,271 +1187,171 @@ function openSettings(){
   sheet('Ajustes',`
     <div class="settings-group">
       <h4 class="sec-t">Apariencia</h4>
-      <div class="settings-row">
-        <span>Tema</span>
-        <div class="chips">
-          <button class="btn o" data-settings="theme" data-val="auto" style="${S.theme==='auto'?'border-color:var(--ac2)':''}">Auto</button>
-          <button class="btn o" data-settings="theme" data-val="light" style="${S.theme==='light'?'border-color:var(--ac2)':''}">Claro</button>
-          <button class="btn o" data-settings="theme" data-val="dark" style="${S.theme==='dark'?'border-color:var(--ac2)':''}">Oscuro</button>
-        </div>
-      </div>
-      <div class="settings-row">
-        <span>Color de acento</span>
-        <div class="chips">
-          <button class="accent-dot" data-accent="violet" style="background:#8b7bff" aria-label="Violeta"></button>
-          <button class="accent-dot" data-accent="pink" style="background:#ff5c8a" aria-label="Rosa"></button>
-          <button class="accent-dot" data-accent="blue" style="background:#35d0ff" aria-label="Azul"></button>
-          <button class="accent-dot" data-accent="green" style="background:#35d68b" aria-label="Verde"></button>
-        </div>
-      </div>
+      <div class="settings-row"><span>Tema</span><div class="chips">
+        <button class="btn o" data-settings="theme" data-val="auto" style="${S.theme==='auto'?'border-color:var(--ac2)':''}">Auto</button>
+        <button class="btn o" data-settings="theme" data-val="light" style="${S.theme==='light'?'border-color:var(--ac2)':''}">Claro</button>
+        <button class="btn o" data-settings="theme" data-val="dark" style="${S.theme==='dark'?'border-color:var(--ac2)':''}">Oscuro</button>
+      </div></div>
+      <div class="settings-row"><span>Color</span><div class="chips">
+        <button class="accent-dot" data-accent="violet" style="background:#8b7bff"></button>
+        <button class="accent-dot" data-accent="pink" style="background:#ff5c8a"></button>
+        <button class="accent-dot" data-accent="blue" style="background:#35d0ff"></button>
+        <button class="accent-dot" data-accent="green" style="background:#35d68b"></button>
+      </div></div>
     </div>
-
     <div class="settings-group">
       <h4 class="sec-t">Reproducción</h4>
-      <div class="settings-row toggle-row">
-        <span>Sonidos</span>
-        <label class="switch"><input type="checkbox" id="stSounds" ${S.muted?'':'checked'}><span class="slider"></span></label>
-      </div>
-      <div class="settings-row toggle-row">
-        <span>Vibración</span>
-        <label class="switch"><input type="checkbox" id="stVib" checked><span class="slider"></span></label>
-      </div>
-      <div class="settings-row toggle-row">
-        <span>Autoplay</span>
-        <label class="switch"><input type="checkbox" id="stAuto" checked><span class="slider"></span></label>
-      </div>
+      <div class="settings-row toggle-row"><span>Sonidos</span><label class="switch"><input type="checkbox" id="stSounds" ${S.muted?'':'checked'}><span class="slider"></span></label></div>
+      <div class="settings-row toggle-row"><span>Vibración</span><label class="switch"><input type="checkbox" id="stVib" checked><span class="slider"></span></label></div>
     </div>
-
     <div class="settings-group">
       <h4 class="sec-t">Cuenta</h4>
-      <div class="chips" style="margin-top:6px">
-        <button class="btn o" data-a="bio">Editar perfil</button>
-        <button class="btn o" data-a="out">Cerrar sesión</button>
-      </div>
+      <div class="chips" style="margin-top:6px"><button class="btn o" data-a="bio">Editar perfil</button><button class="btn o" data-a="out">Cerrar sesión</button></div>
     </div>
-
     <div class="settings-group" style="border-top:1px solid var(--bd);padding-top:14px;margin-top:14px">
       <h4 class="sec-t">Avanzado</h4>
       <div class="settings-row toggle-row">
-        <div style="flex:1">
-          <b style="display:block;font-size:14px;color:var(--tx)">Panel de administrador</b>
-          <span class="mu" style="font-size:12px">Activa el botón flotante para modificar likes, comentarios, favoritos y vistas de los vídeos. Solo para pruebas.</span>
-        </div>
+        <div style="flex:1"><b style="display:block;font-size:14px">Panel de administrador</b><span class="mu" style="font-size:12px">Activa el botón flotante para modificar likes, comentarios, favoritos y vistas.</span></div>
         <label class="switch"><input type="checkbox" id="stAdmin" ${adminEnabled?'checked':''}><span class="slider"></span></label>
       </div>
     </div>
   `,'');
-
-  // Listeners
-  document.querySelectorAll('[data-settings="theme"]').forEach(b=>b.onclick=()=>{
-    S.theme=b.dataset.val;theme();save();openSettings();
-  });
+  document.querySelectorAll('[data-settings="theme"]').forEach(b=>b.onclick=()=>{S.theme=b.dataset.val;theme();save();openSettings()});
   document.querySelectorAll('[data-accent]').forEach(b=>b.onclick=()=>{
     const ac=b.dataset.accent;
-    const colors={
-      violet:['#8b7bff','#35d0ff'],
-      pink:['#ff5c8a','#ff9ec4'],
-      blue:['#35d0ff','#8b7bff'],
-      green:['#35d68b','#35d0ff']
-    };
+    const colors={violet:['#8b7bff','#35d0ff'],pink:['#ff5c8a','#ff9ec4'],blue:['#35d0ff','#8b7bff'],green:['#35d68b','#35d0ff']};
     document.documentElement.style.setProperty('--ac',colors[ac][0]);
     document.documentElement.style.setProperty('--ac2',colors[ac][1]);
     toast('Color: '+ac);
   });
-  const stSounds=$('#stSounds');
-  if(stSounds)stSounds.onchange=()=>{S.muted=!stSounds.checked;save();toast(stSounds.checked?'Sonidos ON':'Sonidos OFF')};
+  const stSounds=$('#stSounds');if(stSounds)stSounds.onchange=()=>{S.muted=!stSounds.checked;save();toast(stSounds.checked?'Sonido ON':'Sonido OFF')};
   const stAdmin=$('#stAdmin');
   if(stAdmin)stAdmin.onchange=()=>{
     adminEnabled=stAdmin.checked;
     localStorage.setItem('novaAdmin',adminEnabled?'1':'0');
     $('#adminFab').classList.toggle('on',adminEnabled);
+    if(!adminEnabled){adminOpen=false;$('#adminPanel').classList.remove('on')}
     toast(adminEnabled?'Panel admin activado':'Panel admin desactivado');
   };
-  const stVib=$('#stVib');
-  if(stVib)stVib.onchange=()=>toast(stVib.checked?'Vibración ON':'Vibración OFF');
-  const stAuto=$('#stAuto');
-  if(stAuto)stAuto.onchange=()=>toast(stAuto.checked?'Autoplay ON':'Autoplay OFF');
+  const stVib=$('#stVib');if(stVib)stVib.onchange=()=>toast(stVib.checked?'Vibración ON':'Vibración OFF');
 }
 
 /* ---------- ADMIN PANEL ---------- */
 const BOT_NAMES=['carlos_92','maria.x','javito','luciaG','dani_rm','sofi_99','alex7','pedri_fan','nuria_v','manu.g','lorena.c','iker_boy','irene.r','pablo_23','raquel.x','ruben_g','cris.m','sara_love','juanma','nerea_4'];
 const BOT_RESPONSES={
   guapo:['¡Está increíble! 🔥','Uff, qué guapo 🔥🔥','Totalmente de acuerdo 😍','Sí, sí, sí 🔥','Menudo nivel 👏','Está brutal hermano'],
-  feo:['No es para tanto 😅','Bueno, para gustos colores','Yo no lo veo así','Hay mejores, la verdad','No sé yo…'],
-  increible:['¡Sí! Impresionante ✨','Nunca vi algo así 😱','Qué locura 🔥🔥🔥','Me quedo sin palabras 🤯'],
-  bueno:['Está muy bien 👌','Buen trabajo 💪','Sigue así 🔥','Mola bastante ✨'],
-  malo:['No me convence mucho 🤔','Podría estar mejor','Le falta algo…','No es lo mío'],
-  gracioso:['JAJAJAJA 😂😂','Me muero de risa 🤣','Qué bueno 😂','No puedo parar de reír'],
-  default:['¡Qué bueno! 🔥','Me encanta ❤️','Uff 🔥','Brutal ✨','Está genial 👏','Muy top 💯','Opino igual 😍']
+  feo:['No es para tanto 😅','Bueno, para gustos colores','Yo no lo veo así','Hay mejores, la verdad'],
+  increible:['¡Sí! Impresionante ✨','Nunca vi algo así 😱','Qué locura 🔥🔥🔥'],
+  bueno:['Está muy bien 👌','Buen trabajo 💪','Sigue así 🔥'],
+  malo:['No me convence mucho 🤔','Podría estar mejor','Le falta algo…'],
+  gracioso:['JAJAJAJA 😂😂','Me muero de risa 🤣','Qué bueno 😂'],
+  default:['¡Qué bueno! 🔥','Me encanta ❤️','Uff 🔥','Brutal ✨','Está genial 👏','Muy top 💯']
 };
-
 function botReplyFor(text){
   const t=text.toLowerCase();
-  for(const key in BOT_RESPONSES){
-    if(key==='default')continue;
-    if(t.includes(key))return BOT_RESPONSES[key][Math.floor(Math.random()*BOT_RESPONSES[key].length)];
-  }
+  for(const key in BOT_RESPONSES){if(key==='default')continue;if(t.includes(key))return BOT_RESPONSES[key][Math.floor(Math.random()*BOT_RESPONSES[key].length)]}
   return BOT_RESPONSES.default[Math.floor(Math.random()*BOT_RESPONSES.default.length)];
-}
-function randomBotName(){
-  return BOT_NAMES[Math.floor(Math.random()*BOT_NAMES.length)];
 }
 
 function updateAdminPanelForVideo(videoId){
   const tag=$('#adminVideoTag');
   const body=$('#adminBody');
   if(!tag||!body)return;
-  if(!videoId){
-    tag.textContent='Sin vídeo';
-    body.innerHTML='<div class="em" style="padding:20px 0;font-size:12px;color:#c4b8ff">Abre un vídeo para modificarlo.</div>';
-    return;
-  }
+  if(!videoId){tag.textContent='Sin vídeo';body.innerHTML='<div class="em" style="padding:20px 0;font-size:12px;color:#c4b8ff">Abre un vídeo para modificarlo.</div>';return}
   const v=vid(videoId);
   if(!v){tag.textContent='Vídeo no encontrado';body.innerHTML='';return}
   tag.textContent='@'+esc(v.username||'usuario')+' · '+v.id.slice(0,8);
 
   body.innerHTML=`
-    <div class="admin-sec">
-      <h4>Likes (<span id="admLikes">${v.likeCount||0}</span>)</h4>
-      <div class="admin-row">
-        <button class="admin-btn" data-adm="likes+1">+1</button>
-        <button class="admin-btn" data-adm="likes+10">+10</button>
-        <button class="admin-btn" data-adm="likes+100">+100</button>
-        <button class="admin-btn danger" data-adm="likes-1">-1</button>
-        <button class="admin-btn danger" data-adm="likes0">Reset</button>
-      </div>
+    <div class="admin-sec"><h4>Likes</h4>
+      <input class="admin-input" id="admInLikes" type="number" min="0" value="${v.likeCount||0}" placeholder="Total">
+      <button class="admin-btn" data-adm="saveLikes">Guardar likes</button>
+      <div class="admin-counter">Total: <b id="admLikeCount">${v.likeCount||0}</b></div>
     </div>
-
-    <div class="admin-sec">
-      <h4>Vistas (<span id="admViews">${v.views||0}</span>)</h4>
-      <div class="admin-row">
-        <button class="admin-btn" data-adm="views+1">+1</button>
-        <button class="admin-btn" data-adm="views+10">+10</button>
-        <button class="admin-btn" data-adm="views+100">+100</button>
-        <button class="admin-btn" data-adm="views+1000">+1000</button>
-        <button class="admin-btn danger" data-adm="views0">Reset</button>
-      </div>
+    <div class="admin-sec"><h4>Vistas</h4>
+      <input class="admin-input" id="admInViews" type="number" min="0" value="${v.views||0}" placeholder="Total">
+      <button class="admin-btn" data-adm="saveViews">Guardar vistas</button>
+      <div class="admin-counter">Total: <b id="admViewCount">${v.views||0}</b></div>
     </div>
-
-    <div class="admin-sec">
-      <h4>Comentarios bots (<span id="admComm">${v.commentCount||0}</span>)</h4>
+    <div class="admin-sec"><h4>Favoritos</h4>
+      <input class="admin-input" id="admInFavs" type="number" min="0" value="${v.saveCount||0}" placeholder="Total">
+      <button class="admin-btn" data-adm="saveFavs">Guardar favoritos</button>
+      <div class="admin-counter">Total: <b id="admFavCount">${v.saveCount||0}</b></div>
+    </div>
+    <div class="admin-sec"><h4>Comentarios bots</h4>
       <input class="admin-input" id="admBotText" placeholder="Escribe algo (ej: guapo)" maxlength="80">
-      <div class="admin-row">
-        <button class="admin-btn" data-adm="bot1">+1 bot</button>
-        <button class="admin-btn" data-adm="bot5">+5 bots</button>
-        <button class="admin-btn" data-adm="bot10">+10 bots</button>
-      </div>
-    </div>
-
-    <div class="admin-sec">
-      <h4>Favoritos</h4>
-      <div class="admin-row">
-        <button class="admin-btn" data-adm="fav+1">+1</button>
-        <button class="admin-btn" data-adm="fav+10">+10</button>
-        <button class="admin-btn danger" data-adm="fav0">Reset</button>
-      </div>
+      <input class="admin-input" id="admBotNum" type="number" min="1" max="50" value="5" placeholder="Cantidad">
+      <button class="admin-btn" data-adm="addBots">Añadir comentarios</button>
+      <div class="admin-counter">Total: <b id="admCommCount">${v.commentCount||0}</b></div>
     </div>
   `;
-
   document.querySelectorAll('[data-adm]').forEach(b=>b.onclick=()=>handleAdminAction(b.dataset.adm,videoId));
 }
 
 async function handleAdminAction(action,videoId){
-  const v=vid(videoId);
-  if(!v)return;
-  const [field,val]=action.split(/[+0]/).filter(Boolean);
+  const v=vid(videoId);if(!v)return;
   try{
-    if(action.startsWith('likes')){
-      const delta=action==='likes0'?-(v.likeCount||0):parseInt(action.replace('likes',''))||0;
-      const newVal=Math.max(0,(v.likeCount||0)+delta);
-      // Modificar en la BD directamente
-      const likes=await sb.from('likes').select('id').eq('video_id',v.id);
-      if(action==='likes0'){
-        await sb.from('likes').delete().eq('video_id',v.id);
-      }else if(delta>0){
-        // Añadir likes falsos con UUIDs random (no persisten usuario real)
-        // Como likes requiere user_id, usamos la columna user_id con el nuestro y solo simulamos contador
-        // Mejor: guardar en una tabla de contadores. Como no la tenemos, sumamos localmente y avisamos.
-        // Alternativa rápida: solo modifica el contador local (se pierde al recargar). 
-        // Vamos a persistirlo en la columna views... no, en una nueva.
-      }
-      // Simplificación: para likes usamos localStorage del propio vídeo + un campo local
-      v.likeCount=newVal;
-      localStorage.setItem('novaLikeOverride_'+v.id,String(newVal));
-      refresh(videoId);
-      updateAdminPanelForVideo(videoId);
-      toast('Likes: '+newVal);
-    }
-    else if(action.startsWith('views')){
-      const delta=action==='views0'?-(v.views||0):parseInt(action.replace('views',''))||0;
-      const newVal=Math.max(0,(v.views||0)+delta);
-      await sb.from('videos').update({views:newVal}).eq('id',v.id);
-      v.views=newVal;
-      refresh(videoId);
-      updateAdminPanelForVideo(videoId);
-      toast('Vistas: '+newVal);
-    }
-    else if(action.startsWith('fav')){
-      const delta=action==='fav0'?-(v.saveCount||0):parseInt(action.replace('fav',''))||0;
-      const newVal=Math.max(0,(v.saveCount||0)+delta);
-      v.saveCount=newVal;
-      updateAdminPanelForVideo(videoId);
-      toast('Favoritos: '+newVal);
-    }
-    else if(action.startsWith('bot')){
-      const n=parseInt(action.replace('bot',''))||1;
-      const input=$('#admBotText');
-      const seed=input?input.value.trim():'guapo';
-      if(!seed){toast('Escribe algo primero');return}
+    if(action==='saveLikes'){
+      const input=$('#admInLikes');
+      const val=Math.max(0,parseInt(input.value)||0);
+      const likesReales=(v.likeCount||0)-(v.adminLikes||0);
+      const adminVal=Math.max(0,val-likesReales);
+      const {error}=await sb.rpc('admin_set_likes',{p_video:v.id,p_value:adminVal});
+      if(error)throw error;
+      v.adminLikes=adminVal;v.likeCount=likesReales+adminVal;
+      $('#admLikeCount').textContent=v.likeCount;
+      refresh(videoId);toast('Likes actualizados');
+    }else if(action==='saveViews'){
+      const input=$('#admInViews');
+      const val=Math.max(0,parseInt(input.value)||0);
+      const {error}=await sb.rpc('admin_set_views',{p_video:v.id,p_value:val});
+      if(error)throw error;
+      v.views=val;$('#admViewCount').textContent=val;
+      refresh(videoId);toast('Vistas actualizadas');
+    }else if(action==='saveFavs'){
+      const input=$('#admInFavs');
+      const val=Math.max(0,parseInt(input.value)||0);
+      const savesReales=(v.saveCount||0)-(v.adminFavorites||0);
+      const adminVal=Math.max(0,val-savesReales);
+      const {error}=await sb.rpc('admin_set_favorites',{p_video:v.id,p_value:adminVal});
+      if(error)throw error;
+      v.adminFavorites=adminVal;v.saveCount=savesReales+adminVal;
+      $('#admFavCount').textContent=v.saveCount;
+      toast('Favoritos actualizados');
+    }else if(action==='addBots'){
+      const seed=($('#admBotText').value||'guapo').trim();
+      const n=Math.max(1,Math.min(50,parseInt($('#admBotNum').value)||5));
       const me=await getMyId();
       for(let i=0;i<n;i++){
         const reply=botReplyFor(seed);
-        await sb.from('comments').insert({
-          video_id:String(v.id),
-          user_id:me,
-          content:reply
-        });
+        const {error}=await sb.from('comments').insert({video_id:String(v.id),user_id:me,content:reply});
+        if(error)throw error;
       }
-      const v2=vid(videoId);
-      if(v2)v2.commentCount=(v2.commentCount||0)+n;
-      refresh(videoId);
-      updateAdminPanelForVideo(videoId);
-      toast(n+' comentarios añadidos');
+      const {count}=await sb.from('comments').select('*',{count:'exact',head:true}).eq('video_id',v.id);
+      v.commentCount=count||0;
+      $('#admCommCount').textContent=v.commentCount;
+      refresh(videoId);toast(n+' comentarios añadidos');
     }
-  }catch(e){
-    console.error(e);
-    toast('Error: '+e.message);
-  }
+  }catch(e){console.error(e);toast('Error: '+e.message)}
 }
 
-// Toggle del panel
 $('#adminFab').onclick=()=>{
   adminOpen=!adminOpen;
   $('#adminPanel').classList.toggle('on',adminOpen);
   if(adminOpen)updateAdminPanelForVideo(currentVideoId);
 };
-$('#adminClose').onclick=()=>{
-  adminOpen=false;
-  $('#adminPanel').classList.remove('on');
-};
+$('#adminClose').onclick=()=>{adminOpen=false;$('#adminPanel').classList.remove('on')};
 
-/* ---------- CHAT & resto ---------- */
+/* ---------- CHAT ---------- */
 async function messagesPage(){
   $('#m').innerHTML=`<div class="pg"><h2>Chats</h2><p class="mu">Cargando…</p></div>`;
   const list=await loadConversationList();
   const rows=list.map(c=>{
     const streak=computeStreakDisplay(c);
     const badge=streak.count>0?`<span class="streak ${streak.active?streakLevel(streak.count).cls:'off'}" style="font-size:11px"><span class="fire">🔥</span>${streak.count}</span>`:'';
-    return `<div class="conv" data-conv="${c.id}">
-      ${avt(48,c.otherUsername,c.otherAvatar)}
-      <div class="meta"><b>${esc(c.otherDisplay)} ${badge}</b><div class="last">${esc(c.lastMsg||'Sin mensajes todavía')}</div></div>
-    </div>`;
+    return `<div class="conv" data-conv="${c.id}">${avt(48,c.otherUsername,c.otherAvatar)}<div class="meta"><b>${esc(c.otherDisplay)} ${badge}</b><div class="last">${esc(c.lastMsg||'Sin mensajes todavía')}</div></div></div>`;
   }).join('');
-  $('#m').innerHTML=`<div class="pg">
-    <h2>Chats</h2>
-    <p class="mu">Los chats son privados. Si ambos escribís cada día, la racha 🔥 sube.</p>
-    ${list.length?`<div class="conv-list">${rows}</div>`:'<div class="em"><b>'+ic('chat',44)+'</b>No tienes chats todavía.</div>'}
-  </div>`;
+  $('#m').innerHTML=`<div class="pg"><h2>Chats</h2><p class="mu">Los chats son privados. Si ambos escribís cada día, la racha 🔥 sube.</p>${list.length?`<div class="conv-list">${rows}</div>`:'<div class="em"><b>'+ic('chat',44)+'</b>No tienes chats todavía.</div>'}</div>`;
   document.querySelectorAll('.conv').forEach(el=>el.onclick=()=>go('#/c/'+el.dataset.conv));
 }
 async function chatPage(convId){
@@ -1706,10 +1372,7 @@ async function chatPage(convId){
       <span id="streakPill" class="streak off"><span class="fire">🔥</span><span id="streakNum">0</span></span>
     </div>
     <div class="chatbody" id="chatBody"></div>
-    <div class="chatfoot">
-      <textarea id="chatInput" rows="1" placeholder="Mensaje…" maxlength="2000"></textarea>
-      <button id="chatSend">${ic('send',20,1)}</button>
-    </div>
+    <div class="chatfoot"><textarea id="chatInput" rows="1" placeholder="Mensaje…" maxlength="2000"></textarea><button id="chatSend">${ic('send',20,1)}</button></div>
   </div>`;
   $('#chatBack').onclick=()=>go('#/messages');
   $('#chatSend').onclick=sendCurrentMessage;
@@ -1723,12 +1386,12 @@ async function chatPage(convId){
   const box=$('#chatBody');if(box)setTimeout(()=>{box.scrollTop=box.scrollHeight},50);
 }
 async function sendCurrentMessage(){
-  const ta=$('#chatInput'); if(!ta)return;
-  const content=ta.value.trim(); if(!content)return;
-  try{await sendChatMessage(currentChat.convId,content);ta.value='';ta.style.height='auto'}catch(e){toast('No se pudo enviar: '+e.message)}
+  const ta=$('#chatInput');if(!ta)return;
+  const content=ta.value.trim();if(!content)return;
+  try{await sendChatMessage(currentChat.convId,content);ta.value='';ta.style.height='auto'}catch(e){toast('No se pudo enviar')}
 }
 async function loadAndRenderMessages(convId){
-  const box=$('#chatBody'); if(!box)return;
+  const box=$('#chatBody');if(!box)return;
   const msgs=await loadMessages(convId);
   const me=await getMyId();
   renderMessages(box,msgs,me);
@@ -1747,19 +1410,17 @@ async function subscribeChat(convId){
   chatChannel=sb.channel('nova-chat-'+convId)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'messages',filter:'conversation_id=eq.'+convId},
       async payload=>{
-        const box=$('#chatBody'); if(!box)return;
+        const box=$('#chatBody');if(!box)return;
         const me=await getMyId();
-        const m=payload.new;
-        const mine=m.sender_id===me;
+        const m=payload.new;const mine=m.sender_id===me;
         const t=new Date(m.created_at);
         const hh=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-        const empty=box.querySelector('.em'); if(empty)box.innerHTML='';
+        const empty=box.querySelector('.em');if(empty)box.innerHTML='';
         const row=document.createElement('div');row.className='msg-row '+(mine?'me':'them');
         row.innerHTML=`<div class="bub ${mine?'me':'them'}">${esc(m.content)}<span class="time">${hh}</span></div>`;
         box.append(row);box.scrollTop=box.scrollHeight;
       })
-    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations',filter:'id=eq.'+convId},
-      payload=>{updateStreakPill(payload.new)})
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'conversations',filter:'id=eq.'+convId},payload=>{updateStreakPill(payload.new)})
     .subscribe(s=>console.log('Chat Realtime:',s));
 }
 
@@ -1775,48 +1436,39 @@ async function refreshNotifBadge(){
     const bell=document.querySelector('nav a[data-r="activity"] b');
     if(!bell)return;
     let badge=bell.querySelector('.notif-badge');
-    if(n>0){
-      if(!badge){badge=document.createElement('span');badge.className='notif-badge';bell.style.position='relative';bell.append(badge)}
-      badge.textContent=n>99?'99+':String(n);
-    }else if(badge){badge.remove()}
+    if(n>0){if(!badge){badge=document.createElement('span');badge.className='notif-badge';bell.style.position='relative';bell.append(badge)}badge.textContent=n>99?'99+':String(n)}
+    else if(badge){badge.remove()}
   }catch(e){}
 }
 async function subscribeNotifications(){
   if(!sb||notifChannel)return;
   const me=await getMyId();
   notifChannel=sb.channel('nova-notifs-'+me)
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+me},
-      payload=>{
-        const n=payload.new;
-        if(n.type==='message'&&String(n.target_id)!==String(currentChat.convId)){
-          toast('💬 Nuevo mensaje');
-        }
-        refreshNotifBadge();
-      })
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+me},payload=>{
+      const n=payload.new;
+      if(n.type==='message'&&String(n.target_id)!==String(currentChat.convId))toast('💬 Nuevo mensaje');
+      refreshNotifBadge();
+    })
     .subscribe(s=>console.log('Notif Realtime:',s));
 }
 async function activityPage(){
   $('#m').innerHTML=`<div class="pg"><h2>Actividad</h2><p class="mu">Cargando…</p></div>`;
   const me=await getMyId();
   const {data,error}=await sb.from('notifications').select('id,type,target_id,body,created_at,read_at,actor_id').eq('user_id',me).order('created_at',{ascending:false}).limit(100);
-  if(error){$('#m').innerHTML='<div class="em">Error cargando notificaciones.</div>';return}
+  if(error){$('#m').innerHTML='<div class="em">Error.</div>';return}
   const list=data||[];
   if(!list.length){$('#m').innerHTML=`<div class="pg"><h2>Actividad</h2><div class="em"><b>${ic('bell',44)}</b>Aún no hay actividad.</div></div>`;return}
   const actorIds=[...new Set(list.map(n=>n.actor_id).filter(Boolean))];
   const {data:profs}=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',actorIds);
   const pmap={};(profs||[]).forEach(p=>pmap[p.id]=p);
   const html=list.map(n=>{
-    const p=pmap[n.actor_id]||{};
-    const user=p.username||'';
-    const unread=!n.read_at;
+    const p=pmap[n.actor_id]||{};const user=p.username||'';const unread=!n.read_at;
     let text='';let href='#/activity';let icon='bell';
     if(n.type==='message'){text=`<b>@${esc(user)}</b> te escribió: <span class="mu">${esc((n.body||'').slice(0,80))}</span>`;href='#/c/'+n.target_id;icon='chat'}
     else if(n.type==='like'){text=`<b>@${esc(user)}</b> le dio like a tu vídeo`;icon='heart';href='#/v/'+n.target_id}
     else if(n.type==='comment'){text=`<b>@${esc(user)}</b> comentó: <span class="mu">${esc((n.body||'').slice(0,80))}</span>`;icon='chat';href='#/v/'+n.target_id}
     else if(n.type==='follow'){text=`<b>@${esc(user)}</b> te empezó a seguir`;icon='user';href='#/u/'+n.actor_id}
-    const t=new Date(n.created_at);
-    const hh=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-    const dd=String(t.getDate()).padStart(2,'0')+'/'+String(t.getMonth()+1).padStart(2,'0');
+    const t=new Date(n.created_at);const hh=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');const dd=String(t.getDate()).padStart(2,'0')+'/'+String(t.getMonth()+1).padStart(2,'0');
     return `<a class="notif ${unread?'unread':''}" href="${href}" data-notif="${n.id}">${avt(40,user,p.avatar_url)}<div class="meta"><div>${text}</div><span class="mu" style="font-size:11px">${dd} · ${hh}</span></div><span class="nicon">${ic(icon,18)}</span></a>`;
   }).join('');
   $('#m').innerHTML=`<div class="pg"><h2>Actividad</h2><div class="notif-list">${html}</div></div>`;
@@ -1834,30 +1486,19 @@ function camOff(){
 }
 async function open(first){
   if(first)cam();
-  const nocam=(msg)=>{
-    st=null;
-    const v=$('#cv'),n=$('#nc'),er=$('#nce');
-    v&&(v.style.display='none');n&&(n.style.display='flex');
-    er&&(er.textContent=msg||'Permite el acceso a la cámara y al micrófono.');
-  };
-  if(!(window.MediaRecorder&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia))
-    return nocam('Tu navegador no admite la cámara.');
+  const nocam=(msg)=>{st=null;const v=$('#cv'),n=$('#nc'),er=$('#nce');v&&(v.style.display='none');n&&(n.style.display='flex');er&&(er.textContent=msg||'Permite el acceso a la cámara.')};
+  if(!(window.MediaRecorder&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia))return nocam('Tu navegador no admite la cámara.');
   try{
     st&&st.getTracks().forEach(t=>t.stop());
-    try{
-      st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:fc},width:{ideal:1080},height:{ideal:1920}},audio:true});
-    }catch(e){
-      if(e&&(e.name==='NotFoundError'||e.name==='OverconstrainedError')){
-        st=await navigator.mediaDevices.getUserMedia({video:true,audio:true});
-      }else throw e;
-    }
+    try{st=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:fc},width:{ideal:1080},height:{ideal:1920}},audio:true})}
+    catch(e){if(e&&(e.name==='NotFoundError'||e.name==='OverconstrainedError')){st=await navigator.mediaDevices.getUserMedia({video:true,audio:true})}else throw e}
     const v=$('#cv'),n=$('#nc');
     v&&(v.style.display='');n&&(n.style.display='none');
     att();
   }catch(e){
-    const msg=e&&e.name==='NotAllowedError'?'Permiso de cámara denegado.'
-      :e&&e.name==='NotReadableError'?'La cámara está siendo utilizada por otra app.'
-      :'No se pudo acceder a la cámara.';
+    const msg=e&&e.name==='NotAllowedError'?'Permiso denegado.'
+      :e&&e.name==='NotReadableError'?'Cámara ocupada.'
+      :'No se pudo acceder.';
     nocam(msg);
   }
 }
@@ -1876,7 +1517,7 @@ function cam(){
   document.body.classList.add('nl');
   const tb=(a,n,l)=>`<button class="tb" id="${a}" aria-label="${l}">${ic(n,26)}</button>`;
   $('#m').innerHTML=`<div class="cam"><video id="cv" playsinline muted autoplay></video><div class="cshade"></div><div class="tm" id="tm">00:00</div><div class="cd" id="cd"></div>
-  <div class="nc" id="nc"><b>${ic('play',44)}</b><h2 style="margin:0">Cámara</h2><p id="nce">Permite el acceso a la cámara y al micrófono.</p><button class="btn" id="ncretry">Reintentar</button></div>
+  <div class="nc" id="nc"><b>${ic('play',44)}</b><h2 style="margin:0">Cámara</h2><p id="nce">Permite el acceso.</p><button class="btn" id="ncretry">Reintentar</button></div>
   <div class="top"><button class="cb" id="cx">${ic('x',22)}</button>${tb('fp','flip','Girar')}</div>
   <div class="tl">${tb('fz','flash','Flash')}${tb('tmr','timer','Timer')}${tb('fxn','fx','Filtro')}</div>
   <div class="cbot"><div class="durs">${[['600','10 min'],['60','60 s'],['15','15 s']].map(([v,t])=>`<button data-d="${v}" class="${dur==v?'on':''}">${t}</button>`).join('')}</div>
@@ -1933,9 +1574,9 @@ function editor(f,fl=''){
       console.error(e);
       const msg=String(e?.message||e);
       if(/bucket|not found/i.test(msg)) toast('Falta bucket "videos"');
-      else if(/user_id|username|views|avatar_url/i.test(msg)) toast('Ejecuta el SQL nuevo en Supabase');
+      else if(/user_id|username|views|avatar_url|admin_likes/i.test(msg)) toast('Ejecuta el SQL nuevo en Supabase');
       else if(/row-level|permission|policy/i.test(msg)) toast('Revisa RLS');
-      else toast('No se pudo publicar: '+msg.slice(0,90));
+      else toast('No se pudo: '+msg.slice(0,90));
     }finally{btn.disabled=false;btn.textContent='Publicar'}
   };
 }
@@ -1976,7 +1617,7 @@ const A={
       const wasLiked=!!S.liked[id];
       if(!wasLiked){const h=document.createElement('div');h.className='heart';h.innerHTML=ic('heart',110,1);c.append(h);setTimeout(()=>h.remove(),800)}
       await toggleLike(id);
-    }catch(err){toast('No se pudo dar like')}
+    }catch(err){toast('No se pudo')}
   },
   sv:async e=>{const id=e.closest('.card').dataset.id;try{await toggleSave(id);toast(S.saved[id]?'Guardado':'Eliminado')}catch(err){toast('No se pudo')}},
   mute:()=>{S.muted=!S.muted;save();document.querySelectorAll('video').forEach(v=>v.muted=S.muted);document.querySelectorAll('[data-a=mute] b').forEach(b=>b.innerHTML=ic(S.muted?'voloff':'volon'));toast(S.muted?'Silenciado':'Sonido')},
@@ -2014,9 +1655,7 @@ const A={
     if(cn){ME.n=n;ME.nAt=Date.now()}
     if(cu){ME.u=u;ME.uAt=Date.now()}
     ME.bio=$('#bi').value;save();closeSheet();toast('Perfil actualizado');
-    if(sb&&supabaseUser){
-      try{await sb.from('profiles').update({username:ME.u,display_name:ME.n,bio:ME.bio}).eq('id',supabaseUser.id)}catch(e){}
-    }
+    if(sb&&supabaseUser){try{await sb.from('profiles').update({username:ME.u,display_name:ME.n,bio:ME.bio}).eq('id',supabaseUser.id)}catch(e){}}
     profile();
   },
   out:()=>{S.acct=null;ME=null;save();welcome()}
@@ -2044,14 +1683,8 @@ function route(){
   closeSheet();camOff();
   document.body.classList.remove('nl');
   document.querySelectorAll('video').forEach(v=>{try{v.pause()}catch(e){}});
-  if(r!=='live'){
-    if(liveChannel){sb&&sb.removeChannel(liveChannel);liveChannel=null}
-    currentLive=null;cleanupRTCPeers();stopLiveCamera();
-  }
-  if(r!=='c'){
-    if(chatChannel){sb&&sb.removeChannel(chatChannel);chatChannel=null}
-    currentChat={convId:null,otherUser:null,otherUsername:null};
-  }
+  if(r!=='live'){if(liveChannel){sb&&sb.removeChannel(liveChannel);liveChannel=null}currentLive=null;cleanupRTCPeers();stopLiveCamera()}
+  if(r!=='c'){if(chatChannel){sb&&sb.removeChannel(chatChannel);chatChannel=null}currentChat={convId:null,otherUser:null,otherUsername:null}}
   document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.r==(r=='v'||r=='t'||r=='u'||r=='c'?'':r)));
   try{
     (({'':()=>feed(),v:()=>feed(p),discover,create:()=>open(true),profile,activity:activityPage,hist:history2,t:()=>tagPage(p),live:livePage,u:()=>publicProfile(p),messages:messagesPage,c:()=>chatPage(p)})[r]||(()=>feed()))();
@@ -2129,7 +1762,6 @@ function applyCommentDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.co
   const loading=document.getElementById('nova-loading');
   const hideLoading=()=>{loading&&loading.classList.add('gone');setTimeout(()=>loading&&loading.remove(),700)};
 
-  // Aplicar estado del toggle admin
   if(adminEnabled){$('#adminFab').classList.add('on')}
 
   const waitIntro=()=>new Promise(resolve=>{
@@ -2179,9 +1811,7 @@ function applyCommentDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.co
     console.error(e);
     if(S.acct){ME=S.acct;route()}
     else welcome();
-  }finally{
-    setTimeout(hideLoading,300);
-  }
+  }finally{setTimeout(hideLoading,300)}
 })();
 </script>
 </body></html>
