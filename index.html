@@ -255,6 +255,8 @@ input:disabled{opacity:.5}
 .card.photo-card .photo-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gi.photo{background:#000}.gi.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .create-menu{position:fixed;inset:0;z-index:75;background:rgba(4,3,12,.78);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;padding:18px}.create-menu .create-box{width:min(520px,100%);background:var(--sf);border:1px solid var(--bd);border-radius:26px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.55);animation:up .25s}.camera-sticker{background:linear-gradient(135deg,#8b7bff,#35d0ff,#ff5c8a);box-shadow:0 0 22px rgba(53,208,255,.28);border-radius:18px;padding:8px}.camera-sticker svg{stroke:#fff!important;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.camera-sticker .nv-star{stroke:#fff!important}
 .create-option{width:100%;display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:rgba(139,123,255,.08);border:1px solid rgba(170,150,255,.2);margin-top:10px;text-align:left}.create-option:first-child{margin-top:4px}.create-option .co-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(139,123,255,.6),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.4),transparent 60%),#151027;box-shadow:0 0 18px rgba(139,123,255,.25)}.create-option b{display:block;font-size:16px}.create-option span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
+
+.live-viewers{display:flex;align-items:center;gap:4px;margin-top:2px;color:#ddd;font-size:11px}.live-eye-sticker{display:inline-flex;vertical-align:middle}.live-eye-sticker .nv-sticker{width:15px!important;height:15px!important}.live-viewer-pill{min-width:46px;height:36px;padding:0 9px;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;backdrop-filter:blur(12px)}.live-viewer-pill .nv-sticker{width:16px!important;height:16px!important}.live-end-top{background:rgba(255,38,61,.18)!important;border-color:rgba(255,93,111,.55)!important;color:#ff8b98!important}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -491,6 +493,7 @@ async function loadCloudVideos(){
       f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
       userId:v.user_id||null,
       username:v.username||prof.username||'usuario',
+      displayName:prof.display_name||v.username||prof.username||'usuario',
       avatarUrl:v.avatar_url||prof.avatar_url||null,
       views:v.views||0,
       adminLikes:v.admin_likes||0,
@@ -553,9 +556,10 @@ async function publishCloudVideo(file, description){
     d:res.data.description||description||'Mi vídeo',
     tags:[],t:Date.now(),src:res.data.video_url,
     f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
-    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(v.video_url),
+    isPhoto:false,
     userId:res.data.user_id,
     username:res.data.username||username,
+    displayName:ME?.n||res.data.username||username,
     avatarUrl:res.data.avatar_url||ME.av||null,
     views:res.data.views||0,
     adminLikes:res.data.admin_likes||0,
@@ -575,7 +579,7 @@ async function publishCloudPhoto(file,description){
   if(!photoUrl){await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});throw new Error('No se pudo obtener la URL pública de la foto.');}
   const res=await sb.from('videos').insert({description:description||'Mi foto',video_url:photoUrl,user_id:user.id,username,avatar_url:ME.av||null,views:0,admin_likes:0,admin_favorites:0}).select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites').single();
   if(res.error){await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});throw res.error;}
-  return {id:String(res.data.id),d:res.data.description||description||'Mi foto',tags:[],t:Date.now(),src:res.data.video_url,f:'',txt:'',sp:1,nc:false,mu:false,remote:true,isPhoto:true,userId:res.data.user_id,username:res.data.username||username,avatarUrl:res.data.avatar_url||ME.av||null,views:res.data.views||0,adminLikes:res.data.admin_likes||0,adminFavorites:res.data.admin_favorites||0,likeCount:0,commentCount:0,saveCount:0};
+  return {id:String(res.data.id),d:res.data.description||description||'Mi foto',tags:[],t:Date.now(),src:res.data.video_url,f:'',txt:'',sp:1,nc:false,mu:false,remote:true,isPhoto:true,userId:res.data.user_id,username:res.data.username||username,displayName:ME?.n||res.data.username||username,avatarUrl:res.data.avatar_url||ME.av||null,views:res.data.views||0,adminLikes:res.data.admin_likes||0,adminFavorites:res.data.admin_favorites||0,likeCount:0,commentCount:0,saveCount:0};
 }
 function photoEditor(file){
   document.body.classList.remove('nl'); camOff(); const u=URL.createObjectURL(file);
@@ -902,6 +906,13 @@ async function subscribeLive(liveId){
         const m=payload.new;m.__username=await getUsername(m.user_id);
         renderLiveMessage(m);const b=$('#liveMessages');if(b)b.scrollTop=b.scrollHeight;
       })
+    .on('postgres_changes',{event:'UPDATE',schema:'public',table:'lives',filter:'id=eq.'+liveId},payload=>{
+      const row=payload.new||{};
+      if(currentLive&&String(currentLive.id)===String(liveId))currentLive=row;
+      const vc=$('#liveViewerCount'); if(vc)vc.textContent=Number(row.viewer_count||0); const vct=$('#liveViewerCountTop'); if(vct)vct.textContent=Number(row.viewer_count||0);
+      const fvc=$('#feedLiveViewerCount'); if(fvc)fvc.textContent=Number(row.viewer_count||0);
+      if(row.status!=='live'){const ph=$('#feedLivePlaceholder');if(ph)ph.style.display='grid';}
+    })
     .on('broadcast',{event:'rtc'},async ({payload})=>{try{await handleRTCSignal(payload)}catch(e){}});
   // Supabase Realtime no permite añadir callbacks postgres_changes después de subscribe().
   // Registramos el listener de regalos ANTES de suscribir el canal.
@@ -985,7 +996,7 @@ async function startLive(){
     if(error)throw error;
     currentLive=data; giftCombo={senderId:null,count:0,lastAt:0};
     const off=$('#liveCamOff');if(off)off.style.display='none';
-    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; 
+    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; $('#liveStatusPill').style.display='grid';
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display=''; const gb=$('#liveGiftBtn');if(gb)gb.style.display='none';
     await loadLiveMessages(data.id); await subscribeLive(data.id); await startLiveRTC();
     toast('Live iniciado');
@@ -995,11 +1006,11 @@ async function joinLive(id){
   try{
     const {data,error}=await sb.from('lives').select('*').eq('id',id).single();
     if(error)throw error;
-    currentLive=data; giftCombo={senderId:null,count:0,lastAt:0}; stopLiveCamera(); cleanupRTCPeers();
+    currentLive=data; giftCombo={senderId:null,count:0,lastAt:0}; const vc=$('#liveViewerCount'); if(vc)vc.textContent=Number(data.viewer_count||0); stopLiveCamera(); cleanupRTCPeers();
     const me=await getMyId(); await sb.rpc('join_live',{p_live:id}).catch(()=>{}); const uname=await getUsername(me); await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}).catch(()=>{});
     const off=$('#liveCamOff');if(off)off.style.display='grid';
     await loadLiveMessages(id); await subscribeLive(id); await joinLiveRTC();
-    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; 
+    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; $('#liveStatusPill').style.display='grid';
     $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none'; const gb=$('#liveGiftBtn');if(gb)gb.style.display=isLiveOwner()?'none':'flex';
     toast('Conectado');
   }catch(e){toast('No se pudo: '+(e.message||''))}
@@ -1011,27 +1022,40 @@ async function endLive(){
     if(error)throw error;
     if(liveChannel){await sb.removeChannel(liveChannel);liveChannel=null}
     currentLive=null; giftCombo={senderId:null,count:0,lastAt:0}; openGiftPanel(); cleanupRTCPeers(); stopLiveCamera();
-    $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>';  $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
+    $('#liveStatusPill').style.display='none'; $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
     toast('Live terminado'); livePage();
   }catch(e){toast('No se pudo terminar')}
 }
 async function livePage(){
   document.body.classList.remove('nl');
   const me=ME||{n:'Nova',u:'nova'};
+  const liveId=decodeURIComponent((H.slice(2).split('/')[1]||''));
+  let liveProfile=null, liveRow=null;
+  if(liveId&&sb){
+    try{
+      const r=await sb.from('lives').select('id,title,user_id,status,viewer_count').eq('id',liveId).eq('status','live').maybeSingle();
+      liveRow=r.data||null;
+      if(liveRow?.user_id)liveProfile=await getProfile(liveRow.user_id);
+    }catch(e){}
+  }
+  const liveDisplay=liveProfile?.display_name||liveProfile?.username||me.n;
+  const liveUsername=liveProfile?.username||me.u;
+  const liveAvatar=liveProfile?.avatar_url||null;
+  const liveHref=liveRow?.user_id?`#/u/${esc(liveRow.user_id)}`:'#/profile';
   $('#m').innerHTML=`
   <div class="live-stage">
     <video id="liveCam" playsinline autoplay muted></video>
     <div id="liveCamOff" class="live-cam-off"><div><b>Tu cámara aparecerá aquí</b><span>Al iniciar el Live, Nova pedirá permiso.</span></div></div>
     <div class="live-dark"></div>
     <div class="live-head">
-      <a class="live-me" href="#/profile">${avt(40)}<span class="live-name"><b>${esc(me.n)}</b><span>@${esc(me.u)}</span></span></a>
-      <div class="live-actions"><span class="live-pill live-now" id="liveStatusPill"><i class="live-live-dot" aria-hidden="true"></i><span>En directo</span></span><button class="live-pill" id="openLiveList" type="button">Lives</button></div>
+      <a class="live-me" href="${liveHref}">${avt(40,liveUsername,liveAvatar)}<span class="live-name"><b>${esc(liveDisplay)}</b><span>@${esc(liveUsername)}</span><span class="live-viewers"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="liveViewerCountTop">${Number(liveRow?.viewer_count||0)}</span> espectadores</span></span></a>
+      <div class="live-actions"><span class="live-pill live-now" id="liveStatusPill" style="display:none"><i class="live-live-dot" aria-hidden="true"></i><span>En directo</span></span><span class="live-viewer-pill" id="liveViewerPill"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="liveViewerCount">${Number(liveRow?.viewer_count||0)}</span></span><button class="live-pill" id="openLiveList" type="button">Lives</button><button class="live-pill live-end-top" id="endLiveBtn" type="button" style="display:none">Terminar</button></div>
     </div>
     <div class="live-chat"><div id="liveMessages" class="live-msgs"><div class="live-msg"><span class="av" style="width:28px;height:28px;font-size:12px">N</span><div class="live-msg-body"><div class="live-msg-user">@Nova</div><div class="live-msg-text">Los mensajes aparecerán aquí</div></div></div></div></div>
     <button class="live-gift-fab" id="liveGiftBtn" style="display:none">${sticker('gift')} Regalar</button>
     <div class="live-compose"><input id="liveInput" maxlength="300" placeholder="Añade un comentario…"><button class="btn" id="sendLiveBtn">Enviar</button></div>
     <div class="live-list" id="liveListPanel"><div style="display:flex;justify-content:space-between;align-items:center"><b>Lives activos</b><button class="btn o" id="closeLiveList">Cerrar</button></div><div id="liveList" style="margin-top:10px"><p class="mu">Cargando…</p></div></div>
-    <div style="position:absolute;left:12px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:8px"><button class="btn" id="startLiveBtn">Iniciar Live</button><button class="btn o" id="endLiveBtn" style="display:none">Terminar</button></div>
+    <div style="position:absolute;left:12px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:8px"><button class="btn" id="startLiveBtn">Iniciar Live</button></div>
   </div>`;
   $('#startLiveBtn').onclick=startLive;
   $('#endLiveBtn').onclick=endLive;
@@ -1042,15 +1066,19 @@ async function livePage(){
   $('#liveGiftBtn').onclick=toggleGiftPanel;
   await refreshLiveList();
   const v=$('#liveCam'); if(v)v.srcObject=liveStream||null;
-  const liveId=decodeURIComponent((H.slice(2).split('/')[1]||''));
   if(liveId){setTimeout(()=>joinLive(liveId),0)}
 }
 async function refreshLiveList(){
   const box=$('#liveList'); if(!box||!sb)return;
   const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count').eq('status','live').order('started_at',{ascending:false}).limit(20);
   if(error){box.innerHTML='<p class="mu">Error.</p>';return}
-  if(!data?.length){box.innerHTML='<p class="mu">No hay Lives activos.</p>';return}
-  box.innerHTML=data.map(x=>`<div style="padding:12px 0;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;gap:10px;align-items:center"><div><b>${esc(x.title||'Live')}</b><div class="mu" style="font-size:12px">${x.viewer_count||0} espectadores</div></div><button class="btn o" data-live-id="${esc(x.id)}">Ver</button></div>`).join('');
+  const me=await getMyId();
+  const visible=(data||[]).filter(x=>String(x.user_id)!==String(me));
+  if(!visible.length){box.innerHTML='<p class="mu">No hay Lives activos.</p>';return}
+  const ids=[...new Set(visible.map(x=>x.user_id).filter(Boolean))];
+  let profiles=[]; if(ids.length){const r=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);profiles=r.data||[]}
+  const pm=new Map(profiles.map(p=>[p.id,p]));
+  box.innerHTML=visible.map(x=>{const p=pm.get(x.user_id)||{};return `<div style="padding:12px 0;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;gap:10px;align-items:center"><div style="display:flex;align-items:center;gap:9px;min-width:0">${avt(38,p.username||'usuario',p.avatar_url)}<div style="min-width:0"><b>${esc(p.display_name||p.username||x.title||'Live')}</b><div class="mu" style="font-size:12px">@${esc(p.username||'usuario')} · ${sticker('eye','sm')} ${Number(x.viewer_count||0)} espectadores</div></div></div><button class="btn o" data-live-id="${esc(x.id)}">Ver</button></div>`}).join('');
   box.querySelectorAll('[data-live-id]').forEach(b=>b.onclick=()=>{$('#liveListPanel')?.classList.remove('on');joinLive(b.dataset.liveId)});
 }
 
@@ -1112,31 +1140,35 @@ const safeFilter=f=>SAFE_FILTERS.has(f||'')?(f||''):'';
 
 const slide=v=>{
   const authorName=v.username||'usuario';
+  const displayName=v.displayName||authorName;
   const mediaHtml=v.isPhoto?`<img src="${esc(v.src)}" alt="" class="photo-media">`:`<video src="${esc(v.src)}" loop playsinline ${S.muted?'muted':''} style="${esc(safeFilter(v.f))}"></video>`;
   const authorAvatar=avt(30,authorName,v.avatarUrl);
   const isMine=v.userId&&supabaseUser&&v.userId===supabaseUser.id;
   const profileHref=v.userId?`#/u/${esc(v.userId)}`:'#/';
   const viewsHtml=v.views>0?`<span style="font-size:11px;color:#cfe8ff;opacity:.8">${sticker('eye','sm')} ${v.views}</span>`:'';
-  return `<section class="v"><div class="card ${v.isPhoto?'photo-card':''}" data-id="${v.id}" data-uid="${esc(v.userId||'')}" data-uname="${esc(authorName)}">${mediaHtml}<div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><a href="${profileHref}" style="display:flex;align-items:center;gap:8px">${authorAvatar}<b>@${esc(authorName)}</b>${isMine?'<span class="mu" style="font-size:11px">· tú</span>':''}${viewsHtml}</a><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
+  return `<section class="v"><div class="card ${v.isPhoto?'photo-card':''}" data-id="${v.id}" data-uid="${esc(v.userId||'')}" data-uname="${esc(authorName)}">${mediaHtml}<div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><a href="${profileHref}" style="display:flex;align-items:center;gap:8px">${authorAvatar}<span style="display:flex;flex-direction:column;line-height:1.08"><b>${esc(displayName)}</b><span style="font-size:11px;color:#ddd">@${esc(authorName)}</span></span>${isMine?'<span class="mu" style="font-size:11px">· tú</span>':''}${viewsHtml}</a><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
 };
 
 async function getActiveLives(){
   if(!sb)return [];
   try{
+    const me=await getMyId();
     const {data,error}=await sb.from('lives').select('id,title,user_id,started_at,viewer_count').eq('status','live').order('started_at',{ascending:false}).limit(20);
     if(error||!data?.length)return [];
     const ids=[...new Set(data.map(x=>x.user_id).filter(Boolean))];
     let profiles=[];
     if(ids.length){const r=await sb.from('profiles').select('id,username,display_name,avatar_url').in('id',ids);profiles=r.data||[]}
     const pm=new Map(profiles.map(p=>[p.id,p]));
-    return data.filter(x=>!supabaseUser||x.user_id!==supabaseUser.id).map(x=>({...x,profile:pm.get(x.user_id)||{username:'usuario',display_name:'Usuario',avatar_url:null}}));
+    return data.filter(x=>String(x.user_id)!==String(me)).map(x=>({...x,profile:pm.get(x.user_id)||{username:'usuario',display_name:'Usuario',avatar_url:null}}));
   }catch(e){return []}
 }
 function renderFeedLives(lives){
   if(!lives?.length)return '';
   const x=lives[0];
   const p=x.profile||{};
-  return `<section class="feed-live-slide" data-feed-live-id="${esc(x.id)}"><div class="feed-live-card"><video id="feedLiveVideo" playsinline autoplay muted></video><div class="live-placeholder" id="feedLivePlaceholder">${avt(86,p.username||'usuario',p.avatar_url)}<div style="position:absolute;margin-top:140px;color:#ddd;font-size:13px">Conectando al directo…</div></div><div class="live-overlay"></div><div class="live-top"><div class="live-user">${avt(38,p.username||'usuario',p.avatar_url)}<div><b style="display:block;font-size:13px">@${esc(p.username||'usuario')}</b><span style="display:block;font-size:11px;color:#ddd">${Number(x.viewer_count||0)} espectadores</span></div></div><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span></div><div class="live-info"><span class="live-badge"><i class="live-live-dot" aria-hidden="true"></i> LIVE</span><b>${esc(x.title||'Mi directo')}</b><span>Desliza para seguir viendo vídeos</span></div><button type="button" class="live-enter" data-open-live="${esc(x.id)}">Entrar</button></div></section>`;
+  const display=p.display_name||p.username||'Usuario';
+  const username=p.username||'usuario';
+  return `<section class="feed-live-slide" data-feed-live-id="${esc(x.id)}"><div class="feed-live-card"><video id="feedLiveVideo" playsinline autoplay muted></video><div class="live-placeholder" id="feedLivePlaceholder">${avt(86,username,p.avatar_url)}<div style="position:absolute;margin-top:140px;color:#ddd;font-size:13px">Conectando al directo…</div></div><div class="live-overlay"></div><div class="live-top"><div class="live-user">${avt(38,username,p.avatar_url)}<div><b style="display:block;font-size:13px">${esc(display)}</b><span style="display:block;font-size:11px;color:#ddd">@${esc(username)}</span><span class="live-viewers"><span class="live-eye-sticker">${sticker('eye','sm')}</span><span id="feedLiveViewerCount">${Number(x.viewer_count||0)}</span> espectadores</span></div></div><span class="live-now-label"><i class="live-live-dot" aria-hidden="true"></i> En directo</span></div><div class="live-info"><span class="live-badge"><i class="live-live-dot" aria-hidden="true"></i> LIVE</span><b>${esc(x.title||'Mi directo')}</b><span>Desliza para seguir viendo vídeos</span></div><button type="button" class="live-enter" data-open-live="${esc(x.id)}">Entrar</button></div></section>`;
 }
 async function openLiveFromFeed(id){
   if(!id)return;
@@ -1247,7 +1279,7 @@ async function profile(){
   const myVideos=(mine||[]).map(v=>({
     id:String(v.id),d:v.description||'Mi vídeo',tags:[],t:0,src:v.video_url,
     f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
-    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(v.video_url),
+    isPhoto:false,
     userId:v.user_id,username:v.username||ME.u,
     avatarUrl:v.avatar_url||ME.av||null,
     views:v.views||0,
