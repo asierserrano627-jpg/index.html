@@ -993,8 +993,34 @@ let liveStream=null;
 async function startLiveCamera(){
   if(liveStream)return liveStream;
   if(!navigator.mediaDevices?.getUserMedia)throw new Error('Sin cámara.');
-  liveStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1080},height:{ideal:1920}},audio:true});
-  const v=getLiveVideo(); if(v){v.srcObject=liveStream;v.muted=true;await v.play().catch(()=>{})}
+  const video={facingMode:'user',width:{ideal:1080},height:{ideal:1920}};
+  let st;
+
+  // En algunos móviles Android el navegador devuelve "Could not start audio source"
+  // cuando se solicitan cámara y micrófono en la misma llamada. Abrimos primero
+  // la cámara para que un fallo del micrófono nunca impida iniciar el Live.
+  try{
+    st=await navigator.mediaDevices.getUserMedia({video});
+  }catch(e){
+    const name=String(e?.name||'');
+    const msg=String(e?.message||'');
+    if(name==='NotAllowedError')throw new Error('Permiso de cámara denegado. Actívalo en el navegador.');
+    if(name==='NotFoundError')throw new Error('No se encontró la cámara.');
+    if(name==='NotReadableError' || /Could not start|source/i.test(msg))throw new Error('La cámara está siendo usada por otra aplicación.');
+    throw new Error(msg||'No se pudo iniciar la cámara');
+  }
+
+  // El micrófono es opcional: si Android no puede abrirlo, el vídeo sigue en directo.
+  try{
+    const mic=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+    mic.getAudioTracks().forEach(t=>st.addTrack(t));
+  }catch(e){
+    console.warn('Nova: micrófono no disponible; el Live continuará con vídeo.',e);
+  }
+
+  liveStream=st;
+  const v=getLiveVideo();
+  if(v){v.srcObject=liveStream;v.muted=true;try{await v.play()}catch(e){}}
   return liveStream;
 }
 function stopLiveCamera(){if(liveStream){liveStream.getTracks().forEach(t=>t.stop());liveStream=null}const v=getLiveVideo();if(v)v.srcObject=null}
@@ -1024,7 +1050,7 @@ async function joinLive(id){
     currentLive=data; liveRtcConnected=false; if(liveJoinTimer)clearTimeout(liveJoinTimer); giftCombo={senderId:null,count:0,lastAt:0}; const vc=$('#liveViewerCount'); if(vc)vc.textContent=Number(data.viewer_count||0); stopLiveCamera(); cleanupRTCPeers();
     const me=await getMyId();
     if(String(data.user_id)===String(me)){return}
-    await sb.rpc('join_live',{p_live:id}).catch(()=>{}); const uname=await getUsername(me); await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}).catch(()=>{});
+    const joinRes=await sb.rpc('join_live',{p_live:id}); if(joinRes.error) console.warn('Nova: join_live:',joinRes.error); const uname=await getUsername(me); const msgRes=await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}); if(msgRes.error) console.warn('Nova: mensaje de entrada:',msgRes.error);
     const off=$('#liveCamOff');if(off)off.style.display='grid';
     await loadLiveMessages(id); await joinLiveRTC(); await subscribeLive(id);
     $('#liveStatusPill').innerHTML='<i class="live-live-dot" aria-hidden="true"></i><span>En directo</span>'; $('#liveStatusPill').style.display='grid';
@@ -1240,7 +1266,7 @@ async function activateFeedLive(id){
       const v=$('#feedLiveVideo'); if(v&&liveStream){v.srcObject=liveStream;v.muted=true;v.play().catch(()=>{});const ph=$('#feedLivePlaceholder');if(ph)ph.style.display='none';}
       return;
     }
-    await sb.rpc('join_live',{p_live:id}).catch(()=>{});
+    const joinRes=await sb.rpc('join_live',{p_live:id}); if(joinRes.error) console.warn('Nova: join_live en feed:',joinRes.error);
     await joinLiveRTC();
     await subscribeLive(id);
   }catch(e){console.warn('Feed Live:',e)}
