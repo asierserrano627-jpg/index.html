@@ -240,6 +240,19 @@ input:disabled{opacity:.5}
 .admin-input{width:100%;padding:9px 11px;border-radius:10px;background:rgba(0,0,0,.4);border:1px solid rgba(170,150,255,.35);color:#fff;font-size:13px;margin-bottom:6px}
 .admin-input::placeholder{color:#8b7bff99}
 .admin-counter{font-size:11px;color:#c4b8ff;text-align:center;padding:6px 0 0;font-weight:700}
+
+/* ---------- NOVA GALAXY STICKERS + LIVE GIFTS ---------- */
+.nv-sticker{display:inline-grid;place-items:center;width:24px;height:24px;vertical-align:-.28em;position:relative;filter:drop-shadow(0 0 5px rgba(139,123,255,.7));animation:nvPulse 2.2s ease-in-out infinite}
+.nv-sticker svg{width:100%;height:100%;overflow:visible}.nv-sticker .nv-star{animation:nvTwinkle 1.7s ease-in-out infinite}.nv-sticker .nv-star:nth-child(2){animation-delay:.35s}.nv-sticker .nv-star:nth-child(3){animation-delay:.7s}
+@keyframes nvPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}@keyframes nvTwinkle{0%,100%{opacity:.35;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+.nv-sticker.sm{width:18px;height:18px}.nv-sticker.lg{width:38px;height:38px}.streak .nv-sticker{width:20px;height:20px;margin-right:1px}.fire-particle .nv-sticker{width:18px;height:18px}
+.live-gift-fab{position:absolute;right:12px;bottom:calc(132px + env(safe-area-inset-bottom,0px));z-index:7;height:48px;padding:0 16px;border-radius:999px;background:linear-gradient(135deg,rgba(139,123,255,.9),rgba(53,208,255,.9));box-shadow:0 0 22px rgba(139,123,255,.55);display:flex;align-items:center;gap:7px;font-weight:800}
+.gift-sheet{position:absolute;left:10px;right:10px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:10;border:1px solid rgba(170,150,255,.45);border-radius:22px;background:rgba(12,10,25,.96);backdrop-filter:blur(18px);padding:14px;box-shadow:0 15px 50px rgba(0,0,0,.55);animation:giftUp .25s ease-out}
+@keyframes giftUp{from{opacity:0;transform:translateY(20px) scale(.96)}}.gift-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:rgba(139,123,255,.12);border:1px solid rgba(170,150,255,.25)}.gift-item .gift-icon{width:56px;height:56px;flex:none}.gift-item .gift-meta{flex:1}.gift-item .gift-meta b{display:block}.gift-item .gift-meta span{font-size:12px;color:#c9c1ff}.gift-legend{color:#d7ccff;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.gift-burst{position:absolute;left:50%;bottom:13%;transform:translateX(-50%);z-index:12;width:min(88vw,360px);pointer-events:none;animation:giftEnter .45s cubic-bezier(.2,.9,.2,1) both}.gift-burst video{display:block;width:100%;max-height:31vh;object-fit:contain;filter:drop-shadow(0 10px 30px rgba(139,123,255,.55));border-radius:18px}.gift-burst .gift-label{margin-top:6px;text-align:center;font-weight:900;font-size:14px;text-shadow:0 2px 10px #000;background:rgba(8,7,18,.72);border:1px solid rgba(170,150,255,.45);border-radius:999px;padding:7px 12px;backdrop-filter:blur(10px)}.gift-burst .sound-btn{position:absolute;right:8px;top:8px;border-radius:999px;padding:7px 10px;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.25);font-size:11px;font-weight:800;pointer-events:auto}.gift-burst .sound-btn.on{background:rgba(139,123,255,.75)}
+@keyframes giftEnter{0%{opacity:0;transform:translate(-50%,35%) scale(.72)}65%{opacity:1;transform:translate(-50%,-4%) scale(1.05)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
+.card.photo-card .photo-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gi.photo{background:#000}.gi.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.create-menu{position:fixed;inset:0;z-index:75;background:rgba(4,3,12,.78);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;padding:18px}.create-menu .create-box{width:min(520px,100%);background:var(--sf);border:1px solid var(--bd);border-radius:26px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.55);animation:up .25s}.create-option{width:100%;display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:rgba(139,123,255,.08);border:1px solid rgba(170,150,255,.2);margin-top:10px;text-align:left}.create-option:first-child{margin-top:4px}.create-option .co-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(139,123,255,.6),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.4),transparent 60%),#151027;box-shadow:0 0 18px rgba(139,123,255,.25)}.create-option b{display:block;font-size:16px}.create-option span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -335,7 +348,7 @@ input:disabled{opacity:.5}
   <div class="bg"></div>
   <div class="admin-head">
     <div>
-      <b>⚙️ Panel Admin</b>
+      <b>Panel Admin</b>
       <span class="video-tag" id="adminVideoTag">Sin vídeo</span>
     </div>
     <button class="admin-close" id="adminClose" aria-label="Cerrar">✕</button>
@@ -537,6 +550,7 @@ async function publishCloudVideo(file, description){
     d:res.data.description||description||'Mi vídeo',
     tags:[],t:Date.now(),src:res.data.video_url,
     f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(res.data.video_url),
     userId:res.data.user_id,
     username:res.data.username||username,
     avatarUrl:res.data.avatar_url||ME.av||null,
@@ -545,6 +559,31 @@ async function publishCloudVideo(file, description){
     adminFavorites:res.data.admin_favorites||0,
     likeCount:0,commentCount:0,saveCount:0
   };
+}
+
+async function publishCloudPhoto(file,description){
+  if(!sb) throw new Error('Supabase no está disponible.');
+  const user=await ensureSupabaseUser(); const username=await ensureSupabaseProfile(user);
+  const mime=file.type||'image/jpeg'; const ext=(mime.split('/')[1]||'jpeg').replace('jpeg','jpg');
+  const uid=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
+  const path=`${user.id}/photo_${uid}.${ext}`;
+  const upload=await sb.storage.from(VIDEO_BUCKET).upload(path,file,{contentType:mime,upsert:false}); if(upload.error)throw upload.error;
+  const {data:pub}=sb.storage.from(VIDEO_BUCKET).getPublicUrl(path); const photoUrl=pub?.publicUrl;
+  if(!photoUrl){await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});throw new Error('No se pudo obtener la URL pública de la foto.');}
+  const res=await sb.from('videos').insert({description:description||'Mi foto',video_url:photoUrl,user_id:user.id,username,avatar_url:ME.av||null,views:0,admin_likes:0,admin_favorites:0}).select('id,description,video_url,user_id,username,views,avatar_url,admin_likes,admin_favorites').single();
+  if(res.error){await sb.storage.from(VIDEO_BUCKET).remove([path]).catch(()=>{});throw res.error;}
+  return {id:String(res.data.id),d:res.data.description||description||'Mi foto',tags:[],t:Date.now(),src:res.data.video_url,f:'',txt:'',sp:1,nc:false,mu:false,remote:true,isPhoto:true,userId:res.data.user_id,username:res.data.username||username,avatarUrl:res.data.avatar_url||ME.av||null,views:res.data.views||0,adminLikes:res.data.admin_likes||0,adminFavorites:res.data.admin_favorites||0,likeCount:0,commentCount:0,saveCount:0};
+}
+function photoEditor(file){
+  document.body.classList.remove('nl'); camOff(); const u=URL.createObjectURL(file);
+  $('#m').innerHTML=`<div class="pg"><h2>Publicar foto</h2><img src="${u}" class="pv" style="object-fit:cover"><p><input id="pd" maxlength="150" placeholder="Descripción de la foto"><small id="pdCount" class="mu" style="font-size:11px">0/150</small></p><div class="chips"><button class="btn o" id="pcancel">Cancelar</button><button class="btn" id="ppub">Publicar foto</button></div></div>`;
+  $('#pd').oninput=()=>$('#pdCount').textContent=$('#pd').value.length+'/150'; $('#pcancel').onclick=()=>go('#/');
+  $('#ppub').onclick=async()=>{const b=$('#ppub');b.disabled=true;b.textContent='Publicando…';try{const v=await publishCloudPhoto(file,$('#pd').value.trim()||'Mi foto');S.meta.unshift(v);await refreshCloudFeed();toast('Foto publicada');go('#/v/'+v.id)}catch(e){console.error(e);toast('No se pudo publicar la foto: '+String(e.message||e).slice(0,80))}finally{b.disabled=false;b.textContent='Publicar foto'}};
+}
+function createMenu(){
+  document.body.classList.add('nl');
+  $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon">${ic('live',28)}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
+  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>open(true); $('#createLive').onclick=()=>go('#/live'); $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files[0];if(f)photoEditor(f)};
 }
 
 async function incrementView(videoId){
@@ -633,11 +672,14 @@ async function loadComments(videoId){
 async function postComment(videoId,content){
   const user=await ensureSupabaseUser();
   await ensureSupabaseProfile(user);
-  const {error}=await sb.from('comments').insert({video_id:String(videoId).trim(),user_id:user.id,content});
+  const uuid=String(videoId).trim();
+  const {error}=await sb.from('comments').insert({video_id:uuid,user_id:user.id,content});
   if(error)throw error;
-  const v=vid(videoId);
-  if(v)v.commentCount=(v.commentCount||0)+1;
-  refresh(videoId);
+  const {count,error:countError}=await sb.from('comments').select('id',{count:'exact',head:true}).eq('video_id',uuid);
+  if(countError)throw countError;
+  const v=vid(uuid); if(v)v.commentCount=count||0;
+  refresh(uuid);
+  return await loadComments(uuid);
 }
 async function deleteComment(commentId,videoId){
   const {error}=await sb.from('comments').delete().eq('id',commentId);
@@ -778,7 +820,7 @@ function updateStreakPill(conv){
   if(s.count>prev){
     pill.classList.remove('bump');void pill.offsetWidth;
     pill.classList.add('bump');burstFire(pill);
-    toast('¡Racha subida! 🔥 '+s.count);
+    toast('¡Racha subida! '+s.count);
   }
 }
 function burstFire(anchor){
@@ -786,7 +828,7 @@ function burstFire(anchor){
   const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
   for(let i=0;i<10;i++){
     const p=document.createElement('div');
-    p.className='fire-particle';p.textContent=i%2?'🔥':'✨';
+    p.className='fire-particle';p.innerHTML=sticker(i%2?'fire':'star','sm');
     const angle=(Math.PI*2)*(i/10),dist=40+Math.random()*40;
     p.style.left=cx+'px';p.style.top=cy+'px';
     p.style.setProperty('--tx',Math.cos(angle)*dist+'px');
@@ -798,6 +840,29 @@ function burstFire(anchor){
 }
 
 /* ---------- LIVE ---------- */
+const NOVA_GIFT_VIDEO='https://github.com/asierserrano627-jpg/index.html/raw/main/1791290625330~2.mp4';
+let giftCombo={senderId:null,count:0,lastAt:0};
+let giftPanelOpen=false;
+let giftOverlayTimer=null;
+function isLiveOwner(){return !!(currentLive&&supabaseUser&&currentLive.user_id===supabaseUser.id)}
+function openGiftPanel(){const p=$('#giftPanel');if(!p)return;p.remove();giftPanelOpen=false}
+function toggleGiftPanel(){const p=$('#giftPanel');if(p){p.remove();giftPanelOpen=false;return} if(isLiveOwner())return; const host=$('.live-stage');if(!host)return; giftPanelOpen=true; const el=document.createElement('div');el.id='giftPanel';el.className='gift-sheet';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><b>Regalos</b><div class="gift-legend">Legendario</div></div><button class="btn o" id="closeGiftPanel">Cerrar</button></div><div class="gift-item"><div class="gift-icon">${sticker('gift','lg')}</div><div class="gift-meta"><b>Pistola de Dinero Nova</b><span>100 monedas · regalo gratis</span></div><button class="btn" id="sendNovaGift">Regalar</button></div>`;host.append(el);$('#closeGiftPanel').onclick=openGiftPanel;$('#sendNovaGift').onclick=sendNovaGift}
+async function sendNovaGift(){
+  if(!currentLive||isLiveOwner())return; const me=await getMyId(); const now=Date.now();
+  giftCombo=(giftCombo.senderId===me&&now-giftCombo.lastAt<3000)?{senderId:me,count:giftCombo.count+1,lastAt:now}:{senderId:me,count:1,lastAt:now};
+  try{const {error}=await sb.rpc('send_gift',{p_live:currentLive.id,p_gift_key:'pistola_nova',p_gift_name:'Pistola de Dinero Nova',p_coins:100});if(error)throw error;openGiftPanel();toast('Regalo enviado');showNovaGift(giftCombo.count,me)}catch(e){console.error(e);toast('No se pudo enviar el regalo: '+String(e.message||e).slice(0,70))}
+}
+function showNovaGift(combo=1,senderId){
+  const host=$('.live-stage');if(!host)return; const old=$('#giftBurst');if(old)old.remove(); if(giftOverlayTimer)clearTimeout(giftOverlayTimer);
+  const wrap=document.createElement('div');wrap.id='giftBurst';wrap.className='gift-burst';wrap.innerHTML=`<video id="giftVideo" src="${NOVA_GIFT_VIDEO}" muted playsinline preload="auto"></video><button class="sound-btn" id="giftSound">Activar sonido</button><div class="gift-label">Pistola de Dinero Nova · ${100*combo} monedas${combo>1?` · COMBO x${combo}`:''}</div>`;host.append(wrap);
+  const v=$('#giftVideo');const b=$('#giftSound'); b.onclick=()=>{v.muted=false;v.volume=1;v.play().catch(()=>{});b.textContent='Sonido activado';b.classList.add('on')};
+  v.play().catch(()=>{}); giftOverlayTimer=setTimeout(()=>wrap.remove(),Math.max(3500,Math.min(5000,(v.duration&&isFinite(v.duration)?v.duration*1000:4200))));
+}
+async function subscribeLiveGifts(liveId){
+  if(!liveChannel)return;
+  liveChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'live_gifts',filter:'live_id=eq.'+liveId},payload=>{const g=payload.new;if(!g||g.gift_key!=='pistola_nova')return;const now=Date.now();const same=giftCombo.senderId===g.sender_id&&now-giftCombo.lastAt<3000;giftCombo={senderId:g.sender_id,count:same?giftCombo.count+1:1,lastAt:now};showNovaGift(giftCombo.count,g.senderId);});
+}
+
 async function loadLiveMessages(liveId){
   const box=$('#liveMessages'); if(!box)return;
   const {data,error}=await sb.from('live_messages')
@@ -840,6 +905,7 @@ async function subscribeLive(liveId){
         liveChannel.send({type:'broadcast',event:'rtc',payload:{type:'viewer-join',from:rtcClientId}});
       }
     });
+  await subscribeLiveGifts(liveId);
 }
 function getLiveVideo(){return $('#liveCam')}
 function rtcConfig(){return {iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]}}
@@ -910,12 +976,12 @@ async function startLive(){
   try{
     const user=await ensureSupabaseUser(); await ensureSupabaseProfile(user);
     await startLiveCamera();
-    const {data,error}=await sb.from('lives').insert({user_id:user.id,title:'Mi directo',status:'live'}).select().single();
+    const {data,error}=await sb.from('lives').insert({user_id:user.id,type:'live',title:'Mi directo',status:'live'}).select().single();
     if(error)throw error;
-    currentLive=data;
+    currentLive=data; giftCombo={senderId:null,count:0,lastAt:0};
     const off=$('#liveCamOff');if(off)off.style.display='none';
     $('#liveStatusPill').textContent='EN DIRECTO';
-    $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='';
+    $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display=''; const gb=$('#liveGiftBtn');if(gb)gb.style.display='none';
     await loadLiveMessages(data.id); await subscribeLive(data.id); await startLiveRTC();
     toast('Live iniciado');
   }catch(e){stopLiveCamera();cleanupRTCPeers();toast('No se pudo: '+(e.message||''))}
@@ -924,11 +990,12 @@ async function joinLive(id){
   try{
     const {data,error}=await sb.from('lives').select('*').eq('id',id).single();
     if(error)throw error;
-    currentLive=data; stopLiveCamera(); cleanupRTCPeers();
+    currentLive=data; giftCombo={senderId:null,count:0,lastAt:0}; stopLiveCamera(); cleanupRTCPeers();
+    const me=await getMyId(); await sb.rpc('join_live',{p_live:id}).catch(()=>{}); const uname=await getUsername(me); await sb.from('live_messages').insert({live_id:id,user_id:me,message:`@${uname} se unió al live`}).catch(()=>{});
     const off=$('#liveCamOff');if(off)off.style.display='grid';
     await loadLiveMessages(id); await subscribeLive(id); await joinLiveRTC();
     $('#liveStatusPill').textContent='VIENDO LIVE';
-    $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none';
+    $('#startLiveBtn').style.display='none'; $('#endLiveBtn').style.display='none'; const gb=$('#liveGiftBtn');if(gb)gb.style.display=isLiveOwner()?'none':'flex';
     toast('Conectado');
   }catch(e){toast('No se pudo: '+(e.message||''))}
 }
@@ -938,7 +1005,7 @@ async function endLive(){
     const {error}=await sb.from('lives').update({status:'ended',ended_at:new Date().toISOString()}).eq('id',currentLive.id);
     if(error)throw error;
     if(liveChannel){await sb.removeChannel(liveChannel);liveChannel=null}
-    currentLive=null; cleanupRTCPeers(); stopLiveCamera();
+    currentLive=null; giftCombo={senderId:null,count:0,lastAt:0}; openGiftPanel(); cleanupRTCPeers(); stopLiveCamera();
     $('#liveStatusPill').textContent='LIVE'; $('#startLiveBtn').style.display=''; $('#endLiveBtn').style.display='none';
     toast('Live terminado'); livePage();
   }catch(e){toast('No se pudo terminar')}
@@ -956,6 +1023,7 @@ async function livePage(){
       <div class="live-actions"><span class="live-pill" id="liveStatusPill">LIVE</span><button class="live-pill" id="openLiveList" type="button">Lives</button></div>
     </div>
     <div class="live-chat"><div id="liveMessages" class="live-msgs"><div class="live-msg"><span class="av" style="width:28px;height:28px;font-size:12px">N</span><div class="live-msg-body"><div class="live-msg-user">@Nova</div><div class="live-msg-text">Los mensajes aparecerán aquí</div></div></div></div></div>
+    <button class="live-gift-fab" id="liveGiftBtn" style="display:none">${sticker('gift')} Regalar</button>
     <div class="live-compose"><input id="liveInput" maxlength="300" placeholder="Añade un comentario…"><button class="btn" id="sendLiveBtn">Enviar</button></div>
     <div class="live-list" id="liveListPanel"><div style="display:flex;justify-content:space-between;align-items:center"><b>Lives activos</b><button class="btn o" id="closeLiveList">Cerrar</button></div><div id="liveList" style="margin-top:10px"><p class="mu">Cargando…</p></div></div>
     <div style="position:absolute;left:12px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:8px"><button class="btn" id="startLiveBtn">Iniciar Live</button><button class="btn o" id="endLiveBtn" style="display:none">Terminar</button></div>
@@ -966,6 +1034,7 @@ async function livePage(){
   $('#liveInput').onkeydown=e=>{if(e.key==='Enter')sendLiveMessage()};
   $('#closeLiveList').onclick=()=>$('#liveListPanel').classList.remove('on');
   $('#openLiveList').onclick=()=>$('#liveListPanel').classList.add('on');
+  $('#liveGiftBtn').onclick=toggleGiftPanel;
   await refreshLiveList();
   const v=$('#liveCam'); if(v)v.srcObject=liveStream||null;
 }
@@ -1010,7 +1079,12 @@ const vid=id=>S.meta.find(v=>String(v.id)==String(id));
 function theme(){const r=document.documentElement;S.theme=='auto'?r.removeAttribute('data-theme'):r.dataset.theme=S.theme}
 function toast(t){const e=document.createElement('div');e.className='tt';e.setAttribute('role','status');e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),2000)}
 const go=h=>{H=h;try{history.replaceState(null,'',h)}catch(e){}route()};
-const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi" href="#/v/${v.id}"><video src="${esc(v.src)}" muted playsinline preload="metadata"></video>${v.views>0?`<span class="vws">👁 ${v.views}</span>`:''}<span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
+const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi ${v.isPhoto?'photo':''}" href="#/v/${v.id}">${v.isPhoto?`<img src="${esc(v.src)}" alt="">`:`<video src="${esc(v.src)}" muted playsinline preload="metadata"></video>`}${v.views>0?`<span class="vws">${sticker('eye','sm')} ${v.views}</span>`:''}<span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
+
+function sticker(type,size=''){
+ const paths={fire:'M12 2c1.8 3.3-.2 5.2 2.4 7.1 1.3 1 2.1 2.4 2.1 4.1 0 3.1-2.3 5.4-5.4 5.4S5.6 16.3 5.6 13c0-2.5 1.6-4.5 3.5-6.2-.1 2.2.8 3.1 1.8 3.7.2-2.8.5-5.1 1.1-8.5Z',coin:'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z',mission:'M6 4h12v16H6zM9 8h6M9 12h6M9 16h4',store:'M4 9h16v11H4zM3 9l2-5h14l2 5M8 9v3M16 9v3',heart:'M12 20.5C5 15.5 3 12 3 8.8A4.8 4.8 0 0 1 12 6.5a4.8 4.8 0 0 1 9 2.3c0 3.2-2 6.7-9 11.7Z',eye:'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Zm10-3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',gift:'M4 8h16v12H4zM3 8h18v4H3zM12 8v12M8.5 8C6 8 5 6.5 5 5s1.5-2 3-2c2 0 4 3 4 5M15.5 8c2.5 0 3.5-1.5 3.5-3s-1.5-2-3-2c-2 0-4 3-4 5',chat:'M4 5.5h16v10.5H10l-4.5 3.5V16H4z',star:'M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z'};
+ const p=paths[type]||paths.star; return `<span class="nv-sticker ${size||''}" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="url(#nvGrad)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="nvGrad" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#8b7bff"/><stop offset=".55" stop-color="#35d0ff"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path d="${p}"/><path class="nv-star" d="M4 3.5v2M3 4.5h2M20 18v2M19 19h2" stroke="#fff"/></svg></span>`;
+}
 
 const rail=v=>{
   const lk=v.likeCount??(S.liked[v.id]?1:0);
@@ -1031,11 +1105,12 @@ const safeFilter=f=>SAFE_FILTERS.has(f||'')?(f||''):'';
 
 const slide=v=>{
   const authorName=v.username||'usuario';
+  const mediaHtml=v.isPhoto?`<img src="${esc(v.src)}" alt="" class="photo-media">`:`<video src="${esc(v.src)}" loop playsinline ${S.muted?'muted':''} style="${esc(safeFilter(v.f))}"></video>`;
   const authorAvatar=avt(30,authorName,v.avatarUrl);
   const isMine=v.userId&&supabaseUser&&v.userId===supabaseUser.id;
   const profileHref=v.userId?`#/u/${esc(v.userId)}`:'#/';
-  const viewsHtml=v.views>0?`<span style="font-size:11px;color:#cfe8ff;opacity:.8">👁 ${v.views}</span>`:'';
-  return `<section class="v"><div class="card" data-id="${v.id}" data-uid="${esc(v.userId||'')}" data-uname="${esc(authorName)}"><video src="${esc(v.src)}" loop playsinline ${S.muted?'muted':''} style="${esc(safeFilter(v.f))}"></video><div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><a href="${profileHref}" style="display:flex;align-items:center;gap:8px">${authorAvatar}<b>@${esc(authorName)}</b>${isMine?'<span class="mu" style="font-size:11px">· tú</span>':''}${viewsHtml}</a><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
+  const viewsHtml=v.views>0?`<span style="font-size:11px;color:#cfe8ff;opacity:.8">${sticker('eye','sm')} ${v.views}</span>`:'';
+  return `<section class="v"><div class="card ${v.isPhoto?'photo-card':''}" data-id="${v.id}" data-uid="${esc(v.userId||'')}" data-uname="${esc(authorName)}">${mediaHtml}<div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><a href="${profileHref}" style="display:flex;align-items:center;gap:8px">${authorAvatar}<b>@${esc(authorName)}</b>${isMine?'<span class="mu" style="font-size:11px">· tú</span>':''}${viewsHtml}</a><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
 };
 
 function feed(first){
@@ -1113,6 +1188,7 @@ async function profile(){
   const myVideos=(mine||[]).map(v=>({
     id:String(v.id),d:v.description||'Mi vídeo',tags:[],t:0,src:v.video_url,
     f:'',txt:'',sp:1,nc:false,mu:false,remote:true,
+    isPhoto:/\.(?:jpe?g|png|webp|gif)(?:$|[?#])/i.test(res.data.video_url),
     userId:v.user_id,username:v.username||ME.u,
     avatarUrl:v.avatar_url||ME.av||null,
     views:v.views||0,
@@ -1239,13 +1315,13 @@ function openSettings(){
 /* ---------- ADMIN PANEL ---------- */
 const BOT_NAMES=['carlos_92','maria.x','javito','luciaG','dani_rm','sofi_99','alex7','pedri_fan','nuria_v','manu.g','lorena.c','iker_boy','irene.r','pablo_23','raquel.x','ruben_g','cris.m','sara_love','juanma','nerea_4'];
 const BOT_RESPONSES={
-  guapo:['¡Está increíble! 🔥','Uff, qué guapo 🔥🔥','Totalmente de acuerdo 😍','Sí, sí, sí 🔥','Menudo nivel 👏','Está brutal hermano'],
+  guapo:['¡Está increíble!','Uff, qué guapo','Totalmente de acuerdo','Sí, sí, sí','Menudo nivel','Está brutal'],
   feo:['No es para tanto 😅','Bueno, para gustos colores','Yo no lo veo así','Hay mejores, la verdad'],
-  increible:['¡Sí! Impresionante ✨','Nunca vi algo así 😱','Qué locura 🔥🔥🔥'],
-  bueno:['Está muy bien 👌','Buen trabajo 💪','Sigue así 🔥'],
+  increible:['¡Sí! Impresionante','Nunca vi algo así','Qué locura'],
+  bueno:['Está muy bien 👌','Buen trabajo','Sigue así'],
   malo:['No me convence mucho 🤔','Podría estar mejor','Le falta algo…'],
-  gracioso:['JAJAJAJA 😂😂','Me muero de risa 🤣','Qué bueno 😂'],
-  default:['¡Qué bueno! 🔥','Me encanta ❤️','Uff 🔥','Brutal ✨','Está genial 👏','Muy top 💯']
+  gracioso:['JAJAJAJA','Me muero de risa','Qué bueno'],
+  default:['¡Qué bueno!','Me encanta','Uff','Brutal','Está genial','Muy top']
 };
 function botReplyFor(text){
   const t=text.toLowerCase();
@@ -1348,10 +1424,10 @@ async function messagesPage(){
   const list=await loadConversationList();
   const rows=list.map(c=>{
     const streak=computeStreakDisplay(c);
-    const badge=streak.count>0?`<span class="streak ${streak.active?streakLevel(streak.count).cls:'off'}" style="font-size:11px"><span class="fire">🔥</span>${streak.count}</span>`:'';
+    const badge=streak.count>0?`<span class="streak ${streak.active?streakLevel(streak.count).cls:'off'}" style="font-size:11px">${sticker('fire')}${streak.count}</span>`:'';
     return `<div class="conv" data-conv="${c.id}">${avt(48,c.otherUsername,c.otherAvatar)}<div class="meta"><b>${esc(c.otherDisplay)} ${badge}</b><div class="last">${esc(c.lastMsg||'Sin mensajes todavía')}</div></div></div>`;
   }).join('');
-  $('#m').innerHTML=`<div class="pg"><h2>Chats</h2><p class="mu">Los chats son privados. Si ambos escribís cada día, la racha 🔥 sube.</p>${list.length?`<div class="conv-list">${rows}</div>`:'<div class="em"><b>'+ic('chat',44)+'</b>No tienes chats todavía.</div>'}</div>`;
+  $('#m').innerHTML=`<div class="pg"><h2>Chats</h2><p class="mu">Los chats son privados. Si ambos escribís cada día, la racha sube.</p>${list.length?`<div class="conv-list">${rows}</div>`:'<div class="em"><b>'+ic('chat',44)+'</b>No tienes chats todavía.</div>'}</div>`;
   document.querySelectorAll('.conv').forEach(el=>el.onclick=()=>go('#/c/'+el.dataset.conv));
 }
 async function chatPage(convId){
@@ -1369,7 +1445,7 @@ async function chatPage(convId){
       <button class="back" id="chatBack">${ic('back',22)}</button>
       ${avt(38,prof?.username,prof?.avatar_url)}
       <div class="who"><b>${esc(prof?.display_name||prof?.username||'usuario')}</b><div class="mu">@${esc(prof?.username||'usuario')}</div></div>
-      <span id="streakPill" class="streak off"><span class="fire">🔥</span><span id="streakNum">0</span></span>
+      <span id="streakPill" class="streak off">${sticker('fire')}<span id="streakNum">0</span></span>
     </div>
     <div class="chatbody" id="chatBody"></div>
     <div class="chatfoot"><textarea id="chatInput" rows="1" placeholder="Mensaje…" maxlength="2000"></textarea><button id="chatSend">${ic('send',20,1)}</button></div>
@@ -1446,7 +1522,7 @@ async function subscribeNotifications(){
   notifChannel=sb.channel('nova-notifs-'+me)
     .on('postgres_changes',{event:'INSERT',schema:'public',table:'notifications',filter:'user_id=eq.'+me},payload=>{
       const n=payload.new;
-      if(n.type==='message'&&String(n.target_id)!==String(currentChat.convId))toast('💬 Nuevo mensaje');
+      if(n.type==='message'&&String(n.target_id)!==String(currentChat.convId))toast('Nuevo mensaje');
       refreshNotifBadge();
     })
     .subscribe(s=>console.log('Notif Realtime:',s));
@@ -1687,7 +1763,7 @@ function route(){
   if(r!=='c'){if(chatChannel){sb&&sb.removeChannel(chatChannel);chatChannel=null}currentChat={convId:null,otherUser:null,otherUsername:null}}
   document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.r==(r=='v'||r=='t'||r=='u'||r=='c'?'':r)));
   try{
-    (({'':()=>feed(),v:()=>feed(p),discover,create:()=>open(true),profile,activity:activityPage,hist:history2,t:()=>tagPage(p),live:livePage,u:()=>publicProfile(p),messages:messagesPage,c:()=>chatPage(p)})[r]||(()=>feed()))();
+    (({'':()=>feed(),v:()=>feed(p),discover,create:createMenu,profile,activity:activityPage,hist:history2,t:()=>tagPage(p),live:livePage,u:()=>publicProfile(p),messages:messagesPage,c:()=>chatPage(p)})[r]||(()=>feed()))();
   }catch(e){
     console.error(e);
     $('#m').innerHTML='<div class="em">Ups, algo salió mal.<br><br><a class="btn" href="#/">Volver</a></div>';
@@ -1700,7 +1776,7 @@ function welcome(){
   const ov=document.getElementById('nova-loading'); ov&&ov.remove();
   $('#m').innerHTML=`<div class="wl"><div class="wc">
     <span class="logo">Nova</span>
-    <p style="font-size:19px;opacity:.85">Creado por Asier, Ari y Adán. Disfrútalo 🔥</p>
+    <p style="font-size:19px;opacity:.85">Creado por Asier, Ari y Adán. Disfrútalo</p>
     <div class="gl" id="wf">
       <button type="button" id="googleBtn" class="google-btn">
         <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M21.35 12.27c0-.68-.06-1.35-.18-1.98H12v3.75h5.24a4.47 4.47 0 0 1-1.94 2.93v2.43h3.14c1.84-1.69 2.91-4.18 2.91-7.13z"/><path fill="#34A853" d="M12 21.7c2.62 0 4.82-.87 6.43-2.36l-3.14-2.43c-.87.58-1.98.93-3.29.93-2.53 0-4.68-1.71-5.45-4.01H3.3v2.5A9.72 9.72 0 0 0 12 21.7z"/><path fill="#FBBC05" d="M6.55 13.83A5.84 5.84 0 0 1 6.24 12c0-.64.11-1.26.31-1.83V7.67H3.3A9.7 9.7 0 0 0 2.27 12c0 1.56.37 3.03 1.03 4.33l3.25-2.5z"/><path fill="#EA4335" d="M12 6.16c1.43 0 2.71.49 3.72 1.45l2.79-2.79C16.81 3.25 14.62 2.3 12 2.3a9.72 9.72 0 0 0-8.7 5.37l3.25 2.5c.77-2.3 2.92-4.01 5.45-4.01z"/></svg>
