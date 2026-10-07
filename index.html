@@ -2193,12 +2193,27 @@ function templateEditor(file,tpl){
 async function openDuet(videoId){
   const v=vid(videoId);if(!v)return;
   document.body.classList.add('nl');
-  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" src="${esc(v.src)}" autoplay muted loop playsinline></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div><p id="duetStatus" class="mu" style="margin-top:8px;font-size:12px">Pulsa Grabar para activar la cámara y comenzar.</p></div></div>`;
+  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" autoplay muted loop playsinline crossorigin="anonymous"></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div><p id="duetStatus" class="mu" style="margin-top:8px;font-size:12px">Pulsa Grabar para activar la cámara y comenzar.</p></div></div>`;
   $('#duetClose').onclick=()=>go('#/');
   let stream=null,rec=null,chunks=[],raf=0,recording=false,canvas=null,ctx=null;
   const original=$('#duetOriginal'),me=$('#duetMe'),btn=$('#duetRec'),status=$('#duetStatus');
-  try{await original.play().catch(()=>{});}catch(e){}
-  const stopAll=()=>{if(raf)cancelAnimationFrame(raf);raf=0;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;me.srcObject=null};
+  let originalObjectUrl='';
+  try{
+    original.crossOrigin='anonymous';
+    const response=await fetch(v.src,{mode:'cors',credentials:'omit'});
+    if(!response.ok)throw new Error('No se pudo cargar el vídeo original del dueto.');
+    const blob=await response.blob();
+    originalObjectUrl=URL.createObjectURL(blob);
+    original.src=originalObjectUrl;
+    await new Promise((resolve,reject)=>{original.onloadeddata=resolve;original.onerror=()=>reject(new Error('El vídeo original no permite grabar el dueto.'))});
+    await original.play().catch(()=>{});
+  }catch(e){
+    status.textContent='Este vídeo no permite crear el dueto porque el servidor bloquea la composición.';
+    btn.disabled=true;
+    console.error('Dueto CORS:',e);
+    toast('Este vídeo no permite grabar un dueto');
+  }
+  const stopAll=()=>{if(raf)cancelAnimationFrame(raf);raf=0;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;me.srcObject=null;if(originalObjectUrl){URL.revokeObjectURL(originalObjectUrl);originalObjectUrl=''}};
   const draw=()=>{
     if(!canvas||!ctx)return;
     ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);
