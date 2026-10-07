@@ -260,6 +260,13 @@ input:disabled{opacity:.5}
 
 /* ===== NOVA EXTRA FEATURES ===== */
 .duet-sheet,.template-sheet{position:fixed;inset:0;z-index:120;background:rgba(4,5,12,.82);backdrop-filter:blur(18px);display:grid;place-items:center;padding:18px}.feature-box{width:min(560px,94vw);max-height:90vh;overflow:auto;background:var(--bg2,#11131d);border:1px solid var(--bd);border-radius:24px;padding:20px;box-shadow:0 20px 80px #0008}.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.feature-card{border:1px solid var(--bd);border-radius:18px;padding:14px;background:linear-gradient(145deg,#15182a,#0d0f18);cursor:pointer}.feature-card:hover{border-color:#8b7bff}.duet-stage{position:relative;display:grid;grid-template-columns:1fr 1fr;height:min(62vh,600px);background:#000;border-radius:20px;overflow:hidden}.duet-stage video{width:100%;height:100%;object-fit:cover;background:#000}.duet-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:3;padding:6px 12px;border-radius:999px;background:#0009;color:#fff;font-weight:800}.neon-avatar{box-shadow:0 0 0 3px #fff,0 0 12px #8b7bff,0 0 28px #35d0ff,0 0 48px #ff4fd8;animation:nvNeonPulse 2.2s ease-in-out infinite}@keyframes nvNeonPulse{50%{filter:hue-rotate(90deg);box-shadow:0 0 0 3px #fff,0 0 18px #ff4fd8,0 0 38px #8b7bff,0 0 58px #35d0ff}}.combo-pop{position:absolute;right:18px;bottom:28%;z-index:60;font-size:34px;font-weight:1000;font-style:italic;color:#fff;text-shadow:0 0 14px #8b7bff,0 4px 14px #000;animation:comboPop .7s cubic-bezier(.2,1.5,.3,1) both;pointer-events:none}@keyframes comboPop{0%{opacity:0;transform:scale(.2) rotate(-12deg)}45%{opacity:1;transform:scale(1.3) rotate(5deg)}100%{opacity:0;transform:scale(1) translateY(-30px)}}.live-poll{position:absolute;left:14px;right:14px;bottom:92px;z-index:45;background:#111c;border:1px solid #fff3;border-radius:18px;padding:12px;backdrop-filter:blur(12px)}.poll-opt{width:100%;margin-top:7px;padding:10px;border-radius:12px;border:1px solid #fff2;background:#fff1;color:#fff;text-align:left}.poll-opt b{float:right}.mod-badge{font-size:10px;padding:3px 7px;border-radius:999px;background:linear-gradient(90deg,#8b7bff,#35d0ff);color:#05060a;font-weight:900}.comment-reply-video{margin-top:8px}.feature-btn{font-size:12px!important;padding:7px 10px!important}
+
+/* ---------- DEVICE: solo móvil / escritorio ---------- */
+body.nova-device-mobile .duet-stage,body.nova-device-desktop .duet-stage{grid-template-columns:1fr 1fr!important}
+.nova-dog-overlay{position:fixed;inset:0;z-index:100500;background:rgba(2,1,10,.94);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;padding:10px}
+.nova-dog-panel{width:min(520px,100%);max-height:96vh;overflow:auto;border:1px solid #795cff88;border-radius:24px;background:radial-gradient(circle at 50% 0,#24105d,#08051b 58%,#02030b);box-shadow:0 0 60px #704cff44;color:#fff;padding:12px}
+.nova-dog-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}.nova-dog-head b{font-size:18px}.nova-dog-stage{position:relative;width:100%;max-width:420px;margin:auto;user-select:none}.nova-dog-stage select{position:absolute;top:8px;left:8px;z-index:3;padding:7px 9px;border-radius:8px;background:#fff;color:#111;border:0}.nova-dog-stage svg{width:100%;display:block;cursor:pointer}
+#novaDog{--c1:#e9b56a;--c2:#b07330;--c3:#f7dcae;--ear:#a5652a}#novaDog #dogBody{animation:novaDogBreathe 3s ease-in-out infinite}#novaDog #dogTail{animation:novaDogWag .6s ease-in-out infinite alternate;transform-origin:285px 270px}#novaDog #dogTag{animation:novaDogSwing 2s ease-in-out infinite alternate;transform-origin:200px 232px}#novaDog #dogTongue{animation:novaDogPant .35s ease-in-out infinite alternate;transform-origin:200px 198px}#novaDog.sleep #dogTongue{display:none}#novaDog.sleep #dogTail{animation-duration:3s}#novaDog.happy #dogTail{animation-duration:.15s}@keyframes novaDogBreathe{50%{transform:scaleY(1.03)}}@keyframes novaDogWag{from{transform:rotate(-12deg)}to{transform:rotate(18deg)}}@keyframes novaDogSwing{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}@keyframes novaDogPant{to{transform:scaleY(1.15)}}@keyframes novaDogFloat{to{transform:translateY(-80px);opacity:0}}#novaDog .nova-dog-fx{animation:novaDogFloat 1.6s ease-out forwards}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -1567,6 +1574,10 @@ function openSettings(){
       <h4 class="sec-t">Cuenta</h4>
       <div class="chips" style="margin-top:6px"><button class="btn o" data-a="bio">Editar perfil</button><button class="btn o" data-a="out">Cerrar sesión</button></div>
     </div>
+    <div class="settings-group">
+      <h4 class="sec-t">Mascota</h4>
+      <div class="settings-row"><div style="flex:1"><b style="display:block;font-size:14px">Perro SVG interactivo</b><span class="mu" style="font-size:12px">Golden, Husky, Dálmata, Carlino o Border Collie.</span></div><button class="btn o" id="openNovaDog">Abrir</button></div>
+    </div>
     <div class="settings-group" style="border-top:1px solid var(--bd);padding-top:14px;margin-top:14px">
       <h4 class="sec-t">Avanzado</h4>
       <div class="settings-row toggle-row">
@@ -1593,6 +1604,7 @@ function openSettings(){
     toast(adminEnabled?'Panel admin activado':'Panel admin desactivado');
   };
   const stVib=$('#stVib');if(stVib)stVib.onchange=()=>toast(stVib.checked?'Vibración ON':'Vibración OFF');
+  const openDog=$('#openNovaDog');if(openDog)openDog.onclick=openNovaDogStudio;
 }
 
 /* ---------- ADMIN PANEL ---------- */
@@ -2218,8 +2230,9 @@ async function openDuet(videoId){
     if(!canvas||!ctx)return;
     ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);
     const w=canvas.width/2;
-    const fit=(el,x)=>{const vw=el.videoWidth||360,vh=el.videoHeight||640,sc=Math.max(w/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.drawImage(el,x+(w-dw)/2,(canvas.height-dh)/2,dw,dh)};
-    fit(original,0);fit(me,w);raf=requestAnimationFrame(draw);
+    const w2=canvas.width-w;
+    const fit=(el,x,cw)=>{const vw=el.videoWidth||360,vh=el.videoHeight||640,sc=Math.max(cw/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.drawImage(el,x+(cw-dw)/2,(canvas.height-dh)/2,dw,dh)};
+    fit(original,0,w);fit(me,w,w2);raf=requestAnimationFrame(draw);
   };
   const startRecording=async()=>{
     if(recording)return;
@@ -2317,5 +2330,34 @@ function manageLiveMods(){const current=JSON.parse(localStorage.getItem('nova_mo
     else welcome();
   }finally{setTimeout(hideLoading,300)}
 })();
+
+/* ---------- DETECCIÓN SIMPLE: solo móvil o escritorio ---------- */
+function novaDetectDevice(){
+  const mobile=window.matchMedia('(pointer:coarse)').matches && Math.min(window.innerWidth,window.innerHeight)<=900;
+  document.body.classList.toggle('nova-device-mobile',mobile);document.body.classList.toggle('nova-device-desktop',!mobile);
+}
+window.addEventListener('resize',novaDetectDevice,{passive:true});window.addEventListener('orientationchange',novaDetectDevice,{passive:true});setTimeout(novaDetectDevice,0);
+
+/* ---------- PERRO SVG INTERACTIVO ---------- */
+function openNovaDogStudio(){
+  const old=document.querySelector('.nova-dog-overlay');if(old)old.remove();
+  const overlay=document.createElement('div');overlay.className='nova-dog-overlay';
+  overlay.innerHTML=`<div class="nova-dog-panel"><div class="nova-dog-head"><div><b>Perro Nova</b><div class="mu">SVG interactivo · toca al perro para hacerlo feliz</div></div><button class="btn o" id="closeNovaDog">Cerrar</button></div><div id="novaDogStage" class="nova-dog-stage"><select id="novaDogBreed"><option value="golden">Golden</option><option value="husky">Husky</option><option value="dalmata">Dálmata</option><option value="carlino">Carlino</option><option value="border">Border Collie</option></select>
+<svg id="novaDog" viewBox="0 0 400 400"><defs><filter id="novaFur" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="4" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" result="d"/><feColorMatrix in="n" type="saturate" values="0" result="g"/><feComposite in="g" in2="d" operator="in" result="t"/><feBlend in="d" in2="t" mode="multiply"/></filter><radialGradient id="novaGBody" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="var(--c1)"/><stop offset="1" stop-color="var(--c2)"/></radialGradient><radialGradient id="novaGBelly" cx="50%" cy="40%" r="60%"><stop offset="0" stop-color="var(--c3)"/><stop offset="1" stop-color="var(--c1)"/></radialGradient><radialGradient id="novaGEye" cx="40%" cy="40%" r="60%"><stop offset="0" stop-color="#8a5a2b"/><stop offset=".7" stop-color="#3b220d"/><stop offset="1" stop-color="#120800"/></radialGradient><radialGradient id="novaGNose" cx="35%" cy="30%" r="70%"><stop offset="0" stop-color="#555"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient><linearGradient id="novaGTag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2a8"/><stop offset=".5" stop-color="#d4a017"/><stop offset="1" stop-color="#8a6508"/></linearGradient></defs>
+<ellipse cx="200" cy="370" rx="120" ry="14" fill="#000" opacity=".25"/><g id="novaPrints"></g><g id="dogTail"><path d="M285 270 Q350 230 340 170 Q335 150 325 165 Q330 225 278 255Z" fill="url(#novaGBody)" filter="url(#novaFur)"/></g><g id="dogBody"><ellipse cx="200" cy="280" rx="95" ry="70" fill="url(#novaGBody)" filter="url(#novaFur)"/><ellipse cx="190" cy="295" rx="50" ry="48" fill="url(#novaGBelly)" filter="url(#novaFur)"/><g id="novaSpots"></g><g fill="url(#novaGBody)" filter="url(#novaFur)"><rect x="135" y="300" width="38" height="68" rx="18"/><rect x="215" y="300" width="38" height="68" rx="18"/></g><g fill="#e8a0a8"><ellipse cx="154" cy="362" rx="11" ry="5"/><ellipse cx="234" cy="362" rx="11" ry="5"/></g></g>
+<g id="dogHead"><g id="dogEarL"><path d="M145 105 Q95 110 100 190 Q120 200 140 160Z" fill="var(--ear)" filter="url(#novaFur)"/></g><g id="dogEarR"><path d="M255 105 Q305 110 300 190 Q280 200 260 160Z" fill="var(--ear)" filter="url(#novaFur)"/></g><ellipse cx="200" cy="150" rx="70" ry="65" fill="url(#novaGBody)" filter="url(#novaFur)"/><path id="novaMask" d="" fill="#fff" opacity=".95" filter="url(#novaFur)"/><ellipse cx="200" cy="185" rx="42" ry="32" fill="url(#novaGBelly)" filter="url(#novaFur)"/><g><g transform="translate(172 140)"><ellipse rx="13" ry="14" fill="#fff"/><g class="novaIris"><circle r="9" fill="url(#novaGEye)"/><circle r="4.5" fill="#000"/><circle cx="-3" cy="-4" r="2.6" fill="#fff"/></g><rect class="novaLid" x="-15" y="-16" width="30" height="0" fill="var(--c2)"/></g><g transform="translate(228 140)"><ellipse rx="13" ry="14" fill="#fff"/><g class="novaIris"><circle r="9" fill="url(#novaGEye)"/><circle r="4.5" fill="#000"/><circle cx="-3" cy="-4" r="2.6" fill="#fff"/></g><rect class="novaLid" x="-15" y="-16" width="30" height="0" fill="var(--c2)"/></g></g><path d="M186 168 Q200 160 214 168 Q212 182 200 184 Q188 182 186 168Z" fill="url(#novaGNose)"/><path d="M200 184 V194 M200 194 Q188 204 178 196 M200 194 Q212 204 222 196" stroke="#2a1a10" stroke-width="2.5" fill="none"/><g id="dogTongue"><path d="M190 198 Q188 225 200 228 Q212 225 210 198Z" fill="#e85a74"/><line x1="200" y1="202" x2="200" y2="222" stroke="#b83a55" stroke-width="2"/></g><path d="M140 205 Q200 235 260 205 L262 218 Q200 250 138 218Z" fill="#c0392b"/><g id="dogTag"><circle cx="200" cy="232" r="3" fill="none" stroke="#999" stroke-width="2"/><circle cx="200" cy="248" r="13" fill="url(#novaGTag)" stroke="#7a5a05"/><text x="200" y="252" font-size="9" text-anchor="middle" font-family="sans-serif" font-weight="bold" fill="#5a4000">Nova</text></g></g><g id="novaFx"></g></svg></div></div>`;
+  document.body.appendChild(overlay);
+  const svg=overlay.querySelector('#novaDog'),$=s=>svg.querySelector(s);let sleeping=false,idle,lastPrint=0,ac;
+  const breeds={golden:{c1:'#e9b56a',c2:'#b07330',c3:'#f7dcae',ear:'#a5652a'},husky:{c1:'#8d949c',c2:'#4a5058',c3:'#fff',ear:'#3d4248',mask:true},dalmata:{c1:'#fff',c2:'#d9d9d9',c3:'#fff',ear:'#222',spots:'#111'},carlino:{c1:'#e6cfa3',c2:'#b89b6a',c3:'#f3e3c4',ear:'#2b2016'},border:{c1:'#2a2a2a',c2:'#0d0d0d',c3:'#fff',ear:'#111',mask:true}};
+  function setBreed(b){const p=breeds[b];['c1','c2','c3','ear'].forEach(k=>svg.style.setProperty('--'+k,p[k]));$('#novaMask').setAttribute('d',p.mask?'M200 95 Q185 140 160 165 Q200 215 240 165 Q215 140 200 95Z':'');const sp=$('#novaSpots');sp.innerHTML='';if(p.spots)for(let i=0;i<22;i++){const c=document.createElementNS('http://www.w3.org/2000/svg','ellipse');c.setAttribute('cx',120+Math.random()*160);c.setAttribute('cy',230+Math.random()*100);c.setAttribute('rx',4+Math.random()*7);c.setAttribute('ry',4+Math.random()*6);c.setAttribute('fill',p.spots);sp.appendChild(c)}}
+  overlay.querySelector('#novaDogBreed').onchange=e=>setBreed(e.target.value);setBreed('golden');
+  const pt=e=>{const r=svg.getBoundingClientRect(),t=e.touches?.[0]||e;return{x:(t.clientX-r.left)/r.width*400,y:(t.clientY-r.top)/r.height*400}};
+  const blink=h=>svg.querySelectorAll('.novaLid').forEach(l=>l.setAttribute('height',h));const wake=()=>{if(sleeping){sleeping=false;svg.classList.remove('sleep');blink(0)}clearTimeout(idle);idle=setTimeout(()=>{sleeping=true;svg.classList.add('sleep');blink(28)},15000)};
+  svg.addEventListener('pointermove',e=>{const p=pt(e);wake();svg.querySelectorAll('.novaIris').forEach((ir,i)=>{const cx=i?228:172,a=Math.atan2(p.y-140,p.x-cx),d=Math.min(4,Math.hypot(p.x-cx,p.y-140)/30);ir.setAttribute('transform',`translate(${Math.cos(a)*d} ${Math.sin(a)*d})`)});if(Date.now()-lastPrint>350&&p.y>330&&p.y<400){lastPrint=Date.now();const g=document.createElementNS('http://www.w3.org/2000/svg','g');g.innerHTML='<ellipse cx="0" cy="4" rx="5" ry="4"/><circle cx="-5" cy="-3" r="2"/><circle cx="0" cy="-5" r="2"/><circle cx="5" cy="-3" r="2"/>';g.setAttribute('transform',`translate(${p.x} ${p.y})`);g.setAttribute('fill','#0003');$('#novaPrints').appendChild(g);setTimeout(()=>g.remove(),3000)}});
+  setInterval(()=>{if(!sleeping){blink(28);setTimeout(()=>blink(0),140)}},3500);setInterval(()=>{const ear=$(Math.random()<.5?'#dogEarL':'#dogEarR');ear.style.transition='transform .2s';ear.style.transform=`rotate(${Math.random()<.5?-10:10}deg)`;setTimeout(()=>ear.style.transform='',250)},4000);
+  function fx(txt,x,y){const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.textContent=txt;t.setAttribute('x',x);t.setAttribute('y',y);t.setAttribute('font-size',26);t.setAttribute('class','nova-dog-fx');$('#novaFx').appendChild(t);setTimeout(()=>t.remove(),1600)}
+  function bark(){try{ac=ac||(window.AudioContext?new AudioContext():new webkitAudioContext());const o=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();o.type='sawtooth';f.type='bandpass';f.frequency.value=900;o.frequency.setValueAtTime(520,ac.currentTime);o.frequency.exponentialRampToValueAtTime(180,ac.currentTime+.18);g.gain.setValueAtTime(.5,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.22);o.connect(f).connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime+.25)}catch(e){}const h=$('#dogHead');h.style.transition='transform .1s';h.style.transform='translateY(-6px) rotate(-3deg)';setTimeout(()=>h.style.transform='',150)}
+  svg.addEventListener('click',e=>{const p=pt(e);bark();svg.classList.add('happy');setTimeout(()=>svg.classList.remove('happy'),1500);for(let i=0;i<4;i++)setTimeout(()=>fx('♥',p.x-15+Math.random()*30,p.y),i*120)});overlay.querySelector('#closeNovaDog').onclick=()=>{clearTimeout(idle);overlay.remove()};wake();
+}
 </script>
 </body></html>
