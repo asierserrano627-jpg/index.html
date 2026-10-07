@@ -283,6 +283,20 @@ body.nova-device-mobile .duet-stage,body.nova-device-desktop .duet-stage{grid-te
 .nvfitting{position:fixed;inset:0;z-index:99999;background:radial-gradient(circle at 50% 25%,rgba(139,123,255,.18),transparent 40%),rgba(3,3,10,.97);display:flex;flex-direction:column}.nvfitting-head{height:64px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.1);background:rgba(8,8,18,.78);backdrop-filter:blur(18px)}.nvfitting-title{font-weight:1000;font-size:17px}.nvfitting-stage{position:relative;flex:1;display:grid;place-items:center;overflow:hidden}.nvfitting-room{width:min(94vw,520px);height:min(76vh,610px);position:relative;display:grid;place-items:end center;padding-bottom:32px;background:linear-gradient(90deg,#11131e 0 8%,#24263a 8% 12%,#161827 12% 88%,#24263a 88% 92%,#11131e 92%);border:1px solid rgba(255,255,255,.1);box-shadow:inset 0 0 80px #0008,0 25px 70px #0008;border-radius:18px 18px 8px 8px}.nvfitting-room:before{content:"";position:absolute;left:8%;right:8%;top:7%;bottom:8%;border:2px solid rgba(255,255,255,.06);background:linear-gradient(180deg,#171827,#0b0c14);box-shadow:inset 0 0 80px #0008}.nvcurtain{position:absolute;z-index:5;top:7%;bottom:8%;width:50%;background:linear-gradient(100deg,#362050,#6b3ca1 18%,#26143e 42%,#7c4bb4 62%,#2a163f);box-shadow:0 0 30px #0009;transition:transform .65s cubic-bezier(.7,0,.2,1)}.nvcurtain.left{left:8%;transform-origin:left center;border-radius:12px 0 0 8px}.nvcurtain.right{right:8%;transform-origin:right center;border-radius:0 12px 8px 0}.nvcurtain.open.left{transform:translateX(-86%)}.nvcurtain.open.right{transform:translateX(86%)}.nvcurtain-fold{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.06) 0 4px,transparent 4px 25px);opacity:.55}.nvfitting-pet{position:absolute;z-index:3;bottom:45px;width:270px;height:300px;display:grid;place-items:center;transition:transform .7s ease,opacity .5s}.nvfitting-pet.enter{transform:translateX(260px);opacity:0}.nvfitting-pet.walk{animation:nvWalkIn 1.1s ease-out forwards}@keyframes nvWalkIn{0%{transform:translateX(260px)}45%{transform:translateX(-18px) rotate(-1deg)}70%{transform:translateX(9px) rotate(1deg)}100%{transform:translateX(0)}}.nvfitting-pet svg{width:270px;height:270px}.nvfit-controls{padding:10px 14px calc(12px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;background:rgba(8,8,18,.88);border-top:1px solid rgba(255,255,255,.1);backdrop-filter:blur(18px)}.nvfit-count{flex:1;text-align:center}.nvfit-bar{height:7px;background:rgba(255,255,255,.09);border-radius:99px;overflow:hidden;margin-top:5px}.nvfit-bar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transform-origin:left;transform:scaleX(0)}.nvfit-note{position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:8;padding:8px 13px;border-radius:999px;background:#090a13cc;border:1px solid rgba(255,255,255,.1);font-size:12px;white-space:nowrap}.nvfitting.trying .nvfitting-pet{animation:nvWalkIn 1.1s ease-out forwards}.nvcloset{padding:14px}.nvcloset-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.nvcloset-head h3{font-size:18px}.nvcloset-coins{padding:6px 10px;border-radius:999px;background:rgba(139,123,255,.12);border:1px solid rgba(139,123,255,.3);font-weight:900}.nvpet-toast{position:fixed;z-index:100001;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;padding:10px 15px;border-radius:999px;background:#0b0c16ee;border:1px solid rgba(139,123,255,.35);box-shadow:0 10px 30px #0008;font-size:13px;font-weight:800;pointer-events:none;transition:.3s}.nvpet-toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:430px){.nvpet-grid{grid-template-columns:repeat(3,1fr)}.nvpet-preview{height:215px}.nvclothes{grid-template-columns:1fr 1fr}.nvfitting-room{height:70vh}.nvfit-controls{gap:5px}.nvfit-controls .btn{padding:9px 8px}}
 
+
+/* Mascota: animaciones de cuidado y juego */
+.pet-bath-stage{position:relative;min-height:260px;border-radius:24px;overflow:hidden;margin:12px 0;background:linear-gradient(180deg,#1a1444,#0b1830 58%,#07121f);box-shadow:inset 0 0 40px #35d0ff18,0 10px 35px #0005}
+.bath-water{position:absolute;left:7%;right:7%;bottom:22px;height:82px;border-radius:50% 50% 18px 18px;background:linear-gradient(180deg,#55ddff66,#3977ff33);border:2px solid #72e8ff55;box-shadow:0 -8px 25px #42d9ff33;animation:bathWater 1.8s ease-in-out infinite}
+.bath-pet{position:absolute;left:50%;bottom:46px;width:190px;height:190px;transform:translateX(-50%);z-index:3}
+.bath-pet svg{width:100%;height:100%;filter:drop-shadow(0 10px 16px #0006)}
+.bath-bubbles i{position:absolute;width:14px;height:14px;border:2px solid #fff8;border-radius:50%;bottom:62px;left:20%;animation:bubbleUp 2.8s ease-in infinite}.bath-bubbles i:nth-child(2){left:36%;animation-delay:.4s;width:9px;height:9px}.bath-bubbles i:nth-child(3){left:62%;animation-delay:1s;width:18px;height:18px}.bath-bubbles i:nth-child(4){left:78%;animation-delay:1.5s;width:10px;height:10px}.bath-bubbles i:nth-child(5){left:50%;animation-delay:1.9s;width:7px;height:7px}
+.bath-towel{position:absolute;right:16px;top:18px;padding:8px 11px;border-radius:12px;background:linear-gradient(135deg,#fff,#b8caff);color:#272050;font-weight:1000;font-size:10px;opacity:0;transform:translateY(-8px) rotate(4deg);transition:.35s;z-index:6;box-shadow:0 8px 25px #0004}.bath-towel.show{opacity:1;transform:translateY(0) rotate(4deg);animation:towelDry .7s ease-in-out infinite alternate}
+.bath-run .bath-water{animation:bathWater .65s ease-in-out infinite}.bath-run .bath-bubbles i{animation-duration:1.2s}
+.play-stage{position:relative}.play-ball{position:absolute;width:22px;height:22px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,#65e4ff 35%,#7b52ff 80%);box-shadow:0 0 18px #55d9ff;left:10%;bottom:25%;opacity:0}.play-ball.run{opacity:1;animation:ballRun 1.35s cubic-bezier(.3,.8,.2,1) both}
+@keyframes bubbleUp{0%{transform:translateY(20px) scale(.5);opacity:0}20%{opacity:.8}100%{transform:translateY(-150px) scale(1.1);opacity:0}}
+@keyframes bathWater{0%,100%{transform:scaleX(1)}50%{transform:scaleX(1.04) translateY(-3px)}}
+@keyframes towelDry{to{transform:translateY(2px) rotate(-4deg)}}
+@keyframes ballRun{0%{left:8%;bottom:22%;transform:scale(.7)}35%{left:72%;bottom:50%;transform:scale(1.05) rotate(220deg)}65%{left:55%;bottom:70%;transform:scale(.9) rotate(420deg)}100%{left:8%;bottom:22%;transform:scale(.7) rotate(720deg)}}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -2559,18 +2573,30 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
     let title='Mascota',body='';
     if(type==='poop'){title='Caca';body=`<div class="nsv2-card"><h3 style="margin:0 0 4px">${care.poop?'Hay una caca que recoger 💩':'Todo limpio ✨'}</h3><p class="nsv2-sub">${care.poop?'Tu mascota necesita que limpies el suelo.':'Tu mascota está limpia y feliz.'}</p><div class="nsv2-poop ${care.poop?'':'clean'}"><div class="pet-mini">${nvAnimalSVG(p.id,nvPetState.worn)}</div>${poopSvg()}</div><button class="nsv2-btn primary" style="width:100%;margin-top:10px" id="carePoop">${care.poop?'🧹 Recoger caca':'💩 Hacer caca'}</button></div>`}
     if(type==='food'){title='Comida';body=`<div class="nsv2-card"><h3 style="margin:0">Dar de comer a ${esc(p.name)}</h3><p class="nsv2-sub">La comida sube el hambre y hace una pequeña animación.</p><div class="nsv2-statrow"><span class="nsv2-pill">🍗 Hambre ${care.hunger}%</span><span class="nsv2-pill">⚡ Energía ${care.energy}%</span></div><div class="nsv2-actions" style="margin-top:10px"><button class="nsv2-action" data-food="snack"><span class="ico">🍪</span><span>Snack<small>+12 hambre</small></span></button><button class="nsv2-action" data-food="meal"><span class="ico">🍗</span><span>Comida<small>+25 hambre</small></span></button><button class="nsv2-action" data-food="star"><span class="ico">✨</span><span>Comida estelar<small>+40 hambre</small></span></button><button class="nsv2-action" data-food="water"><span class="ico">💧</span><span>Agua<small>+18 energía</small></span></button></div></div>`}
-    if(type==='bath'){title='Baño';body=`<div class="nsv2-card"><h3 style="margin:0">Baño de burbujas</h3><p class="nsv2-sub">Limpia a tu mascota y activa una animación de espuma.</p><div class="nsv2-pet"><div class="nsv2-pet-art" id="careBathPet">${nvAnimalSVG(p.id,nvPetState.worn)}</div><div><span class="nsv2-pill">🫧 Limpieza ${care.clean}%</span><button class="nsv2-btn primary" style="width:100%;margin-top:10px" id="careBath">🛁 Bañar</button></div></div></div>`}
-    if(type==='play'){title='Jugar';body=`<div class="nsv2-card"><h3 style="margin:0">Hora de jugar</h3><p class="nsv2-sub">Elige una actividad para que tu mascota haga una animación.</p><div class="nsv2-actions"><button class="nsv2-action" data-play="ball"><span class="ico">🎾</span><span>Pelota<small>+ diversión</small></span></button><button class="nsv2-action" data-play="dance"><span class="ico">💃</span><span>Baile<small>+ diversión</small></span></button><button class="nsv2-action" data-play="toy"><span class="ico">🧸</span><span>Juguete<small>+ energía</small></span></button><button class="nsv2-action" data-play="stars"><span class="ico">🌌</span><span>Estrellas<small>+ felicidad</small></span></button></div><div class="nsv2-pet" style="margin-top:10px"><div class="nsv2-pet-art" id="carePlayPet">${nvAnimalSVG(p.id,nvPetState.worn)}</div><div><b>${esc(p.name)}</b><p class="nsv2-sub">Toca una actividad.</p></div></div></div>`}
+    if(type==='bath'){title='Baño';body=`<div class="nsv2-card"><h3 style="margin:0">Baño de burbujas</h3><p class="nsv2-sub">Tu mascota entra en la bañera, aparecen burbujas, se limpia y después se seca.</p><div class="pet-bath-stage" id="careBathStage"><div class="bath-water"></div><div class="bath-bubbles"><i></i><i></i><i></i><i></i><i></i></div><div class="bath-pet" id="careBathPet">${nvAnimalSVG(p.id,nvPetState.worn)}</div><div class="bath-towel" id="bathTowel">TOALLA</div></div><div class="nsv2-statrow"><span class="nsv2-pill">Limpieza ${care.clean}%</span><span class="nsv2-pill" id="bathStatus">Listo para bañar</span></div><button class="nsv2-btn primary" style="width:100%;margin-top:10px" id="careBath">Bañar a ${esc(p.name)}</button></div>`}
+    if(type==='play'){title='Jugar';body=`<div class="nsv2-card"><h3 style="margin:0">Hora de jugar</h3><p class="nsv2-sub">Elige una actividad y mira a tu mascota jugar de verdad.</p><div class="nsv2-actions"><button class="nsv2-action" data-play="ball"><span class="ico">Pelota</span><span>Pelota<small>Corre y persigue</small></span></button><button class="nsv2-action" data-play="dance"><span class="ico">Baile</span><span>Baile<small>Hace una coreografía</small></span></button><button class="nsv2-action" data-play="toy"><span class="ico">Juguete</span><span>Juguete<small>Salta y juega</small></span></button><button class="nsv2-action" data-play="stars"><span class="ico">Nova</span><span>Estrellas<small>Persigue luces</small></span></button></div><div class="nsv2-pet" style="margin-top:10px"><div class="nsv2-pet-art play-stage" id="carePlayPet">${nvAnimalSVG(p.id,nvPetState.worn)}<span class="play-ball" id="playBall"></span></div><div><b>${esc(p.name)}</b><p class="nsv2-sub" id="playStatus">Toca una actividad.</p></div></div></div>`}
     if(type==='sleep'){title='Dormir';body=`<div class="nsv2-card"><h3 style="margin:0">Zona de descanso</h3><p class="nsv2-sub">Tu mascota descansa y recupera energía.</p><button class="nsv2-btn primary" style="width:100%;margin-top:8px" id="careSleep">🌙 Dormir ahora</button></div>`}
     if(type==='stats'){title='Estado';body=`<div class="nsv2-card"><h3 style="margin:0 0 10px">Estado de ${esc(p.name)}</h3>${[['Hambre',care.hunger,'🍗'],['Limpieza',care.clean,'🫧'],['Energía',care.energy,'⚡'],['Diversión',care.fun,'🎮']].map(x=>`<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:11px;font-weight:900"><span>${x[2]} ${x[0]}</span><span>${x[1]}%</span></div><div style="height:8px;background:#fff1;border-radius:99px;overflow:hidden;margin-top:5px"><i style="display:block;width:${x[1]}%;height:100%;background:linear-gradient(90deg,#8b7bff,#35d0ff);border-radius:99px"></i></div></div>`).join('')}</div>`}
     const old=document.querySelector('.nova-care-panel');if(old)old.remove();const o=document.createElement('div');o.className='nova-care-panel';o.style='position:fixed;inset:0;z-index:100004;background:#05050ddd;backdrop-filter:blur(18px);padding:14px;overflow:auto';o.innerHTML=`<div style="max-width:650px;margin:auto"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div><b style="font-size:20px">${title}</b><div class="nsv2-sub">${esc(p.name)}</div></div><button class="nsv2-close" id="careClose">×</button></div>${body}</div>`;document.body.appendChild(o);
     o.querySelector('#careClose').onclick=()=>o.remove();
     const animatePet=sel=>{const e=o.querySelector(sel);if(e)e.animate([{transform:'scale(1) rotate(0)'},{transform:'scale(1.06) rotate(-3deg)'},{transform:'scale(1) rotate(0)'}],{duration:650,easing:'cubic-bezier(.2,1.5,.3,1)'})};
     o.querySelector('#carePoop')?.addEventListener('click',()=>{care.poop=!care.poop;saveCare();petCarePanel('poop',close)});
-    o.querySelector('#careBath')?.addEventListener('click',()=>{care.clean=100;care.fun=Math.min(100,care.fun+4);care.lastBath=Date.now();saveCare();animatePet('#careBathPet');careToast('🫧 ¡Baño terminado!');setTimeout(()=>petCarePanel('bath',close),500)});
+    o.querySelector('#careBath')?.addEventListener('click',()=>{
+      const stage=o.querySelector('#careBathStage'),pet=o.querySelector('#careBathPet'),status=o.querySelector('#bathStatus'),towel=o.querySelector('#bathTowel'),b=o.querySelector('#careBath');
+      if(!stage||!pet)return; b.disabled=true; status.textContent='Entrando en la bañera…'; stage.classList.remove('bath-run'); void stage.offsetWidth; stage.classList.add('bath-run'); pet.animate([{transform:'translateX(-90px)'},{transform:'translateX(-15px)'},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.2,.9,.3,1)'});
+      setTimeout(()=>status.textContent='Lavando…',900); setTimeout(()=>status.textContent='Enjuagando…',2100); setTimeout(()=>{care.clean=100;care.fun=Math.min(100,care.fun+8);care.lastBath=Date.now();saveCare();status.textContent='Secando con la toalla…';towel.classList.add('show');},3300);
+      setTimeout(()=>{towel.classList.remove('show');status.textContent='¡Baño terminado!';b.disabled=false;careToast('Baño completo: tu mascota está limpia');},4500);
+    });
     o.querySelector('#careSleep')?.addEventListener('click',()=>{care.energy=100;saveCare();careToast('🌙 Tu mascota ha descansado');setTimeout(()=>o.remove(),450)});
     o.querySelectorAll('[data-food]').forEach(b=>b.onclick=()=>{const v=b.dataset.food;care.hunger=Math.min(100,care.hunger+(v==='star'?40:v==='meal'?25:v==='water'?5:12));if(v==='water')care.energy=Math.min(100,care.energy+18);care.poop=true;care.lastFeed=Date.now();saveCare();animatePet('.nsv2-pet-art');careToast('🍽️ ¡Qué rico!');});
-    o.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>{care.fun=Math.min(100,care.fun+18);care.energy=Math.max(0,care.energy-5);saveCare();animatePet('#carePlayPet');careToast('✨ ¡Se lo está pasando genial!')});
+    o.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>{
+      const type=b.dataset.play,pet=o.querySelector('#carePlayPet'),ball=o.querySelector('#playBall'),status=o.querySelector('#playStatus');
+      care.fun=Math.min(100,care.fun+18);care.energy=Math.max(0,care.energy-5);saveCare();
+      if(status)status.textContent=type==='ball'?'¡Corre detrás de la pelota!':type==='dance'?'¡Está bailando!':type==='toy'?'¡Ha encontrado su juguete!':'¡Persigue las estrellas!';
+      if(pet){pet.animate(type==='dance'?[{transform:'translateY(0) rotate(0)'},{transform:'translateY(-14px) rotate(-7deg)'},{transform:'translateY(0) rotate(7deg)'},{transform:'translateY(-8px) rotate(0)'},{transform:'translateY(0)'}]:[{transform:'translateX(0) scale(1)'},{transform:'translateX(18px) scale(1.04)'},{transform:'translateX(-14px) scale(1.02)'},{transform:'translateX(0) scale(1)'}],{duration:1200,easing:'ease-in-out'});}
+      if(ball){ball.classList.toggle('run',type==='ball');setTimeout(()=>ball.classList.remove('run'),1400)}
+      careToast(type==='ball'?'¡Pelota!':type==='dance'?'¡Baile!':type==='toy'?'¡Juguete!':'¡Estrellas!');
+    });
   }
 
   /* ---------- CONFIGURACIÓN NUEVA: RAÍL VERTICAL ---------- */
@@ -2652,8 +2678,60 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
     }
     await loadSource();
     function draw(){if(!canvas||!ctx)return;ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);const half=canvas.width/2;const drawCover=(el,x,w)=>{const vw=el.videoWidth||el.naturalWidth||360,vh=el.videoHeight||el.naturalHeight||640,sc=Math.max(w/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.save();if(el===me&&flip){ctx.translate(x+w,0);ctx.scale(-1,1);ctx.drawImage(el,(w-dw)/2,(canvas.height-dh)/2,dw,dh)}else ctx.drawImage(el,x+(w-dw)/2,(canvas.height-dh)/2,dw,dh);ctx.restore()};const src=sourceType==='image'?img:original;drawCover(src,0,half);drawCover(me,half,half);ctx.fillStyle='#fff';ctx.fillRect(half-1,0,2,canvas.height);raf=requestAnimationFrame(draw)}
-    async function start(){if(!sourceReady)return;btn.disabled=true;status.textContent='Solicitando cámara y micrófono…';try{if(!navigator.mediaDevices?.getUserMedia)throw new Error('Tu navegador no permite la cámara. Usa Chrome con HTTPS.');stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:1280}},audio:true});me.srcObject=stream;await me.play().catch(()=>{});canvas=document.createElement('canvas');canvas.width=720;canvas.height=1280;ctx=canvas.getContext('2d');draw();const out=canvas.captureStream(30),audio=stream.getAudioTracks()[0];if(audio)out.addTrack(audio);if(!window.MediaRecorder)throw new Error('MediaRecorder no está disponible.');const types=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];const mt=types.find(t=>MediaRecorder.isTypeSupported(t))||'';rec=new MediaRecorder(out,mt?{mimeType:mt}:{});chunks=[];rec.ondataavailable=e=>e.data?.size&&chunks.push(e.data);rec.onerror=()=>{btn.disabled=false;status.textContent='Error al grabar el dueto.'};rec.onstop=()=>{const type=rec.mimeType||'video/webm',b=new Blob(chunks,{type});if(b.size<1000){btn.disabled=false;status.textContent='La grabación quedó vacía.';return}try{stream?.getTracks().forEach(t=>t.stop())}catch(e){};if(raf)cancelAnimationFrame(raf);btn.disabled=false;status.textContent='Dueto preparado. Abriendo publicación…';editor(new File([b],'dueto-nova.webm',{type}),'')};rec.start(250);btn.textContent='Parar y publicar';status.textContent='● Grabando el dueto…'}catch(e){btn.disabled=false;status.textContent=String(e.message||e);console.error(e)}}
-    btn.onclick=()=>{if(rec&&rec.state==='recording')rec.stop();else start()};$('#duetV4Flip').onclick=()=>{flip=!flip;me.style.transform=flip?'scaleX(-1)':''};
+    let recordingBusy=false;
+    async function start(){
+      if(!sourceReady){status.textContent='El contenido original todavía no está listo.';return}
+      if(recordingBusy)return; recordingBusy=true; btn.disabled=true;
+      status.textContent='Solicitando cámara y micrófono…';
+      try{
+        if(!navigator.mediaDevices?.getUserMedia)throw new Error('Tu navegador no permite la cámara. Usa Chrome con HTTPS.');
+        if(!window.MediaRecorder)throw new Error('Este navegador no admite grabación de vídeo.');
+        stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:720},height:{ideal:1280}},audio:true});
+        me.srcObject=stream; await me.play().catch(()=>{});
+        canvas=document.createElement('canvas'); canvas.width=720; canvas.height=1280; ctx=canvas.getContext('2d');
+        draw();
+        let out;
+        if(typeof canvas.captureStream==='function'){
+          out=canvas.captureStream(30);
+          const audio=stream.getAudioTracks()[0]; if(audio)out.addTrack(audio);
+        }else{
+          // Fallback: grabar directamente la cámara si captureStream no existe.
+          out=stream;
+        }
+        const types=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+        const mt=types.find(t=>MediaRecorder.isTypeSupported(t))||'';
+        rec=new MediaRecorder(out,mt?{mimeType:mt}:{}); chunks=[];
+        rec.ondataavailable=e=>{if(e.data&&e.data.size)chunks.push(e.data)};
+        rec.onerror=e=>{recordingBusy=false;btn.disabled=false;btn.textContent='Grabar dueto';status.textContent='Error al grabar el dueto.';console.error(e)};
+        rec.onstop=()=>{
+          const type=rec.mimeType||'video/webm', b=new Blob(chunks,{type});
+          try{stream?.getTracks().forEach(t=>t.stop())}catch(e){}
+          if(raf)cancelAnimationFrame(raf);
+          recordingBusy=false; btn.disabled=false; btn.textContent='Grabar dueto';
+          if(b.size<1000){status.textContent='La grabación quedó vacía. Vuelve a intentarlo.';return}
+          status.textContent='Dueto preparado. Abriendo publicación…';
+          const file=new File([b],'dueto-nova.webm',{type});
+          if(typeof window.editor==='function')window.editor(file,'');
+          else if(typeof editor==='function')editor(file,'');
+        };
+        rec.start(200);
+        btn.disabled=false; btn.textContent='Parar grabación'; status.textContent='● Grabando dueto… Toca “Parar grabación” para terminar.';
+      }catch(e){
+        recordingBusy=false; btn.disabled=false; btn.textContent='Grabar dueto';
+        try{stream?.getTracks().forEach(t=>t.stop())}catch(_){}
+        status.textContent=String(e.message||e); console.error('Dueto V4:',e);
+      }
+    }
+    function stopRecording(){
+      if(rec && rec.state==='recording'){
+        status.textContent='Guardando el dueto…'; btn.disabled=true;
+        try{rec.requestData?.()}catch(e){}
+        rec.stop();
+      }else{ start(); }
+    }
+    btn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();stopRecording()});
+    btn.addEventListener('pointerup',e=>{if(e.pointerType==='touch'){e.preventDefault();e.stopPropagation();stopRecording()}},{passive:false});
+    $('#duetV4Flip').onclick=e=>{e.preventDefault();flip=!flip;me.style.transform=flip?'scaleX(-1)':''};
   };
 
   /* Cambia los botones de ropa antiguos para que usen el probador V4 */
@@ -2802,4 +2880,75 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
 })();
 </script>
 
+<script id="nova-v6-actions-fix">
+(function(){
+  if(window.__novaV6ActionsFix)return; window.__novaV6ActionsFix=true;
+  const q=s=>document.querySelector(s);
+  const qsa=s=>Array.from(document.querySelectorAll(s));
+  const fireToast=t=>{try{if(typeof careToast==='function')careToast(t);else if(typeof toast==='function')toast(t)}catch(e){}}
+  function settingsOpen(){return !!document.querySelector('.nova-settings-v2')}
+  function doCare(type){
+    if(typeof petCarePanel==='function'){
+      petCarePanel(type);
+      return true;
+    }
+    return false;
+  }
+  document.addEventListener('click',function(e){
+    const t=e.target.closest && e.target.closest('button,a');
+    if(!t||!settingsOpen())return;
+    const careType=t.getAttribute('data-care');
+    if(careType){
+      e.preventDefault(); e.stopImmediatePropagation();
+      if(careType==='petpick'){
+        const tabs=qsa('.nsv2-tab'); const b=tabs.find(x=>x.dataset.tab==='petpick');
+        if(b)b.click(); else if(typeof window.__novaRenderPetPick==='function')window.__novaRenderPetPick();
+      }else if(careType==='clothes'){
+        const b=q('.nsv2-tab[data-tab="clothes"]'); if(b)b.click();
+      }else doCare(careType);
+      return;
+    }
+    const play=t.getAttribute('data-play');
+    if(play){
+      e.preventDefault(); e.stopImmediatePropagation();
+      try{care.fun=Math.min(100,care.fun+18);care.energy=Math.max(0,care.energy-5);saveCare();fireToast(play==='ball'?'Pelota Nova: ¡a jugar!':play==='dance'?'¡Baile activado!':play==='toy'?'¡Juguete activado!':'¡Estrellas activadas!');
+        const art=t.closest('.nova-care-panel,.nova-settings-v2')?.querySelector('.nsv2-pet-art');
+        if(art)art.animate([{transform:'translateY(0) scale(1)'},{transform:'translateY(-12px) rotate(-3deg) scale(1.06)'},{transform:'translateY(0) scale(1)'}],{duration:700,easing:'cubic-bezier(.2,1.5,.3,1)'});
+      }catch(err){}
+      return;
+    }
+    const food=t.getAttribute('data-food');
+    if(food){
+      e.preventDefault(); e.stopImmediatePropagation();
+      try{care.hunger=Math.min(100,care.hunger+(food==='star'?40:food==='meal'?25:food==='water'?5:12));if(food==='water')care.energy=Math.min(100,care.energy+18);care.poop=true;care.lastFeed=Date.now();saveCare();fireToast(food==='water'?'¡Agua servida!':'¡Comida servida!')}catch(err){}
+      return;
+    }
+    if(t.id==='carePoop'){
+      e.preventDefault();e.stopImmediatePropagation();care.poop=!care.poop;saveCare();fireToast(care.poop?'Tu mascota ha hecho caca':'¡Caca recogida!');petCarePanel('poop');return;
+    }
+    if(t.id==='careBath'){
+      e.preventDefault();e.stopImmediatePropagation();care.clean=100;care.fun=Math.min(100,care.fun+4);care.lastBath=Date.now();saveCare();fireToast('¡Baño terminado!');setTimeout(()=>petCarePanel('bath'),350);return;
+    }
+    if(t.id==='careSleep'){
+      e.preventDefault();e.stopImmediatePropagation();care.energy=100;saveCare();fireToast('Tu mascota ha descansado');return;
+    }
+    if(t.id==='strokeV4'||t.id==='nsv2Pet'){
+      e.preventDefault();e.stopImmediatePropagation();
+      if(typeof nvResetPetDay==='function')nvResetPetDay();
+      if(nvPetState.strokes>=10){fireToast('Ya has usado las 10 caricias de hoy');return;}
+      nvPetState.strokes++;nvPetState.coins+=2;nvSavePet();fireToast('+2 monedas galácticas');
+      const b=t.closest('.nova-settings-v2')?.querySelector('.nsv2-pet-art');if(b)b.animate([{transform:'scale(1)'},{transform:'scale(1.08) rotate(-3deg)'},{transform:'scale(1)'}],{duration:550});
+      return;
+    }
+  },true);
+
+  // Reasigna los botones de pestañas cada vez que se abre la configuración.
+  const obs=new MutationObserver(function(){
+    const root=document.querySelector('.nova-settings-v2'); if(!root)return;
+    qsa('.nsv2-tab').forEach(b=>{if(b.dataset.novaV6Bound)return;b.dataset.novaV6Bound='1';b.style.pointerEvents='auto';});
+    qsa('.nsv2-action,.nsv2-btn,.nsv2-tab').forEach(b=>{b.style.touchAction='manipulation';b.style.webkitTapHighlightColor='transparent'});
+  });
+  obs.observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body></html>
