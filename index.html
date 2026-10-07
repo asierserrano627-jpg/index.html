@@ -84,7 +84,7 @@ button:active,.btn:active,nav a:active{transform:scale(.88)}
 nav a.mk b{animation:glow 3s infinite}@keyframes glow{50%{box-shadow:0 0 22px rgba(53,208,255,.8)}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .cam{background:radial-gradient(circle at 20% 15%,#2b1c78,transparent 55%),radial-gradient(circle at 85% 90%,#0a4f78,transparent 55%),#07070d}
-.av{border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-weight:800;flex:none;overflow:hidden}.rail .av{border:2px solid #fff}
+.av{border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-weight:800;flex:none;overflow:hidden}.verified-badge{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#168cff;color:#fff;font-size:11px;font-weight:950;line-height:1;box-shadow:0 0 8px rgba(22,140,255,.55);vertical-align:middle;margin-left:5px}.verified-badge::before{content:"✓"}.verified-name{display:inline-flex;align-items:center;gap:2px}.rail .av{border:2px solid #fff}
 input:disabled{opacity:.5}
 .nc{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 32px 170px;z-index:2}.nc p{max-width:420px}
 .tl{gap:18px}.tb{width:46px;height:46px}.cbot{gap:22px;padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
@@ -1248,6 +1248,8 @@ const avt=(z=40,name,avatarUrl)=>{
   const img=avatarUrl||(!name&&m.av?m.av:null);
   return `<span class="av" style="width:${z}px;height:${z}px;font-size:${z*.42}px">${img?`<img src="${esc(img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc((n||'?')[0].toUpperCase())}</span>`;
 };
+const isVerifiedUser=(id)=>!!supabaseUser&&String(id)===String(supabaseUser.id);
+const verifiedName=(name,id)=>`${esc(name||'usuario')} ${isVerifiedUser(id)?'<span class="verified-badge" title="Cuenta verificada"></span>':''}`;
 const D7=7*864e5;
 const cl=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9._]/g,'');
 
@@ -1473,7 +1475,7 @@ async function profile(){
   $('#m').innerHTML=`<div class="pg">
     ${profileBannerHtml()}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-      <div style="display:flex;gap:14px;align-items:center;flex:1">${avt(80)}<div><h2 style="margin:0">${esc(ME.n)}</h2><span class="mu">@${esc(ME.u)}</span></div></div>
+      <div style="display:flex;gap:14px;align-items:center;flex:1">${avt(80)}<div><h2 style="margin:0" class="verified-name">${esc(ME.n)}<span class="verified-badge" title="Cuenta verificada"></span></h2><span class="mu">@${esc(ME.u)}</span></div></div>
       <button class="settings-wheel" id="openSettings" aria-label="Ajustes">
         <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
@@ -1517,7 +1519,7 @@ async function publicProfile(userId){
   }catch(e){console.error(e)}
   $('#m').innerHTML=`<div class="pg">
     ${p.banner_url?`<div class="profile-banner"><img src="${esc(p.banner_url)}" alt="Banner de ${esc(p.username)}"></div>`:''}
-    <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0">${esc(p.display_name||p.username)}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
+    <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0" class="verified-name">${esc(p.display_name||p.username)}${isVerifiedUser(userId)?'<span class="verified-badge" title="Cuenta verificada"></span>':''}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
     ${publicLive?`<a class="profile-live-link" href="#/live/${esc(publicLive.id)}"><i class="live-live-dot" aria-hidden="true"></i> En directo · ${Number(publicLive.viewer_count||0)} espectadores</a>`:''}
     <div class="pfstats"><div class="s"><b>${videos.length}</b><span>Vídeos</span></div><div class="s"><b>${counts.followers}</b><span>Seguidores</span></div><div class="s"><b>${counts.following}</b><span>Siguiendo</span></div></div>
     <div class="chips c"><button class="btn${following?' o':''}" id="followBtn">${following?'Siguiendo':'Seguir'}</button><button class="btn" id="msgBtn">Mensaje</button></div>
@@ -2181,9 +2183,18 @@ function templateEditor(file,tpl){
 async function openDuet(videoId){
   const v=vid(videoId);if(!v)return;
   document.body.classList.add('nl');
-  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" src="${esc(v.src)}" autoplay muted loop playsinline></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div></div></div>`;
+  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" src="${esc(v.src)}" autoplay muted loop playsinline></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div><p class="mu" style="margin-top:8px;font-size:12px">El vídeo final se guarda con las dos partes del dueto.</p></div></div>`;
   $('#duetClose').onclick=()=>go('#/');
-  try{const stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});$('#duetMe').srcObject=stream;let rec,chunks=[];$('#duetRec').onclick=()=>{if(rec){rec.stop();return}chunks=[];rec=new MediaRecorder(stream);rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const b=new Blob(chunks,{type:rec.mimeType||'video/webm'});editor(new File([b],'dueto.webm',{type:b.type}),'')};rec.start();$('#duetRec').textContent='Parar y publicar';toast('Grabando dueto…')};$('#duetFlip').onclick=()=>{$('#duetMe').style.transform=$('#duetMe').style.transform?'':'scaleX(-1)'};}catch(e){toast('No se pudo abrir la cámara')}
+  let stream=null,rec=null,chunks=[],raf=0;
+  try{
+    const original=$('#duetOriginal'),me=$('#duetMe');
+    await new Promise(resolve=>{if(original.readyState>=2)resolve();else original.addEventListener('loadeddata',resolve,{once:true})});
+    stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});me.srcObject=stream;
+    const canvas=document.createElement('canvas');canvas.width=720;canvas.height=1280;const ctx=canvas.getContext('2d');
+    const draw=()=>{ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);const w=canvas.width/2;const fit=(el,x)=>{const vw=el.videoWidth||360,vh=el.videoHeight||640,sc=Math.max(w/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.drawImage(el,x+(w-dw)/2,(canvas.height-dh)/2,dw,dh)};fit(original,0);fit(me,w);raf=requestAnimationFrame(draw)};draw();
+    $('#duetRec').onclick=()=>{if(rec){rec.stop();return}chunks=[];const out=canvas.captureStream(30),audio=stream.getAudioTracks()[0];if(audio)out.addTrack(audio);const mt=['video/webm;codecs=vp9,opus','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'';rec=new MediaRecorder(out,mt?{mimeType:mt}:{});rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{cancelAnimationFrame(raf);stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:rec.mimeType||'video/webm'});rec=null;editor(new File([blob],'dueto.webm',{type:blob.type}),'')};rec.start(500);$('#duetRec').textContent='Parar y continuar';toast('Grabando dueto…')};
+    $('#duetFlip').onclick=()=>{$('#duetMe').style.transform=$('#duetMe').style.transform?'':'scaleX(-1)'};
+  }catch(e){if(stream)stream.getTracks().forEach(t=>t.stop());toast('No se pudo abrir la cámara')}
 }
 async function replyCommentWithVideo(videoId,username){
   const pick=document.createElement('input');pick.type='file';pick.accept='video/*';pick.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const cloud=await publishCloudVideo(f,`Respuesta a @${username}`);S.meta.unshift(cloud);save();await refreshCloudFeed();toast('Respuesta con vídeo publicada');go('#/v/'+cloud.id)}catch(err){toast('No se pudo publicar')}};pick.click();
