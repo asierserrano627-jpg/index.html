@@ -617,7 +617,7 @@ function photoEditor(file){
 function createMenu(){
   document.body.classList.add('nl');
   $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon camera-sticker">${sticker('camera','lg')}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><button class="create-option" id="createTemplates"><span class="co-icon">${sticker('star','lg')}</span><span><b>Plantillas</b><span>Crea vídeos rápidos con estilos de Nova.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
-  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>openCameraCreate(true); $('#createLive').onclick=()=>go('#/live'); $('#createTemplates').onclick=showTemplates; $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files?.[0];if(f)photoEditor(f)};
+  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>window.novaChooseVideoSource?window.novaChooseVideoSource():openCameraCreate(true); $('#createLive').onclick=()=>window.openNovaLiveLuck&&window.openNovaLiveLuck(); $('#createTemplates').onclick=showTemplates; $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files?.[0];if(f)photoEditor(f)};
 }
 
 async function incrementView(videoId){
@@ -1953,7 +1953,7 @@ function review(){
 function editor(f,fl=''){
   document.body.classList.remove('nl');camOff();
   const u=URL.createObjectURL(f);
-  $('#m').innerHTML=`<div class="pg"><h2>Detalles del vídeo</h2><video src="${u}" controls muted playsinline class="pv"></video><p><input id="d" maxlength="150" placeholder="Descripción"><small id="dCount" class="mu" style="font-size:11px">0/150</small></p><p><select id="fl"><option value="">Sin filtro</option><option value="filter:grayscale(1) contrast(1.1)">B/N</option><option value="filter:saturate(1.9) contrast(1.05)">Vívido</option><option value="filter:sepia(.8)">Retro</option><option value="filter:contrast(1.35) brightness(.9) saturate(.8)">Cine</option></select></p><p><input id="tx" maxlength="40" placeholder="Texto sobre el vídeo"></p><p><select id="sp"><option value="1" selected>1×</option><option value="0.5">0.5×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></p><div class="chips"><button class="btn o" id="dr">Borrador</button><button class="btn" id="pb">Publicar</button></div></div>`;
+  $('#m').innerHTML=`<div class="pg"><h2>Detalles del vídeo</h2><video src="${u}" controls muted playsinline preload="metadata" class="pv"></video><p><input id="d" maxlength="150" placeholder="Descripción"><small id="dCount" class="mu" style="font-size:11px">0/150</small></p><p><select id="fl"><option value="">Sin filtro</option><option value="filter:grayscale(1) contrast(1.1)">B/N</option><option value="filter:saturate(1.9) contrast(1.05)">Vívido</option><option value="filter:sepia(.8)">Retro</option><option value="filter:contrast(1.35) brightness(.9) saturate(.8)">Cine</option></select></p><p><input id="tx" maxlength="40" placeholder="Texto sobre el vídeo"></p><p><select id="sp"><option value="1" selected>1×</option><option value="0.5">0.5×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></p><div class="chips"><button class="btn o" id="dr">Borrador</button><button class="btn" id="pb">Publicar</button></div></div>`;
   $('#fl').value=safeFilter(fl);$('.pv').style.cssText=safeFilter(fl);
   $('#fl').onchange=()=>{$('.pv').style.cssText=safeFilter($('#fl').value)};
   $('#d').oninput=()=>{$('#dCount').textContent=$('#d').value.length+'/150'};
@@ -2665,6 +2665,140 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
 
   /* Refrescar preview cuando se abre perfil/ajustes */
   setTimeout(()=>{try{novaRefreshPetSettings()}catch(e){}},50);
+})();
+</script>
+
+
+<style id="nova-v5-style">
+.cfg-sticker{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:9px;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.34),rgba(139,123,255,.28) 35%,rgba(53,208,255,.16) 72%,transparent);box-shadow:0 0 12px rgba(139,123,255,.35),inset 0 0 8px rgba(255,255,255,.08);overflow:visible}
+.cfg-sticker svg{width:21px;height:21px;overflow:visible;filter:drop-shadow(0 0 4px rgba(139,123,255,.8))}
+.nsv2-tab .cfg-sticker{width:28px;height:28px;border-radius:10px}.nsv2-tab .cfg-sticker svg{width:22px;height:22px}
+.nova-live-luck{position:fixed;inset:0;z-index:100010;background:radial-gradient(circle at 50% 35%,rgba(139,123,255,.25),transparent 38%),rgba(4,4,12,.96);backdrop-filter:blur(20px);display:grid;place-items:center;padding:18px;color:#fff}
+.nova-live-luck-card{width:min(440px,94vw);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:24px;background:linear-gradient(145deg,rgba(25,24,45,.97),rgba(8,9,16,.97));box-shadow:0 25px 90px #0009;text-align:center}
+.nova-luck-orb{width:112px;height:112px;margin:5px auto 18px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(from 0deg,#8b7bff,#35d0ff,#ff4fd8,#8b7bff);box-shadow:0 0 28px rgba(139,123,255,.55),0 0 70px rgba(53,208,255,.2);animation:novaLuckSpin 3.5s linear infinite}
+.nova-luck-orb::after{content:'';width:78px;height:78px;border-radius:50%;background:radial-gradient(circle at 35% 25%,#fff,#8b7bff 30%,#17102e 70%);box-shadow:inset 0 0 20px #fff6}
+@keyframes novaLuckSpin{to{transform:rotate(360deg)}}
+.nova-luck-card h2{margin:0 0 7px;font-size:25px}.nova-luck-card p{color:#aaa7c8;font-size:13px;line-height:1.5;margin:0 0 17px}.nova-luck-actions{display:grid;grid-template-columns:1fr;gap:9px}.nova-luck-btn{border:1px solid rgba(255,255,255,.12);border-radius:15px;padding:12px;background:rgba(255,255,255,.06);color:#fff;font-weight:900}.nova-luck-btn.primary{background:linear-gradient(90deg,#8b7bff,#35d0ff);border-color:transparent}
+.nova-video-fallback{display:none;margin:8px 0 12px;padding:12px;border-radius:16px;border:1px solid rgba(255,255,255,.12);background:rgba(139,123,255,.08);color:#dcd8ef;font-size:12px;line-height:1.45}.nova-video-fallback.on{display:block}
+@media(max-width:520px){.nsv2-main{padding-right:82px}.nsv2-grid,.nsv2-actions{grid-template-columns:1fr}.nsv2-pet{grid-template-columns:120px 1fr}.nsv2-animal-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nsv2-store-grid{grid-template-columns:1fr}}
+</style>
+
+
+<script id="nova-v5-script">
+(function(){
+  const cfgPaths={
+    pet:'M12 4c-4.2 0-7.5 3-7.5 7 0 2.3 1.1 4.1 3 5.2v2.1h9v-2.1c1.9-1.1 3-2.9 3-5.2 0-4-3.3-7-7.5-7Zm-3 12.5c.5-1 1.6-1.7 3-1.7s2.5.7 3 1.7',
+    poop:'M7 18c-1.5-2.2-.5-4.1 1.7-4.7-1.1-2.5.8-4.9 3.1-4.2.7-2.2 3.8-2.6 4.8-.4 2.3.1 3.6 2.7 2 4.4 1.7 1.4 1.3 4.3-.9 5.3H8.5A2.5 2.5 0 0 1 7 18Z',
+    food:'M4 9h16M6 9v9h12V9M8 6c0-1.7 1.3-3 3-3 1.1 0 2 .6 2.6 1.5C14.2 3.6 15.1 3 16 3c1.7 0 3 1.3 3 3v3H6V6c0-1.7 1.3-3 3-3',
+    play:'M6 5.5v13l11-6.5-11-6.5Z',
+    bath:'M4 13h16v5H4zM6 13V8a3 3 0 0 1 6 0v1M12 9h5',
+    sleep:'M7 18h11a3 3 0 0 0-3-3H9a3 3 0 0 0-3 3ZM5 11h5M7.5 8.5h5M17 7l1-2 1 2 2 1-2 1-1 2-1-2-2-1 2-1Z',
+    heart:'M12 20c-6-4.2-9-7.2-9-11A4.8 4.8 0 0 1 12 6a4.8 4.8 0 0 1 9 3c0 3.8-3 6.8-9 11Z',
+    clothes:'M8 5l4 3 4-3 4 4-3 3v8H7v-8L4 9l4-4Z',
+    shop:'M4 9h16v11H4zM3 9l2-5h14l2 5M8 9v3M16 9v3',
+    toy:'M5 8h14v11H5zM8 8V5h8v3M10 13h4M12 11v5',
+    mission:'M6 4h12v16H6zM9 8h6M9 12h6M9 16h4',
+    coin:'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17ZM12 7v10M15 9c-.6-.8-1.6-1.2-3-1.2-1.7 0-3 .9-3 2.1s1.3 2 3 2 3 .8 3 2-1.3 2.1-3 2.1c-1.4 0-2.4-.4-3-1.2',
+    stats:'M5 19V9M12 19V5M19 19v-7',
+    effects:'M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z',
+    look:'M4 7h16M4 12h16M4 17h16M8 5v4M15 10v4M11 15v4',
+    sound:'M4 10h4l5-4v12l-5-4H4zM17 9a4 4 0 0 1 0 6M19.5 6.5a7.5 7.5 0 0 1 0 11',
+    privacy:'M7 10V7a5 5 0 0 1 10 0v3M5 10h14v10H5zM12 14v2',
+    data:'M5 5h14v14H5zM8 8h8M8 12h8M8 16h5',
+    account:'M12 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM4.5 20c1-4 4-6 7.5-6s6.5 2 7.5 6',
+    feed:'M4 5h16v14H4zM7 9h10M7 13h7M7 17h4',
+    notify:'M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0',
+    accessibility:'M12 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM5 9h14M12 9v11M8 20l4-6 4 6',
+    storage:'M4 6h16v12H4zM4 10h16M8 7.8h.1M11 7.8h.1M14 7.8h.1',
+    security:'M12 3l7 3v5c0 4.5-2.8 8-7 10-4.2-2-7-5.5-7-10V6l7-3ZM9 12l2 2 4-4',
+    help:'M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM9.7 9a2.5 2.5 0 1 1 4.1 1.9c-1.1.9-1.8 1.3-1.8 2.6M12 17h.1'
+  };
+  window.novaCfgSticker=function(kind){const p=cfgPaths[kind]||cfgPaths.effects;return `<span class="cfg-sticker" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="url(#cfgG_${kind})" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="cfgG_${kind}" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".28" stop-color="#8b7bff"/><stop offset=".65" stop-color="#35d0ff"/><stop offset="1" stop-color="#ff62df"/></linearGradient></defs><path d="${p}"/><path d="M4 3.5v1.5M3.25 4.25h1.5M20 18v2M19 19h2" stroke="#fff" stroke-width="1.1"/></svg></span>`}
+
+  // Sustituye únicamente los iconos de las pestañas por stickers SVG, sin tocar sus nombres.
+  function refreshConfigStickerIcons(root){
+    if(!root)return;
+    root.querySelectorAll('.nsv2-tab').forEach(b=>{const k=b.dataset.tab;const label=b.querySelector('span');const old=b.querySelector('b');if(old)old.outerHTML=novaCfgSticker(k);});
+    root.querySelectorAll('.nsv2-action .ico').forEach(el=>{
+      const host=el.parentElement?.textContent?.toLowerCase()||'';
+      let k='effects';
+      if(/caca|recoger/.test(host))k='poop'; else if(/comida|snack|agua/.test(host))k='food'; else if(/jugar|pelota|baile|juguete|radio/.test(host))k='play'; else if(/baño|limpieza/.test(host))k='bath'; else if(/mascota/.test(host))k='pet'; else if(/caricia/.test(host))k='heart'; else if(/ropa|conjunto/.test(host))k='clothes'; else if(/misión|recompensa/.test(host))k='mission'; else if(/moneda/.test(host))k='coin'; else if(/exportar|datos/.test(host))k='data'; else if(/tema|apariencia/.test(host))k='look'; else if(/sonido|vibración/.test(host))k='sound';
+      el.innerHTML=novaCfgSticker(k);
+    });
+  }
+
+  // Reabre la configuración y actualiza los iconos cada vez que se abre.
+  const originalOpenSettings=window.openSettings;
+  if(originalOpenSettings){
+    window.openSettings=function(){originalOpenSettings();const o=document.querySelector('.nova-settings-v2');refreshConfigStickerIcons(o);setTimeout(()=>refreshConfigStickerIcons(o),30)};
+  }
+
+  // Live: pantalla intermedia + "Live de la suerte" para que entrar a Live no abra la cámara de golpe.
+  window.openNovaLiveLuck=function(){
+    const old=document.querySelector('.nova-live-luck');if(old)old.remove();
+    const o=document.createElement('div');o.className='nova-live-luck';o.innerHTML=`<div class="nova-live-luck-card"><div class="nova-luck-orb"></div><h2>Live Nova</h2><p>Elige cómo quieres entrar. La opción de suerte busca un directo activo al azar para que cada entrada sea diferente.</p><div class="nova-luck-actions"><button class="nova-luck-btn primary" id="novaStartLive">Iniciar mi Live</button><button class="nova-luck-btn" id="novaLuckLive">Live de la suerte</button><button class="nova-luck-btn" id="novaCancelLive">Volver</button></div></div>`;
+    document.body.appendChild(o);
+    o.querySelector('#novaCancelLive').onclick=()=>o.remove();
+    o.querySelector('#novaStartLive').onclick=()=>{o.remove();go('#/live')};
+    o.querySelector('#novaLuckLive').onclick=async()=>{
+      const b=o.querySelector('#novaLuckLive');b.disabled=true;b.textContent='Buscando un Live…';
+      try{if(!sb)throw new Error('Supabase no disponible');const r=await sb.from('lives').select('id').eq('status','live').order('started_at',{ascending:false}).limit(30);const rows=r.data||[];if(!rows.length){b.textContent='No hay Lives activos';setTimeout(()=>{b.textContent='Live de la suerte';b.disabled=false},1400);return}const pick=rows[Math.floor(Math.random()*rows.length)];o.remove();go('#/live/'+encodeURIComponent(pick.id));}catch(e){b.disabled=false;b.textContent='Live de la suerte';toast('No se pudo buscar un Live')}};
+  };
+  document.addEventListener('click',e=>{if(e.target.closest('#createLive')){setTimeout(()=>window.openNovaLiveLuck(),0)}} ,true);
+
+  // Galería: mejora la entrada de vídeos y muestra un fallback claro si el códec del móvil no se puede previsualizar.
+  const oldEditor=window.editor;
+  if(oldEditor){
+    window.editor=function(f,fl=''){
+      oldEditor(f,fl);
+      setTimeout(()=>{
+        const v=document.querySelector('.pg video.pv');if(!v)return;
+        v.setAttribute('preload','metadata');v.playsInline=true;
+        let box=document.querySelector('.nova-video-fallback');
+        if(!box){box=document.createElement('div');box.className='nova-video-fallback';box.innerHTML='<b>Vista previa no disponible</b><br>El vídeo de tu galería usa un formato/códec que este navegador no puede reproducir. El archivo sigue seleccionado y puedes intentar publicarlo igualmente.';v.parentElement?.insertBefore(box,v.nextSibling)}
+        v.addEventListener('error',()=>box.classList.add('on'),{once:true});v.addEventListener('loadedmetadata',()=>box.classList.remove('on'),{once:true});
+        v.load();
+      },60);
+    }
+  }
+
+  window.novaChooseVideoSource=function(){
+    const old=document.querySelector('.nova-live-luck');if(old)old.remove();
+    const o=document.createElement('div');o.className='nova-live-luck';o.innerHTML=`<div class="nova-live-luck-card"><div class="nova-luck-orb"></div><h2>Crear vídeo</h2><p>Elige si quieres grabar ahora o publicar un vídeo que ya tengas en tu galería.</p><div class="nova-luck-actions"><button class="nova-luck-btn primary" id="nvCam">Abrir cámara</button><button class="nova-luck-btn" id="nvGal">Elegir de galería</button><button class="nova-luck-btn" id="nvCancel">Volver</button></div></div>`;
+    document.body.appendChild(o);
+    o.querySelector('#nvCancel').onclick=()=>o.remove();
+    o.querySelector('#nvCam').onclick=()=>{o.remove();openCameraCreate(true)};
+    o.querySelector('#nvGal').onclick=()=>{
+      o.remove();
+      const input=document.createElement('input');input.type='file';input.accept='video/mp4,video/webm,video/quicktime,video/*';input.style.display='none';document.body.appendChild(input);
+      input.onchange=e=>{const f=e.target.files?.[0];input.remove();if(f){window.editor?window.editor(f,''):editor(f,'')}};
+      input.click();
+    };
+  };
+
+  // Añade un selector de vídeo de galería también en la pantalla de creación, sin quitar la cámara.
+  const oldCreateMenu=window.createMenu;
+  if(oldCreateMenu){
+    window.createMenu=function(){oldCreateMenu();const root=document.querySelector('#createMenu');if(!root)return;let input=root.querySelector('#novaGalleryVideo');if(!input){input=document.createElement('input');input.id='novaGalleryVideo';input.type='file';input.accept='video/mp4,video/webm,video/quicktime,video/*';input.hidden=true;root.appendChild(input)}const videoBtn=root.querySelector('#createVideo');if(videoBtn){const small=videoBtn.querySelector('span span:last-child');if(small)small.textContent='Graba con la cámara o elige un vídeo de tu galería.';videoBtn.onclick=()=>{const choice=document.createElement('div');choice.className='nova-live-luck';choice.innerHTML=`<div class="nova-live-luck-card"><div class="nova-luck-orb"></div><h2>Crear vídeo</h2><p>Elige si quieres grabar ahora o publicar un vídeo que ya tengas.</p><div class="nova-luck-actions"><button class="nova-luck-btn primary" id="nvCam">Abrir cámara</button><button class="nova-luck-btn" id="nvGal">Elegir de galería</button><button class="nova-luck-btn" id="nvCancel">Volver</button></div></div>`;document.body.appendChild(choice);choice.querySelector('#nvCancel').onclick=()=>choice.remove();choice.querySelector('#nvCam').onclick=()=>{choice.remove();openCameraCreate(true)};choice.querySelector('#nvGal').onclick=()=>{choice.remove();input.click()}};input.onchange=e=>{const f=e.target.files?.[0];if(f){window.editor?window.editor(f,''):oldEditor(f,'')}input.value=''}}}
+  }
+
+  // Corrige el botón de Live del menú incluso si el handler original ya estaba creado.
+  document.addEventListener('click',e=>{if(e.target.closest('#createLive')){e.preventDefault();e.stopImmediatePropagation();window.openNovaLiveLuck()}},true);
+
+  // Más apartados de configuración: se añaden a la interfaz existente.
+  const extraTabs=[['account','Cuenta'],['feed','Feed'],['notify','Notificaciones'],['accessibility','Accesibilidad'],['storage','Almacenamiento'],['security','Seguridad'],['help','Ayuda']];
+  function injectExtraTabs(){const rail=document.querySelector('.nsv2-rail');if(!rail||rail.dataset.v5)return;rail.dataset.v5='1';extraTabs.forEach(([id,label])=>{const b=document.createElement('button');b.className='nsv2-tab';b.dataset.tab=id;b.innerHTML=novaCfgSticker(id)+`<span>${label}</span>`;b.onclick=()=>{rail.querySelectorAll('.nsv2-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderExtra(id)};rail.appendChild(b)});}
+  function renderExtra(id){const o=document.querySelector('.nova-settings-v2'),c=o?.querySelector('#nsv2Content');if(!c)return;const card=(title,sub,rows)=>`<div class="nsv2-card"><h3 style="margin:0 0 4px">${title}</h3><div class="nsv2-sub">${sub}</div><div style="margin-top:10px">${rows.map(x=>`<div class="nsv2-toggle"><span>${x[0]}<small>${x[1]}</small></span><button class="nsv2-switch ${x[2]?'on':''}"><i></i></button></div>`).join('')}</div></div>`;
+    if(id==='account')c.innerHTML=card('Cuenta','Preferencias de tu perfil.',[['Mostrar actividad pública','Permite mostrar actividad en tu perfil',true],['Confirmar acciones importantes','Evita pulsaciones accidentales',true],['Modo creador','Muestra herramientas adicionales',false]]);
+    if(id==='feed')c.innerHTML=card('Feed','Controla cómo se comporta el inicio.',[['Reproducción automática','Los vídeos empiezan al aparecer',true],['Scroll con ajuste','Ajusta cada vídeo a pantalla completa',true],['Contenido sensible reducido','Reduce contenido marcado',false]]);
+    if(id==='notify')c.innerHTML=card('Notificaciones','Decide qué avisos quieres recibir.',[['Likes y comentarios','Avisos de interacción',true],['Nuevos seguidores','Avisos cuando alguien te siga',true],['Mensajes','Avisos de chat',true],['Lives','Avisos de directos',false]]);
+    if(id==='accessibility')c.innerHTML=card('Accesibilidad','Opciones para que Nova sea más cómoda.',[['Texto grande','Aumenta tamaños de texto',false],['Reducir movimiento','Reduce animaciones',false],['Contraste alto','Refuerza los bordes y textos',false],['Vibración reducida','Reduce respuesta háptica',false]]);
+    if(id==='storage')c.innerHTML=`<div class="nsv2-card"><h3 style="margin:0 0 4px">Almacenamiento</h3><div class="nsv2-sub">Datos locales de Nova en este dispositivo.</div><div class="nsv2-statrow"><span class="nsv2-pill">Vídeos locales: ${S.meta.filter(v=>!v.remote).length}</span><span class="nsv2-pill">Historial: ${S.hist.length}</span></div><button class="nsv2-btn primary" style="width:100%;margin-top:12px" id="nvClearLocal">Limpiar datos locales</button></div>`;
+    if(id==='security')c.innerHTML=card('Seguridad','Controles básicos de sesión y privacidad.',[['Sesión segura','Mantener sesión iniciada',true],['Bloqueo de capturas UI','Oculta algunos datos sensibles',false],['Avisar de sesiones nuevas','Muestra aviso de acceso',true]]);
+    if(id==='help')c.innerHTML=`<div class="nsv2-card"><h3 style="margin:0 0 4px">Centro de ayuda</h3><div class="nsv2-sub">Soluciones rápidas para Nova.</div><div class="nsv2-actions" style="margin-top:10px"><button class="nsv2-action" id="nvHelpVideo"><span class="ico">${novaCfgSticker('play')}</span><span>Vídeos de galería<small>Si un vídeo no tiene vista previa, prueba otro formato MP4/H.264.</small></span></button><button class="nsv2-action" id="nvHelpComments"><span class="ico">${novaCfgSticker('help')}</span><span>Comentarios<small>Requieren las tablas y políticas de Supabase.</small></span></button></div></div>`;
+    c.querySelector('#nvClearLocal')?.addEventListener('click',()=>{if(confirm('¿Borrar datos locales de Nova?')){localStorage.removeItem('nova');localStorage.removeItem('novaPetV4');localStorage.removeItem('novaPetCareV4');location.reload()}});
+  }
+  const obs=new MutationObserver(()=>{const o=document.querySelector('.nova-settings-v2');if(o&&!o.dataset.v5init){o.dataset.v5init='1';injectExtraTabs();refreshConfigStickerIcons(o)}});obs.observe(document.body,{childList:true,subtree:true});
 })();
 </script>
 
