@@ -57,7 +57,7 @@ textarea{resize:none;font-family:inherit}
 .gl{background:#ffffff12;border:1px solid #ffffff28;border-radius:28px;padding:22px;margin-top:22px;text-align:left}
 .gl input{background:#ffffff14;border-color:#ffffff30;color:#fff;margin:4px 0 12px}.gl input::placeholder{color:#fff9}.gl label{color:#c4c4d8;font-size:13px}
 .cam,.rv{position:absolute;inset:0;background:#000;color:#fff;overflow:hidden}
-.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cam video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
 .cam .top{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;display:flex;justify-content:space-between;z-index:3}
 .cb{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:rgba(40,20,90,.45);border:1px solid rgba(170,150,255,.45);color:#fff}
 .tm{position:absolute;top:calc(68px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);background:#0007;border-radius:99px;padding:4px 14px;font-weight:700;z-index:3}
@@ -250,13 +250,16 @@ input:disabled{opacity:.5}
 .live-gift-fab{position:absolute;right:12px;bottom:calc(132px + env(safe-area-inset-bottom,0px));z-index:7;height:48px;padding:0 16px;border-radius:999px;background:linear-gradient(135deg,rgba(139,123,255,.9),rgba(53,208,255,.9));box-shadow:0 0 22px rgba(139,123,255,.55);display:flex;align-items:center;gap:7px;font-weight:800}
 .gift-sheet{position:absolute;left:10px;right:10px;bottom:calc(70px + env(safe-area-inset-bottom,0px));z-index:10;border:1px solid rgba(170,150,255,.45);border-radius:22px;background:rgba(12,10,25,.96);backdrop-filter:blur(18px);padding:14px;box-shadow:0 15px 50px rgba(0,0,0,.55);animation:giftUp .25s ease-out}
 @keyframes giftUp{from{opacity:0;transform:translateY(20px) scale(.96)}}.gift-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;background:rgba(139,123,255,.12);border:1px solid rgba(170,150,255,.25)}.gift-item .gift-icon{width:56px;height:56px;flex:none}.gift-item .gift-meta{flex:1}.gift-item .gift-meta b{display:block}.gift-item .gift-meta span{font-size:12px;color:#c9c1ff}.gift-legend{color:#d7ccff;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
-.gift-burst{position:absolute;left:12px;bottom:17%;z-index:40;width:min(94vw,470px);pointer-events:none;animation:giftTikIn .42s cubic-bezier(.18,.9,.2,1) both}.gift-tik-row{display:flex;align-items:center;gap:10px;width:max-content;max-width:100%;filter:drop-shadow(0 5px 18px rgba(0,0,0,.45))}.gift-tik-avatar{position:relative;width:48px;height:48px;flex:0 0 48px}.gift-tik-avatar .gift-dog-head{position:absolute;left:-7px;top:-24px;width:62px;height:52px;object-fit:contain;object-position:center bottom;pointer-events:none;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));z-index:3}.gift-tik-user{min-width:62px;max-width:115px;font-size:13px;font-weight:850;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 7px #000}.gift-tik-art{width:110px;height:82px;position:relative;display:grid;place-items:center;overflow:hidden}.gift-tik-art video{width:145%;height:145%;object-fit:cover;object-position:50% 50%;mix-blend-mode:screen;filter:drop-shadow(0 6px 18px rgba(139,123,255,.48));transform:scale(1.08)}.gift-tik-count{position:absolute;left:185px;top:54px;font-size:19px;font-weight:950;font-style:italic;color:#fff;text-shadow:0 2px 9px #000,0 0 12px rgba(139,123,255,.65);animation:giftCountPop .35s ease-out both}.gift-burst .gift-label{display:none}.gift-burst .sound-btn{position:absolute;right:3px;top:-8px;border-radius:999px;padding:6px 9px;background:rgba(0,0,0,.62);border:1px solid rgba(255,255,255,.25);font-size:11px;font-weight:800;pointer-events:auto}.gift-burst .sound-btn.on{background:rgba(139,123,255,.75)}@keyframes giftTikIn{from{opacity:0;transform:translateX(-38px) scale(.88)}to{opacity:1;transform:translateX(0) scale(1)}}@keyframes giftCountPop{from{opacity:0;transform:scale(.5) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.gift-burst{position:absolute;left:12px;bottom:17%;z-index:40;pointer-events:none;animation:giftTikIn .38s cubic-bezier(.18,.9,.2,1) both}.gift-tik-row{display:flex;align-items:center;gap:9px;filter:drop-shadow(0 5px 18px rgba(0,0,0,.45));position:relative}.gift-tik-avatar{position:relative;width:48px;height:48px;flex:0 0 48px}.gift-tik-avatar .gift-dog-head{position:absolute;left:-9px;top:-31px;width:66px;height:58px;object-fit:contain;object-position:center bottom;pointer-events:none;z-index:3}.gift-tik-user{max-width:120px;font-size:13px;font-weight:850;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 7px #000}.gift-tik-art{width:86px;height:72px;position:relative;display:grid;place-items:center;overflow:visible}.gift-tik-art img{display:block;width:72px;height:72px;object-fit:contain;object-position:center;filter:drop-shadow(0 5px 12px rgba(139,123,255,.5))}.gift-tik-count{position:absolute;left:calc(100% - 34px);top:58px;font-size:18px;font-weight:950;font-style:italic;color:#fff;text-shadow:0 2px 9px #000,0 0 12px rgba(139,123,255,.65);animation:giftCountPop .3s ease-out both;white-space:nowrap}.gift-burst .gift-label,.gift-burst .sound-btn{display:none}@keyframes giftTikIn{from{opacity:0;transform:translateX(-38px) scale(.88)}to{opacity:1;transform:translateX(0) scale(1)}}@keyframes giftCountPop{from{opacity:0;transform:scale(.5) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
 @keyframes giftEnter{0%{opacity:0;transform:translate(-50%,35%) scale(.72)}65%{opacity:1;transform:translate(-50%,-4%) scale(1.05)}100%{opacity:1;transform:translate(-50%,0) scale(1)}}
 .card.photo-card .photo-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.gi.photo{background:#000}.gi.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .create-menu{position:fixed;inset:0;z-index:75;background:rgba(4,3,12,.78);backdrop-filter:blur(12px);display:flex;align-items:flex-end;justify-content:center;padding:18px}.create-menu .create-box{width:min(520px,100%);background:var(--sf);border:1px solid var(--bd);border-radius:26px;padding:18px;box-shadow:0 20px 70px rgba(0,0,0,.55);animation:up .25s}.camera-sticker{background:linear-gradient(135deg,#8b7bff,#35d0ff,#ff5c8a);box-shadow:0 0 22px rgba(53,208,255,.28);border-radius:18px;padding:8px}.camera-sticker svg{stroke:#fff!important;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}.camera-sticker .nv-star{stroke:#fff!important}
 .create-option{width:100%;display:flex;align-items:center;gap:15px;padding:16px;border-radius:20px;background:rgba(139,123,255,.08);border:1px solid rgba(170,150,255,.2);margin-top:10px;text-align:left}.create-option:first-child{margin-top:4px}.create-option .co-icon{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(139,123,255,.6),transparent 60%),radial-gradient(circle at 80% 90%,rgba(53,208,255,.4),transparent 60%),#151027;box-shadow:0 0 18px rgba(139,123,255,.25)}.create-option b{display:block;font-size:16px}.create-option span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
 
 .live-viewers{display:flex;align-items:center;gap:4px;margin-top:2px;color:#ddd;font-size:11px}.live-eye-sticker{display:inline-flex;vertical-align:middle}.live-eye-sticker .nv-sticker{width:15px!important;height:15px!important}.live-viewer-pill{min-width:46px;height:36px;padding:0 9px;border-radius:999px;background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;backdrop-filter:blur(12px)}.live-viewer-pill .nv-sticker{width:16px!important;height:16px!important}.live-end-top{background:rgba(255,38,61,.18)!important;border-color:rgba(255,93,111,.55)!important;color:#ff8b98!important}.live-sound-btn{position:absolute;right:12px;top:62px;z-index:8;height:38px;padding:0 12px;border-radius:999px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);color:#fff;font-weight:800;backdrop-filter:blur(10px)}
+
+/* ===== NOVA EXTRA FEATURES ===== */
+.duet-sheet,.template-sheet{position:fixed;inset:0;z-index:120;background:rgba(4,5,12,.82);backdrop-filter:blur(18px);display:grid;place-items:center;padding:18px}.feature-box{width:min(560px,94vw);max-height:90vh;overflow:auto;background:var(--bg2,#11131d);border:1px solid var(--bd);border-radius:24px;padding:20px;box-shadow:0 20px 80px #0008}.feature-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.feature-card{border:1px solid var(--bd);border-radius:18px;padding:14px;background:linear-gradient(145deg,#15182a,#0d0f18);cursor:pointer}.feature-card:hover{border-color:#8b7bff}.duet-stage{position:relative;display:grid;grid-template-columns:1fr 1fr;height:min(62vh,600px);background:#000;border-radius:20px;overflow:hidden}.duet-stage video{width:100%;height:100%;object-fit:cover;background:#000}.duet-label{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:3;padding:6px 12px;border-radius:999px;background:#0009;color:#fff;font-weight:800}.neon-avatar{box-shadow:0 0 0 3px #fff,0 0 12px #8b7bff,0 0 28px #35d0ff,0 0 48px #ff4fd8;animation:nvNeonPulse 2.2s ease-in-out infinite}@keyframes nvNeonPulse{50%{filter:hue-rotate(90deg);box-shadow:0 0 0 3px #fff,0 0 18px #ff4fd8,0 0 38px #8b7bff,0 0 58px #35d0ff}}.combo-pop{position:absolute;right:18px;bottom:28%;z-index:60;font-size:34px;font-weight:1000;font-style:italic;color:#fff;text-shadow:0 0 14px #8b7bff,0 4px 14px #000;animation:comboPop .7s cubic-bezier(.2,1.5,.3,1) both;pointer-events:none}@keyframes comboPop{0%{opacity:0;transform:scale(.2) rotate(-12deg)}45%{opacity:1;transform:scale(1.3) rotate(5deg)}100%{opacity:0;transform:scale(1) translateY(-30px)}}.live-poll{position:absolute;left:14px;right:14px;bottom:92px;z-index:45;background:#111c;border:1px solid #fff3;border-radius:18px;padding:12px;backdrop-filter:blur(12px)}.poll-opt{width:100%;margin-top:7px;padding:10px;border-radius:12px;border:1px solid #fff2;background:#fff1;color:#fff;text-align:left}.poll-opt b{float:right}.mod-badge{font-size:10px;padding:3px 7px;border-radius:999px;background:linear-gradient(90deg,#8b7bff,#35d0ff);color:#05060a;font-weight:900}.comment-reply-video{margin-top:8px}.feature-btn{font-size:12px!important;padding:7px 10px!important}
 </style></head><body>
 
 <script>setTimeout(()=>{const i=document.getElementById('intro');i&&i.remove()},13500)</script>
@@ -590,8 +593,8 @@ function photoEditor(file){
 }
 function createMenu(){
   document.body.classList.add('nl');
-  $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon camera-sticker">${sticker('camera','lg')}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
-  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>openCameraCreate(true); $('#createLive').onclick=()=>go('#/live'); $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files?.[0];if(f)photoEditor(f)};
+  $('#m').innerHTML=`<div class="create-menu" id="createMenu"><div class="create-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Crear en Nova</h2><p class="mu">Elige qué quieres publicar.</p></div><button class="cb" id="createClose">${ic('x',20)}</button></div><button class="create-option" id="createVideo"><span class="co-icon camera-sticker">${sticker('camera','lg')}</span><span><b>Vídeo</b><span>Graba con la cámara o sube uno de tu galería.</span></span></button><button class="create-option" id="createPhoto"><span class="co-icon">${sticker('star','lg')}</span><span><b>Foto</b><span>Sube una imagen de tu galería y publícala en el feed.</span></span></button><button class="create-option" id="createLive"><span class="co-icon">${sticker('gift','lg')}</span><span><b>Live</b><span>Inicia un directo con cámara y micrófono.</span></span></button><button class="create-option" id="createTemplates"><span class="co-icon">${sticker('star','lg')}</span><span><b>Plantillas</b><span>Crea vídeos rápidos con estilos de Nova.</span></span></button><input id="photoFile" type="file" accept="image/*" hidden></div></div>`;
+  $('#createClose').onclick=()=>go('#/'); $('#createVideo').onclick=()=>openCameraCreate(true); $('#createLive').onclick=()=>go('#/live'); $('#createTemplates').onclick=showTemplates; $('#createPhoto').onclick=()=>$('#photoFile').click(); $('#photoFile').onchange=e=>{const f=e.target.files?.[0];if(f)photoEditor(f)};
 }
 
 async function incrementView(videoId){
@@ -858,35 +861,38 @@ let liveViewerRetryTimer=null;
 const rtcPendingIce=new Map();
 function isLiveOwner(){return !!(currentLive&&supabaseUser&&currentLive.user_id===supabaseUser.id)}
 function openGiftPanel(){const p=$('#giftPanel');if(!p)return;p.remove();giftPanelOpen=false}
-function toggleGiftPanel(){const p=$('#giftPanel');if(p){p.remove();giftPanelOpen=false;return} if(isLiveOwner())return; const host=$('.live-stage');if(!host)return; giftPanelOpen=true; const el=document.createElement('div');el.id='giftPanel';el.className='gift-sheet';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><b>Regalos</b><div class="gift-legend">Legendario</div></div><button class="btn o" id="closeGiftPanel">Cerrar</button></div><div class="gift-item"><div class="gift-icon">${sticker('gift','lg')}</div><div class="gift-meta"><b>Pistola de Dinero Nova</b><span>100 monedas · regalo gratis</span></div><button class="btn" id="sendNovaGift">Regalar</button></div>`;host.append(el);$('#closeGiftPanel').onclick=openGiftPanel;$('#sendNovaGift').onclick=sendNovaGift}
+function toggleGiftPanel(){const p=$('#giftPanel');if(p){p.remove();giftPanelOpen=false;return} if(isLiveOwner())return; const host=$('.live-stage');if(!host)return; giftPanelOpen=true; const el=document.createElement('div');el.id='giftPanel';el.className='gift-sheet';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div><b>Regalos</b><div class="gift-legend">Legendario</div></div><button class="btn o" id="closeGiftPanel">Cerrar</button></div><div class="gift-item"><img class="gift-icon" src="https://i.postimg.cc/zDtnqpXd/file-00000000125882109faed2077eaa4dba.png" alt="Regalo perro"><div class="gift-meta"><b>Perro</b><span>Regalo gratis</span></div><button class="btn" id="sendNovaGift">Regalar</button></div>`;host.append(el);$('#closeGiftPanel').onclick=openGiftPanel;$('#sendNovaGift').onclick=sendNovaGift}
 async function sendNovaGift(){
   if(!currentLive||isLiveOwner())return; const me=await getMyId(); const now=Date.now();
   giftCombo=(giftCombo.senderId===me&&now-giftCombo.lastAt<3000)?{senderId:me,count:giftCombo.count+1,lastAt:now}:{senderId:me,count:1,lastAt:now};
-  try{const {error}=await sb.rpc('send_gift',{p_live:currentLive.id,p_gift_key:'pistola_nova',p_gift_name:'Pistola de Dinero Nova',p_coins:100});if(error)throw error;openGiftPanel();toast('Regalo enviado');showNovaGift(giftCombo.count,me)}catch(e){console.error(e);toast('No se pudo enviar el regalo: '+String(e.message||e).slice(0,70))}
+  try{const {error}=await sb.rpc('send_gift',{p_live:currentLive.id,p_gift_key:'perro',p_gift_name:'Perro',p_coins:100});if(error)throw error;openGiftPanel();toast('Regalo enviado');showNovaGift(giftCombo.count,me);showComboAnimation(giftCombo.count)}catch(e){console.error(e);toast('No se pudo enviar el regalo: '+String(e.message||e).slice(0,70))}
 }
 async function showNovaGift(combo=1,senderId){
-  const host=$('.live-stage');if(!host)return; const old=$('#giftBurst');if(old)old.remove(); if(giftOverlayTimer)clearTimeout(giftOverlayTimer);
+  const host=$('.live-stage');if(!host)return;
+  const old=$('#giftBurst');if(old)old.remove();
+  if(giftOverlayTimer)clearTimeout(giftOverlayTimer);
   let senderName='Usuario',senderAvatar=null;
   try{
     if(senderId&&supabaseUser&&senderId===supabaseUser.id){senderName=ME?.u||ME?.n||'Tú';senderAvatar=ME?.av||null}
     else if(senderId){const r=await sb.from('profiles').select('username,display_name,avatar_url').eq('id',senderId).maybeSingle();if(r.data){senderName=r.data.username||r.data.display_name||'Usuario';senderAvatar=r.data.avatar_url||null}}
-  }catch(e){console.warn('No se pudo cargar perfil del regalo',e)}
+  }catch(e){}
   const wrap=document.createElement('div');wrap.id='giftBurst';wrap.className='gift-burst';
   const avatar=senderAvatar?`<img src="${esc(senderAvatar)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:esc((senderName||'U')[0].toUpperCase());
-  wrap.innerHTML=`<div class="gift-tik-row"><div class="gift-tik-avatar av">${avatar}<img class="gift-dog-head" src="https://i.postimg.cc/zDtnqpXd/file-00000000125882109faed2077eaa4dba.png" alt=""></div><div class="gift-tik-user">${esc(senderName)}</div><div class="gift-tik-art"><video id="giftVideo" src="${NOVA_GIFT_VIDEO}" muted playsinline preload="auto"></video></div><div class="gift-tik-count">×${Math.max(1,combo)}</div></div>`;
+  const dog='https://i.postimg.cc/zDtnqpXd/file-00000000125882109faed2077eaa4dba.png';
+  wrap.innerHTML=`<div class="gift-tik-row"><div class="gift-tik-avatar av">${avatar}<img class="gift-dog-head" src="${dog}" alt=""></div><div class="gift-tik-user">${esc(senderName)}</div><div class="gift-tik-art"><img src="${dog}" alt="Perro"></div><div class="gift-tik-count">×${Math.max(1,Number(combo)||1)}</div></div>`;
   host.append(wrap);
-  const v=$('#giftVideo');
-  v.play().catch(()=>{}); giftOverlayTimer=setTimeout(()=>wrap.remove(),Math.max(3200,Math.min(5000,(v.duration&&isFinite(v.duration)?v.duration*1000:4200))));
+  giftOverlayTimer=setTimeout(()=>wrap.remove(),3000);
 }
 async function subscribeLiveGifts(liveId){
   if(!liveChannel)return;
-  liveChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'live_gifts',filter:'live_id=eq.'+liveId},payload=>{const g=payload.new;if(!g||g.gift_key!=='pistola_nova')return;const now=Date.now();const same=giftCombo.senderId===g.sender_id&&now-giftCombo.lastAt<3000;giftCombo={senderId:g.sender_id,count:same?giftCombo.count+1:1,lastAt:now};showNovaGift(giftCombo.count,g.senderId);});
-  // Recupera regalos muy recientes para que el creador también vea la animación aunque se haya conectado justo al enviarse.
-  try{
-    const r=await sb.from('live_gifts').select('id,sender_id,gift_key,created_at').eq('live_id',liveId).eq('gift_key','pistola_nova').order('created_at',{ascending:false}).limit(1);
-    const g=r.data?.[0];
-    if(g&&Date.now()-Date.parse(g.created_at||'')<6000){showNovaGift(1,g.sender_id);}
-  }catch(e){console.warn('Nova: no se pudieron cargar regalos recientes',e)}
+  liveChannel.on('postgres_changes',{event:'INSERT',schema:'public',table:'live_gifts',filter:'live_id=eq.'+liveId},payload=>{
+    const g=payload.new;if(!g||g.gift_key!=='perro')return;
+    // El emisor ya muestra su propio regalo localmente; evitamos duplicarlo al recibir Realtime.
+    if(supabaseUser&&g.sender_id===supabaseUser.id&&Date.now()-giftCombo.lastAt<2500)return;
+    const now=Date.now();const same=giftCombo.senderId===g.sender_id&&now-giftCombo.lastAt<3000;
+    giftCombo={senderId:g.sender_id,count:same?giftCombo.count+1:1,lastAt:now};
+    showNovaGift(giftCombo.count,g.sender_id);showComboAnimation(giftCombo.count);
+  });
 }
 
 async function loadLiveMessages(liveId){
@@ -1213,6 +1219,7 @@ async function livePage(){
   $('#openLiveList').onclick=()=>$('#liveListPanel').classList.add('on');
   $('#liveGiftBtn').onclick=toggleGiftPanel;
   await refreshLiveList();
+  setupLiveExtras();
   const v=$('#liveCam'); if(v)v.srcObject=liveStream||null;
   if(liveId){setTimeout(()=>joinLive(liveId),0)}
 }
@@ -1279,6 +1286,7 @@ const rail=v=>{
 <button data-a="like" class="${S.liked[v.id]?'act':''}" aria-label="Me gusta"><b>${ic('heart',24,S.liked[v.id])}</b><span>${lk}</span></button>
 <button data-a="cm" aria-label="Comentarios"><b>${ic('chat')}</b><span>${cm}</span></button>
 <button data-a="sv" class="${S.saved[v.id]?'act':''}" aria-label="Guardar"><b>${ic('mark',24,S.saved[v.id])}</b><span>${S.saved[v.id]?'Guardado':'Guardar'}</span></button>
+<button data-a="duet" aria-label="Dueto"><b>${ic('layout')}</b><span>Dueto</span></button>
 <button data-a="mute" aria-label="Sonido"><b>${ic(S.muted?'voloff':'volon')}</b></button>
 ${isMine?`<button data-a="del" aria-label="Borrar"><b>${ic('trash')}</b></button>`:''}`;
 };
@@ -1844,7 +1852,7 @@ async function openCameraCreate(first){
 function att(){
   const v=$('#cv');if(!v)return;
   v.srcObject=st;
-  v.style.cssText=safeFilter(cf)+';transform:'+(fc=='user'?'scaleX(-1)':'none');
+  v.style.cssText=safeFilter(cf)+';transform:none;object-fit:contain;background:#000;'
   tor=0;const z=$('#fz');z&&z.classList.remove('on');
   v.play().catch(()=>{});
 }
@@ -1990,12 +1998,13 @@ function readAv(f){
   i.onerror=()=>toast('No se pudo leer');
   i.src=u;
 }
-const renderCommentsList=list=>list.length?list.map(c=>`<div class="cm" style="display:flex;gap:8px;align-items:flex-start">${avt(30)}<div style="flex:1;min-width:0"><b>@${esc(c.u)}</b><div>${esc(c.t)}</div></div><button class="btn o" style="padding:4px 10px;font-size:12px" data-del-cm="${c.id}">Borrar</button></div>`).join(''):'<p class="mu">Sé el primero en comentar.</p>';
+const renderCommentsList=list=>list.length?list.map(c=>`<div class="cm" style="display:flex;gap:8px;align-items:flex-start">${avt(30)}<div style="flex:1;min-width:0"><b>@${esc(c.u)}</b><div>${esc(c.t)}</div></div><div style="display:flex;gap:5px"><button class="btn o feature-btn" data-reply-video="${c.id}" data-user="${esc(c.u)}">Responder con vídeo</button><button class="btn o feature-btn" style="padding:4px 10px;font-size:12px" data-del-cm="${c.id}">Borrar</button></div></div>`).join(''):'<p class="mu">Sé el primero en comentar.</p>';
 async function renderCommentSheetFor(videoId){
   const list=await loadComments(videoId);
   const sbEl=$('.sb');if(!sbEl)return;
   sbEl.innerHTML=renderCommentsList(list);
   sbEl.querySelectorAll('[data-del-cm]').forEach(b=>b.onclick=async()=>{try{await deleteComment(+b.dataset.delCm,videoId);await renderCommentSheetFor(videoId)}catch(e){}});
+  sbEl.querySelectorAll('[data-reply-video]').forEach(b=>b.onclick=()=>replyCommentWithVideo(videoId,b.dataset.user));
 }
 
 const A={
@@ -2010,6 +2019,7 @@ const A={
     }catch(err){toast('No se pudo')}
   },
   sv:async e=>{const id=e.closest('.card').dataset.id;try{await toggleSave(id);toast(S.saved[id]?'Guardado':'Eliminado')}catch(err){toast('No se pudo')}},
+  duet:e=>{const id=e.closest('.card').dataset.id;openDuet(id)},
   mute:()=>{S.muted=!S.muted;save();document.querySelectorAll('video').forEach(v=>v.muted=S.muted);document.querySelectorAll('[data-a=mute] b').forEach(b=>b.innerHTML=ic(S.muted?'voloff':'volon'));toast(S.muted?'Silenciado':'Sonido')},
   cm:async e=>{
     curC=e.closest('.card').dataset.id;currentCommentsVideoId=curC;
@@ -2154,6 +2164,43 @@ async function subscribeSocial(){
 function applyLikeDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.likeCount=Math.max(0,(v.likeCount||0)+delta);refresh(videoId)}
 function applyCommentDelta(videoId,delta){const v=vid(videoId);if(!v)return;v.commentCount=Math.max(0,(v.commentCount||0)+delta);refresh(videoId)}
 
+/* ===== NOVA EXTRA FEATURES ===== */
+function showTemplates(){
+  document.body.classList.add('nl');
+  $('#m').innerHTML=`<div class="template-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 style="margin:0">Plantillas Nova</h2><p class="mu">Elige un estilo y después selecciona un vídeo.</p></div><button class="cb" id="tplClose">${ic('x',22)}</button></div><div class="feature-grid" style="margin-top:14px"><div class="feature-card" data-tpl="neon"><b>NEON</b><p class="mu">Texto luminoso y colores galaxia.</p></div><div class="feature-card" data-tpl="cinema"><b>CINEMA</b><p class="mu">Barras cinematográficas y contraste.</p></div><div class="feature-card" data-tpl="speed"><b>SPEED</b><p class="mu">Ritmo rápido y zoom dinámico.</p></div><div class="feature-card" data-tpl="galaxy"><b>GALAXY</b><p class="mu">Brillo y estética Nova.</p></div></div></div></div>`;
+  $('#tplClose').onclick=()=>go('#/');document.querySelectorAll('[data-tpl]').forEach(x=>x.onclick=()=>pickTemplate(x.dataset.tpl));
+}
+function pickTemplate(tpl){
+  const pick=document.createElement('input');pick.type='file';pick.accept='video/*';pick.onchange=e=>{const f=e.target.files?.[0];if(f)templateEditor(f,tpl)};pick.click();
+}
+function templateEditor(file,tpl){
+  const u=URL.createObjectURL(file), labels={neon:'NEON',cinema:'CINEMA',speed:'SPEED',galaxy:'GALAXY'};
+  document.body.classList.remove('nl');$('#m').innerHTML=`<div class="pg"><h2>Plantilla ${labels[tpl]||'NOVA'}</h2><video id="tplVid" src="${u}" class="pv" controls autoplay muted loop></video><p><input id="tplText" maxlength="40" placeholder="Texto de la plantilla"></p><div class="chips"><button class="btn o" id="tplCancel">Cancelar</button><button class="btn" id="tplSave">Continuar</button></div></div>`;
+  $('#tplCancel').onclick=()=>go('#/');$('#tplSave').onclick=()=>editor(file,tpl==='neon'?'filter:saturate(1.8) contrast(1.15) hue-rotate(35deg)':tpl==='cinema'?'filter:contrast(1.35) saturate(.85)':tpl==='speed'?'filter:saturate(1.5) contrast(1.2)':'filter:saturate(1.45) hue-rotate(15deg)');
+}
+async function openDuet(videoId){
+  const v=vid(videoId);if(!v)return;
+  document.body.classList.add('nl');
+  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" src="${esc(v.src)}" autoplay muted loop playsinline></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div></div></div>`;
+  $('#duetClose').onclick=()=>go('#/');
+  try{const stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});$('#duetMe').srcObject=stream;let rec,chunks=[];$('#duetRec').onclick=()=>{if(rec){rec.stop();return}chunks=[];rec=new MediaRecorder(stream);rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{stream.getTracks().forEach(t=>t.stop());const b=new Blob(chunks,{type:rec.mimeType||'video/webm'});editor(new File([b],'dueto.webm',{type:b.type}),'')};rec.start();$('#duetRec').textContent='Parar y publicar';toast('Grabando dueto…')};$('#duetFlip').onclick=()=>{$('#duetMe').style.transform=$('#duetMe').style.transform?'':'scaleX(-1)'};}catch(e){toast('No se pudo abrir la cámara')}
+}
+async function replyCommentWithVideo(videoId,username){
+  const pick=document.createElement('input');pick.type='file';pick.accept='video/*';pick.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const cloud=await publishCloudVideo(f,`Respuesta a @${username}`);S.meta.unshift(cloud);save();await refreshCloudFeed();toast('Respuesta con vídeo publicada');go('#/v/'+cloud.id)}catch(err){toast('No se pudo publicar')}};pick.click();
+}
+function showComboAnimation(n){const host=$('.live-stage');if(!host)return;const e=document.createElement('div');e.className='combo-pop';e.textContent='×'+n;host.append(e);setTimeout(()=>e.remove(),750)}
+document.addEventListener('click',e=>{if(e.target.closest('#neonProfileBtn')){neonizeProfileAvatar();toast('Efecto Neon activado')}});
+function neonizeProfileAvatar(){const a=document.querySelector('.profile-head .av, .profile-card .av, #ap .av');if(a)a.classList.toggle('neon-avatar')}
+async function setupLiveExtras(){
+  const host=$('.live-stage');if(!host||!currentLive)return;
+  const bar=document.createElement('div');bar.id='liveExtrasBar';bar.style='position:absolute;top:62px;right:12px;z-index:40;display:flex;gap:6px';
+  if(isLiveOwner())bar.innerHTML='<button class="btn o feature-btn" id="pollBtn">Encuesta</button><button class="btn o feature-btn" id="modBtn">Moderadores</button>';
+  host.append(bar);
+  $('#pollBtn')?.addEventListener('click',()=>createLivePoll());$('#modBtn')?.addEventListener('click',()=>manageLiveMods());
+}
+function createLivePoll(){
+  const q=prompt('Pregunta de la encuesta');if(!q)return;const a=prompt('Opción 1','Sí')||'Sí';const b=prompt('Opción 2','No')||'No';const host=$('.live-stage');if(!host)return;document.querySelector('#livePoll')?.remove();const p=document.createElement('div');p.id='livePoll';p.className='live-poll';p.innerHTML=`<b>${esc(q)}</b><button class="poll-opt" data-poll="0">${esc(a)} <b>0%</b></button><button class="poll-opt" data-poll="1">${esc(b)} <b>0%</b></button>`;host.append(p);p.querySelectorAll('.poll-opt').forEach(x=>x.onclick=()=>{const k='nova_poll_'+currentLive.id;const o=JSON.parse(localStorage.getItem(k)||'{}');o[x.dataset.poll]=(o[x.dataset.poll]||0)+1;localStorage.setItem(k,JSON.stringify(o));const t=(o[0]||0)+(o[1]||0)||1;p.querySelectorAll('.poll-opt').forEach(y=>y.querySelector('b').textContent=Math.round((o[y.dataset.poll]||0)*100/t)+'%')})}
+function manageLiveMods(){const current=JSON.parse(localStorage.getItem('nova_mods_'+currentLive.id)||'[]');const u=prompt('Nombre de usuario para añadir/quitar moderador',current[0]||'');if(!u)return;const i=current.indexOf(u);if(i>=0)current.splice(i,1);else current.push(u);localStorage.setItem('nova_mods_'+currentLive.id,JSON.stringify(current));toast(i>=0?'Moderador quitado':'Moderador añadido')}
 /* ---------- Arranque ---------- */
 (async()=>{
   const loading=document.getElementById('nova-loading');
