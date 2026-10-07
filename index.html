@@ -84,7 +84,7 @@ button:active,.btn:active,nav a:active{transform:scale(.88)}
 nav a.mk b{animation:glow 3s infinite}@keyframes glow{50%{box-shadow:0 0 22px rgba(53,208,255,.8)}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
 .cam{background:radial-gradient(circle at 20% 15%,#2b1c78,transparent 55%),radial-gradient(circle at 85% 90%,#0a4f78,transparent 55%),#07070d}
-.av{border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-weight:800;flex:none;overflow:hidden}.verified-badge{display:inline-grid;place-items:center;width:17px;height:17px;border-radius:50%;background:#168cff;color:#fff;font-size:11px;font-weight:950;line-height:1;box-shadow:0 0 8px rgba(22,140,255,.55);vertical-align:middle;margin-left:5px}.verified-badge::before{content:"✓"}.verified-name{display:inline-flex;align-items:center;gap:2px}.rail .av{border:2px solid #fff}
+.av{border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;font-weight:800;flex:none;overflow:hidden}.verified-badge{display:inline-block;width:18px;height:18px;object-fit:contain;vertical-align:middle;margin-left:4px;filter:drop-shadow(0 0 5px rgba(22,140,255,.35))}.verified-name{display:inline-flex;align-items:center;gap:2px}.rail .av{border:2px solid #fff}
 input:disabled{opacity:.5}
 .nc{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:0 32px 170px;z-index:2}.nc p{max-width:420px}
 .tl{gap:18px}.tb{width:46px;height:46px}.cbot{gap:22px;padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
@@ -1249,7 +1249,9 @@ const avt=(z=40,name,avatarUrl)=>{
   return `<span class="av" style="width:${z}px;height:${z}px;font-size:${z*.42}px">${img?`<img src="${esc(img)}" alt="" style="width:100%;height:100%;object-fit:cover">`:esc((n||'?')[0].toUpperCase())}</span>`;
 };
 const isVerifiedUser=(id)=>!!supabaseUser&&String(id)===String(supabaseUser.id);
-const verifiedName=(name,id)=>`${esc(name||'usuario')} ${isVerifiedUser(id)?'<span class="verified-badge" title="Cuenta verificada"></span>':''}`;
+const VERIFIED_BADGE='https://i.postimg.cc/C1z9n3w3/1000067164-removebg-preview.png';
+const verifiedMark=(id)=>isVerifiedUser(id)?`<img class="verified-badge" src="${VERIFIED_BADGE}" alt="Cuenta verificada" title="Cuenta verificada">`:'';
+const verifiedName=(name,id)=>`${esc(name||'usuario')} ${verifiedMark(id)}`;
 const D7=7*864e5;
 const cl=t=>String(t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9._]/g,'');
 
@@ -1271,7 +1273,15 @@ const vid=id=>S.meta.find(v=>String(v.id)==String(id));
 function theme(){const r=document.documentElement;S.theme=='auto'?r.removeAttribute('data-theme'):r.dataset.theme=S.theme}
 function toast(t){const e=document.createElement('div');e.className='tt';e.setAttribute('role','status');e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),2000)}
 const go=h=>{H=h;try{history.replaceState(null,'',h)}catch(e){}route()};
-const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi ${v.isPhoto?'photo':''}" href="#/v/${v.id}">${v.isPhoto?`<img src="${esc(v.src)}" alt="">`:`<video src="${esc(v.src)}" muted playsinline preload="metadata"></video>`}${v.views>0?`<span class="vws">${sticker('eye','sm')} ${v.views}</span>`:''}<span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
+function fmtCount(n){
+  n=Number(n)||0;
+  if(n>=1e9){const v=n/1e9;return (v>=10?Math.round(v):Number(v.toFixed(1)))+'b'}
+  if(n>=1e6){const v=n/1e6;return (v>=10?Math.round(v):Number(v.toFixed(1)))+'M'}
+  if(n>=1e3){const v=n/1e3;return (v>=10?Math.round(v):Number(v.toFixed(1)))+' mil'}
+  return String(Math.floor(n));
+}
+
+const grid=vs=>vs.length?`<div class="g">${vs.map(v=>`<a class="gi ${v.isPhoto?'photo':''}" href="#/v/${v.id}">${v.isPhoto?`<img src="${esc(v.src)}" alt="">`:`<video src="${esc(v.src)}" muted playsinline preload="metadata"></video>`}${v.views>0?`<span class="vws">${sticker('eye','sm')} ${fmtCount(v.views)}</span>`:''}<span>${esc(v.d)}</span></a>`).join('')}</div>`:`<div class="em"><b>${ic('play',44)}</b>Todavía no hay nada aquí.</div>`;
 
 function sticker(type,size=''){
  const paths={fire:'M12 2c1.8 3.3-.2 5.2 2.4 7.1 1.3 1 2.1 2.4 2.1 4.1 0 3.1-2.3 5.4-5.4 5.4S5.6 16.3 5.6 13c0-2.5 1.6-4.5 3.5-6.2-.1 2.2.8 3.1 1.8 3.7.2-2.8.5-5.1 1.1-8.5Z',coin:'M12 3.5a8.5 8.5 0 1 0 0 17 8.5 8.5 0 0 0 0-17Z',mission:'M6 4h12v16H6zM9 8h6M9 12h6M9 16h4',store:'M4 9h16v11H4zM3 9l2-5h14l2 5M8 9v3M16 9v3',heart:'M12 20.5C5 15.5 3 12 3 8.8A4.8 4.8 0 0 1 12 6.5a4.8 4.8 0 0 1 9 2.3c0 3.2-2 6.7-9 11.7Z',eye:'M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Zm10-3a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z',gift:'M4 8h16v12H4zM3 8h18v4H3zM12 8v12M8.5 8C6 8 5 6.5 5 5s1.5-2 3-2c2 0 4 3 4 5M15.5 8c2.5 0 3.5-1.5 3.5-3s-1.5-2-3-2c-2 0-4 3-4 5',chat:'M4 5.5h16v10.5H10l-4.5 3.5V16H4z',star:'M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9Z',camera:'M4 8h3l2-2h6l2 2h3v10H4zM12 10a3.2 3.2 0 1 0 0 6.4A3.2 3.2 0 0 0 12 10Z'};
@@ -1285,8 +1295,8 @@ const rail=v=>{
   const profileHref=v.userId?`#/u/${esc(v.userId)}`:'#/profile';
   const authorAvatar=avt(46,v.username||'usuario',v.avatarUrl);
   return `<a href="${profileHref}" aria-label="Perfil del autor">${authorAvatar}</a>
-<button data-a="like" class="${S.liked[v.id]?'act':''}" aria-label="Me gusta"><b>${ic('heart',24,S.liked[v.id])}</b><span>${lk}</span></button>
-<button data-a="cm" aria-label="Comentarios"><b>${ic('chat')}</b><span>${cm}</span></button>
+<button data-a="like" class="${S.liked[v.id]?'act':''}" aria-label="Me gusta"><b>${ic('heart',24,S.liked[v.id])}</b><span>${fmtCount(lk)}</span></button>
+<button data-a="cm" aria-label="Comentarios"><b>${ic('chat')}</b><span>${fmtCount(cm)}</span></button>
 <button data-a="sv" class="${S.saved[v.id]?'act':''}" aria-label="Guardar"><b>${ic('mark',24,S.saved[v.id])}</b><span>${S.saved[v.id]?'Guardado':'Guardar'}</span></button>
 <button data-a="duet" aria-label="Dueto"><b>${ic('layout')}</b><span>Dueto</span></button>
 <button data-a="mute" aria-label="Sonido"><b>${ic(S.muted?'voloff':'volon')}</b></button>
@@ -1303,7 +1313,7 @@ const slide=v=>{
   const authorAvatar=avt(30,authorName,v.avatarUrl);
   const isMine=v.userId&&supabaseUser&&v.userId===supabaseUser.id;
   const profileHref=v.userId?`#/u/${esc(v.userId)}`:'#/';
-  const viewsHtml=v.views>0?`<span style="font-size:11px;color:#cfe8ff;opacity:.8">${sticker('eye','sm')} ${v.views}</span>`:'';
+  const viewsHtml='';
   return `<section class="v"><div class="card ${v.isPhoto?'photo-card':''}" data-id="${v.id}" data-uid="${esc(v.userId||'')}" data-uname="${esc(authorName)}">${mediaHtml}<div class="shade"></div>${v.txt?`<div class="tx">${esc(v.txt)}</div>`:''}<div class="info"><a href="${profileHref}" style="display:flex;align-items:center;gap:8px">${authorAvatar}<span style="display:flex;flex-direction:column;line-height:1.08"><b>${esc(displayName)}</b><span style="font-size:11px;color:#ddd">@${esc(authorName)}</span></span>${isMine?'<span class="mu" style="font-size:11px">· tú</span>':''}${viewsHtml}</a><div>${esc(v.d)}</div><div class="tags">${v.tags.map(t=>`<a href="#/t/${esc(t.slice(1))}">${esc(t)}</a>`).join(' ')}</div></div><div class="rail">${rail(v)}</div></div></section>`;
 };
 
@@ -1475,13 +1485,13 @@ async function profile(){
   $('#m').innerHTML=`<div class="pg">
     ${profileBannerHtml()}
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px">
-      <div style="display:flex;gap:14px;align-items:center;flex:1">${avt(80)}<div><h2 style="margin:0" class="verified-name">${esc(ME.n)}<span class="verified-badge" title="Cuenta verificada"></span></h2><span class="mu">@${esc(ME.u)}</span></div></div>
+      <div style="display:flex;gap:14px;align-items:center;flex:1">${avt(80)}<div><h2 style="margin:0" class="verified-name">${esc(ME.n)}<img class="verified-badge" src="https://i.postimg.cc/C1z9n3w3/1000067164-removebg-preview.png" alt="Cuenta verificada" title="Cuenta verificada"></h2><span class="mu">@${esc(ME.u)}</span></div></div>
       <button class="settings-wheel" id="openSettings" aria-label="Ajustes">
         <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </button>
     </div>
     <p>${esc(ME.bio||'Nuevo en Nova')}</p>
-    <div class="st"><span><b>${myVideos.length}</b>Vídeos</span><span><b>${lk}</b>Likes</span><span><b>${totalViews}</b>Vistas</span></div>
+    <div class="st"><span><b>${myVideos.length}</b>Vídeos</span><span><b>${lk}</b>Likes</span><span><b>${fmtCount(totalViews)}</b>Vistas</span></div>
     ${ownLive?`<a class="profile-live-link" href="#/live/${esc(ownLive.id)}"><i class="live-live-dot" aria-hidden="true"></i> En directo · ${Number(ownLive.viewer_count||0)} espectadores</a>`:''}
     <h2>Tus vídeos</h2>${myVideos.length?grid(myVideos):'<div class="em">Todavía no has subido vídeos.</div>'}
     <h2>Guardados</h2>${savedVideos.length?grid(savedVideos):'<div class="em">No has guardado nada todavía.</div>'}
@@ -1519,7 +1529,7 @@ async function publicProfile(userId){
   }catch(e){console.error(e)}
   $('#m').innerHTML=`<div class="pg">
     ${p.banner_url?`<div class="profile-banner"><img src="${esc(p.banner_url)}" alt="Banner de ${esc(p.username)}"></div>`:''}
-    <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0" class="verified-name">${esc(p.display_name||p.username)}${isVerifiedUser(userId)?'<span class="verified-badge" title="Cuenta verificada"></span>':''}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
+    <div class="pfhead">${avt(96,p.username,p.avatar_url)}<h2 style="margin:6px 0 0" class="verified-name">${esc(p.display_name||p.username)}${isVerifiedUser(userId)?'<img class="verified-badge" src="https://i.postimg.cc/C1z9n3w3/1000067164-removebg-preview.png" alt="Cuenta verificada" title="Cuenta verificada">':''}</h2><span class="mu">@${esc(p.username)}</span>${p.bio?`<p style="text-align:center">${esc(p.bio)}</p>`:''}</div>
     ${publicLive?`<a class="profile-live-link" href="#/live/${esc(publicLive.id)}"><i class="live-live-dot" aria-hidden="true"></i> En directo · ${Number(publicLive.viewer_count||0)} espectadores</a>`:''}
     <div class="pfstats"><div class="s"><b>${videos.length}</b><span>Vídeos</span></div><div class="s"><b>${counts.followers}</b><span>Seguidores</span></div><div class="s"><b>${counts.following}</b><span>Siguiendo</span></div></div>
     <div class="chips c"><button class="btn${following?' o':''}" id="followBtn">${following?'Siguiendo':'Seguir'}</button><button class="btn" id="msgBtn">Mensaje</button></div>
@@ -2029,7 +2039,7 @@ const A={
     $('#ci').onkeydown=ev=>{ev.key==='Enter'&&A.cmp()};
     try{await renderCommentSheetFor(curC)}catch(e){}
   },
-  cmp:async()=>{const t=$('#ci').value.trim();if(!t)return;const btn=document.querySelector('[data-a="cmp"]');if(btn)btn.disabled=true;try{await postComment(curC,t);await renderCommentSheetFor(curC)}catch(e){toast('No se pudo')}finally{if(btn)btn.disabled=false}},
+  cmp:async()=>{const t=$('#ci').value.trim();if(!t)return;const btn=document.querySelector('[data-a="cmp"]');if(btn)btn.disabled=true;try{await postComment(curC,t);await renderCommentSheetFor(curC)}catch(e){console.error('Nova comentario:',e);toast('No se pudo publicar: '+String(e.message||e).slice(0,90))}finally{if(btn)btn.disabled=false}},
   del:async e=>{
     const id=e.closest('.card').dataset.id;const v=vid(id);if(!v)return;
     if(!v.remote){if(!confirm('¿Borrar?'))return;S.meta=S.meta.filter(x=>x.id!=id);await idb('delete',id);save();go('#/');return}
@@ -2183,19 +2193,43 @@ function templateEditor(file,tpl){
 async function openDuet(videoId){
   const v=vid(videoId);if(!v)return;
   document.body.classList.add('nl');
-  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" src="${esc(v.src)}" autoplay muted loop playsinline></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div><p class="mu" style="margin-top:8px;font-size:12px">El vídeo final se guarda con las dos partes del dueto.</p></div></div>`;
+  $('#m').innerHTML=`<div class="duet-sheet"><div class="feature-box"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h2 style="margin:0">Dueto</h2><button class="cb" id="duetClose">${ic('x',22)}</button></div><div class="duet-stage"><video id="duetOriginal" src="${esc(v.src)}" autoplay muted loop playsinline></video><video id="duetMe" autoplay muted playsinline></video><span class="duet-label">DUETO</span></div><div class="chips" style="margin-top:12px"><button class="btn o" id="duetFlip">Girar</button><button class="btn" id="duetRec">Grabar</button></div><p id="duetStatus" class="mu" style="margin-top:8px;font-size:12px">Pulsa Grabar para activar la cámara y comenzar.</p></div></div>`;
   $('#duetClose').onclick=()=>go('#/');
-  let stream=null,rec=null,chunks=[],raf=0;
-  try{
-    const original=$('#duetOriginal'),me=$('#duetMe');
-    await new Promise(resolve=>{if(original.readyState>=2)resolve();else original.addEventListener('loadeddata',resolve,{once:true})});
-    stream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});me.srcObject=stream;
-    const canvas=document.createElement('canvas');canvas.width=720;canvas.height=1280;const ctx=canvas.getContext('2d');
-    const draw=()=>{ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);const w=canvas.width/2;const fit=(el,x)=>{const vw=el.videoWidth||360,vh=el.videoHeight||640,sc=Math.max(w/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.drawImage(el,x+(w-dw)/2,(canvas.height-dh)/2,dw,dh)};fit(original,0);fit(me,w);raf=requestAnimationFrame(draw)};draw();
-    $('#duetRec').onclick=()=>{if(rec){rec.stop();return}chunks=[];const out=canvas.captureStream(30),audio=stream.getAudioTracks()[0];if(audio)out.addTrack(audio);const mt=['video/webm;codecs=vp9,opus','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'';rec=new MediaRecorder(out,mt?{mimeType:mt}:{});rec.ondataavailable=e=>e.data.size&&chunks.push(e.data);rec.onstop=()=>{cancelAnimationFrame(raf);stream.getTracks().forEach(t=>t.stop());const blob=new Blob(chunks,{type:rec.mimeType||'video/webm'});rec=null;editor(new File([blob],'dueto.webm',{type:blob.type}),'')};rec.start(500);$('#duetRec').textContent='Parar y continuar';toast('Grabando dueto…')};
-    $('#duetFlip').onclick=()=>{$('#duetMe').style.transform=$('#duetMe').style.transform?'':'scaleX(-1)'};
-  }catch(e){if(stream)stream.getTracks().forEach(t=>t.stop());toast('No se pudo abrir la cámara')}
+  let stream=null,rec=null,chunks=[],raf=0,recording=false,canvas=null,ctx=null;
+  const original=$('#duetOriginal'),me=$('#duetMe'),btn=$('#duetRec'),status=$('#duetStatus');
+  try{await original.play().catch(()=>{});}catch(e){}
+  const stopAll=()=>{if(raf)cancelAnimationFrame(raf);raf=0;if(stream)stream.getTracks().forEach(t=>t.stop());stream=null;me.srcObject=null};
+  const draw=()=>{
+    if(!canvas||!ctx)return;
+    ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);
+    const w=canvas.width/2;
+    const fit=(el,x)=>{const vw=el.videoWidth||360,vh=el.videoHeight||640,sc=Math.max(w/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.drawImage(el,x+(w-dw)/2,(canvas.height-dh)/2,dw,dh)};
+    fit(original,0);fit(me,w);raf=requestAnimationFrame(draw);
+  };
+  const startRecording=async()=>{
+    if(recording)return;
+    btn.disabled=true;status.textContent='Solicitando cámara y micrófono…';
+    try{
+      if(!navigator.mediaDevices?.getUserMedia)throw new Error('Tu navegador no permite usar la cámara desde este archivo. Ábrelo en Chrome/HTTPS.');
+      stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+      me.srcObject=stream;await me.play().catch(()=>{});
+      canvas=document.createElement('canvas');canvas.width=720;canvas.height=1280;ctx=canvas.getContext('2d');draw();
+      const out=canvas.captureStream(30),audio=stream.getAudioTracks()[0];if(audio)out.addTrack(audio);
+      const types=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'];
+      const mt=types.find(t=>window.MediaRecorder&&MediaRecorder.isTypeSupported(t))||'';
+      if(!window.MediaRecorder)throw new Error('MediaRecorder no está disponible en este navegador.');
+      rec=new MediaRecorder(out,mt?{mimeType:mt}:{});chunks=[];recording=true;
+      rec.ondataavailable=e=>{if(e.data?.size)chunks.push(e.data)};
+      rec.onerror=e=>{console.error(e);recording=false;btn.disabled=false;status.textContent='No se pudo grabar el dueto.';stopAll();toast('Error al grabar el dueto')};
+      rec.onstop=()=>{const type=rec.mimeType||'video/webm';const b=new Blob(chunks,{type});recording=false;btn.disabled=false;btn.textContent='Grabar';status.textContent='Dueto grabado. Abriendo publicación…';stopAll();if(b.size<1000){toast('La grabación quedó vacía');return}editor(new File([b],'dueto.webm',{type}),'')};
+      rec.start(250);btn.disabled=false;btn.textContent='Parar y continuar';status.textContent='● Grabando dueto…';toast('Grabando dueto');
+    }catch(e){console.error('Dueto:',e);btn.disabled=false;status.textContent=String(e.message||e);toast('No se pudo iniciar el dueto')}
+  };
+  btn.onclick=()=>{if(recording){if(rec&&rec.state!=='inactive')rec.stop()}else startRecording()};
+  $('#duetFlip').onclick=()=>{me.style.transform=me.style.transform?'':'scaleX(-1)'};
+  $('#duetClose').addEventListener('click',stopAll,{once:false});
 }
+
 async function replyCommentWithVideo(videoId,username){
   const pick=document.createElement('input');pick.type='file';pick.accept='video/*';pick.onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const cloud=await publishCloudVideo(f,`Respuesta a @${username}`);S.meta.unshift(cloud);save();await refreshCloudFeed();toast('Respuesta con vídeo publicada');go('#/v/'+cloud.id)}catch(err){toast('No se pudo publicar')}};pick.click();
 }
