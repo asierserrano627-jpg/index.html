@@ -2084,7 +2084,7 @@ const A={
     }catch(err){toast('No se pudo')}
   },
   sv:async e=>{const id=e.closest('.card').dataset.id;try{await toggleSave(id);toast(S.saved[id]?'Guardado':'Eliminado')}catch(err){toast('No se pudo')}},
-  duet:e=>{const id=e.closest('.card')?.dataset.id;if(id&&typeof window.openDuet==='function')window.openDuet(id);},
+  duet:e=>{const id=e.closest('.card').dataset.id;openDuet(id)},
   mute:()=>{S.muted=!S.muted;save();document.querySelectorAll('video').forEach(v=>v.muted=S.muted);document.querySelectorAll('[data-a=mute] b').forEach(b=>b.innerHTML=ic(S.muted?'voloff':'volon'));toast(S.muted?'Silenciado':'Sonido')},
   cm:async e=>{
     curC=e.closest('.card').dataset.id;currentCommentsVideoId=curC;
@@ -2603,8 +2603,8 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
   window.openSettings=function(){
     const old=document.querySelector('.nova-settings-v2');if(old)old.remove();
     const o=document.createElement('div');o.className='nova-settings-v2';
-    const tabs=[['pet','pet','Mascota'],['poop','poop','Caca'],['food','food','Comida'],['play','play','Jugar'],['bath','bath','Baño'],['sleep','sleep','Dormir'],['strokes','heart','Caricias'],['clothes','clothes','Ropa'],['shop','shop','Tienda'],['toys','toy','Juguetes'],['missions','mission','Misiones'],['coins','coin','Monedas'],['stats','stats','Estado'],['effects','effects','Efectos'],['look','look','Apariencia'],['sound','sound','Sonido'],['privacy','privacy','Privacidad'],['data','data','Datos']];
-    o.innerHTML=`<main class="nsv2-main"><div class="nsv2-head"><div><div class="nsv2-title">Configuración</div><div class="nsv2-sub">Todo Nova, organizado en botones.</div></div><button class="nsv2-close" id="nsv2Close">×</button></div><div id="nsv2Content"></div></main><aside class="nsv2-rail">${tabs.map((t,i)=>`<button class="nsv2-tab ${i===0?'active':''}" data-tab="${t[0]}"><b data-cfg-kind="${t[1]}"></b><span>${t[2]}</span></button>`).join('')}</aside>`;
+    const tabs=[['pet','🐾','Mascota'],['poop','💩','Caca'],['food','🍗','Comida'],['play','🎮','Jugar'],['bath','🫧','Baño'],['sleep','🌙','Dormir'],['strokes','🤍','Caricias'],['clothes','👕','Ropa'],['shop','🛍️','Tienda'],['toys','🧸','Juguetes'],['missions','🎯','Misiones'],['coins','🪙','Monedas'],['stats','📊','Estado'],['effects','🌌','Efectos'],['look','✨','Apariencia'],['sound','🔊','Sonido'],['privacy','🔒','Privacidad'],['data','💾','Datos']];
+    o.innerHTML=`<main class="nsv2-main"><div class="nsv2-head"><div><div class="nsv2-title">Configuración</div><div class="nsv2-sub">Todo Nova, organizado en botones.</div></div><button class="nsv2-close" id="nsv2Close">×</button></div><div id="nsv2Content"></div></main><aside class="nsv2-rail">${tabs.map((t,i)=>`<button class="nsv2-tab ${i===0?'active':''}" data-tab="${t[0]}"><b>${t[1]}</b><span>${t[2]}</span></button>`).join('')}</aside>`;
     document.body.appendChild(o);
     const content=o.querySelector('#nsv2Content');
     const render=(tab)=>{
@@ -2674,33 +2674,13 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
         const b=await response.blob();objectUrl=URL.createObjectURL(b);
         if(b.type.startsWith('image/')){sourceType='image';img.src=objectUrl;await new Promise((res,rej)=>{img.onload=res;img.onerror=rej});img.style.display='block';sourceReady=true;status.textContent='Foto lista. Pulsa Grabar para crear un dueto en vídeo.'}
         else{sourceType='video';original.src=objectUrl;await new Promise((res,rej)=>{original.onloadedmetadata=res;original.onerror=rej});await original.play().catch(()=>{});original.style.display='block';sourceReady=true;status.textContent='Vídeo listo. Pulsa Grabar para comenzar.'}
-      }catch(e){
-        console.warn('Dueto V4: no se pudo descargar el origen para canvas',e);
-        sourceReady=false;
-        status.textContent='El servidor bloquea la composición directa. Puedes intentar el modo de captura de pantalla.';
-        btn.disabled=false;
-      }
+      }catch(e){sourceReady=false;status.textContent='No se puede componer este contenido desde el navegador. Comprueba que el bucket de vídeos permita CORS.';btn.disabled=true;console.error('Dueto V4',e)}
     }
     await loadSource();
     function draw(){if(!canvas||!ctx)return;ctx.fillStyle='#000';ctx.fillRect(0,0,canvas.width,canvas.height);const half=canvas.width/2;const drawCover=(el,x,w)=>{const vw=el.videoWidth||el.naturalWidth||360,vh=el.videoHeight||el.naturalHeight||640,sc=Math.max(w/vw,canvas.height/vh),dw=vw*sc,dh=vh*sc;ctx.save();if(el===me&&flip){ctx.translate(x+w,0);ctx.scale(-1,1);ctx.drawImage(el,(w-dw)/2,(canvas.height-dh)/2,dw,dh)}else ctx.drawImage(el,x+(w-dw)/2,(canvas.height-dh)/2,dw,dh);ctx.restore()};const src=sourceType==='image'?img:original;drawCover(src,0,half);drawCover(me,half,half);ctx.fillStyle='#fff';ctx.fillRect(half-1,0,2,canvas.height);raf=requestAnimationFrame(draw)}
     let recordingBusy=false;
     async function start(){
-      if(!sourceReady){
-        if(navigator.mediaDevices?.getDisplayMedia && window.MediaRecorder){
-          try{
-            status.textContent='Comparte esta ventana/pantalla para grabar el dueto…';
-            const display=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
-            const mt=['video/webm;codecs=vp9,opus','video/webm;codecs=vp8,opus','video/webm'].find(t=>MediaRecorder.isTypeSupported(t))||'';
-            const rr=new MediaRecorder(display,mt?{mimeType:mt}:{}); const cc=[];
-            rr.ondataavailable=e=>{if(e.data?.size)cc.push(e.data)};
-            rr.onstop=()=>{display.getTracks().forEach(t=>t.stop());const type=rr.mimeType||'video/webm',b=new Blob(cc,{type});btn.disabled=false;btn.textContent='Grabar dueto';recordingBusy=false;if(b.size>1000){status.textContent='Dueto capturado. Abriendo publicación…';const f=new File([b],'dueto-nova.webm',{type});window.editor?window.editor(f,''):editor(f,'')}else status.textContent='La captura quedó vacía.'};
-            rr.start(200); recordingBusy=true; btn.disabled=false; btn.textContent='Parar grabación'; status.textContent='● Capturando… Toca “Parar grabación” para terminar.';
-            btn.onclick=e=>{e.preventDefault();e.stopPropagation();if(rr.state==='recording'){btn.disabled=true;rr.stop()}else start()};
-            return;
-          }catch(err){status.textContent='No se pudo iniciar la captura: '+(err.message||err);return}
-        }
-        status.textContent='El contenido original no se puede componer en este navegador.';return
-      }
+      if(!sourceReady){status.textContent='El contenido original todavía no está listo.';return}
       if(recordingBusy)return; recordingBusy=true; btn.disabled=true;
       status.textContent='Solicitando cámara y micrófono…';
       try{
@@ -2767,19 +2747,6 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
 </script>
 
 
-<style id="nova-sticker-fix">
-/* Stickers Nova: evita que los estilos globales de span conviertan los iconos en texto gigante */
-.nsv2-action .ico{flex:0 0 42px!important;width:42px!important;height:42px!important;display:grid!important;place-items:center!important;font-size:0!important;line-height:0!important;overflow:visible!important}
-.nsv2-action .ico .cfg-sticker{width:42px!important;height:42px!important;border-radius:14px!important}
-.nsv2-action .ico .cfg-sticker svg{width:32px!important;height:32px!important}
-.nsv2-tab b.cfg-sticker{font-size:0!important}
-.create-option>.co-icon{flex:0 0 52px!important}
-.create-option>.co-icon .nv-sticker{display:grid!important;width:38px!important;height:38px!important;margin:0!important}
-.create-option>.co-icon span{display:grid!important;color:inherit!important;font-size:inherit!important;margin:0!important}
-.create-option>span:last-child{flex:1;min-width:0}
-.create-option>span:last-child>span{display:block;color:var(--mu);font-size:12px;margin-top:2px}
-.nsv2-tab .cfg-sticker{font-size:0!important;line-height:0!important}
-</style>
 <style id="nova-v5-style">
 .cfg-sticker{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:9px;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.34),rgba(139,123,255,.28) 35%,rgba(53,208,255,.16) 72%,transparent);box-shadow:0 0 12px rgba(139,123,255,.35),inset 0 0 8px rgba(255,255,255,.08);overflow:visible}
 .cfg-sticker svg{width:21px;height:21px;overflow:visible;filter:drop-shadow(0 0 4px rgba(139,123,255,.8))}
@@ -2829,7 +2796,7 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
   // Sustituye únicamente los iconos de las pestañas por stickers SVG, sin tocar sus nombres.
   function refreshConfigStickerIcons(root){
     if(!root)return;
-    root.querySelectorAll('.nsv2-tab b[data-cfg-kind]').forEach(old=>{old.outerHTML=novaCfgSticker(old.dataset.cfgKind||'effects')});
+    root.querySelectorAll('.nsv2-tab').forEach(b=>{const k=b.dataset.tab;const label=b.querySelector('span');const old=b.querySelector('b');if(old)old.outerHTML=novaCfgSticker(k);});
     root.querySelectorAll('.nsv2-action .ico').forEach(el=>{
       const host=el.parentElement?.textContent?.toLowerCase()||'';
       let k='effects';
@@ -2837,25 +2804,6 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
       el.innerHTML=novaCfgSticker(k);
     });
   }
-
-  function forcePetStickers(root){
-    if(!root || typeof window.novaCfgSticker!=='function')return;
-    root.querySelectorAll('.nsv2-tab b[data-cfg-kind]').forEach(el=>{
-      if(el.dataset.novaStickerBound==='1')return;
-      const kind=el.dataset.cfgKind||'effects';
-      el.outerHTML=window.novaCfgSticker(kind);
-    });
-    root.querySelectorAll('.nsv2-action .ico').forEach(el=>{
-      if(el.dataset.novaStickerBound==='1')return;
-      let host=(el.parentElement?.textContent||'').toLowerCase(),k='effects';
-      if(/caca|recoger/.test(host))k='poop'; else if(/comida|snack|agua/.test(host))k='food'; else if(/jugar|pelota|baile|juguete|radio/.test(host))k='play'; else if(/baño|limpieza/.test(host))k='bath'; else if(/mascota|compañero|elegir/.test(host))k='pet'; else if(/caricia/.test(host))k='heart'; else if(/ropa|conjunto|armario/.test(host))k='clothes'; else if(/misión|recompensa/.test(host))k='mission'; else if(/moneda/.test(host))k='coin'; else if(/exportar|datos/.test(host))k='data'; else if(/tema|apariencia/.test(host))k='look'; else if(/sonido|vibración/.test(host))k='sound';
-      el.dataset.novaStickerBound='1';
-      el.textContent='';
-      el.insertAdjacentHTML('afterbegin',window.novaCfgSticker(k));
-    });
-  }
-  const stickerObserver=new MutationObserver(()=>{const root=document.querySelector('.nova-settings-v2');if(root)forcePetStickers(root)});
-  stickerObserver.observe(document.body,{childList:true,subtree:true});
 
   // Reabre la configuración y actualiza los iconos cada vez que se abre.
   const originalOpenSettings=window.openSettings;
@@ -3004,104 +2952,3 @@ function openNovaFitting(clothId){const c=NOVA_CLOTHES.find(x=>x.id===clothId)||
 })();
 </script>
 </body></html>
-<!-- NOVA CARE V6: mobile-safe pet interactions -->
-<style id="nova-care-v6-style">
-  .nova-care-panel,.nova-care-panel *,.nova-settings-v2,.nova-settings-v2 button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
-  .nova-care-panel{z-index:100004!important;pointer-events:auto!important}
-  .nova-care-panel button,.nova-settings-v2 button{pointer-events:auto!important;cursor:pointer!important}
-  .pet-bath-stage.bath-run .bath-water{animation:novaBathWater 2.2s ease-in-out infinite}
-  .pet-bath-stage.bath-run .bath-bubbles i{animation:novaBubble 1.7s ease-in-out infinite}
-  .pet-bath-stage.bath-run .bath-pet{animation:novaBathPet 2.2s ease-in-out infinite!important}
-  .pet-bath-stage.bath-run:after{content:'✦';position:absolute;inset:25px auto auto 50%;font-size:30px;color:#fff;filter:drop-shadow(0 0 12px #35d0ff);animation:novaSparkle 1s ease-in-out infinite;z-index:8}
-  @keyframes novaBathWater{0%,100%{transform:translateY(3px);filter:brightness(.9)}50%{transform:translateY(-3px);filter:brightness(1.2)}}
-  @keyframes novaBubble{0%{transform:translateY(25px) scale(.5);opacity:0}25%{opacity:1}100%{transform:translateY(-100px) scale(1.15);opacity:0}}
-  @keyframes novaBathPet{0%{transform:translateX(-70px) rotate(-3deg)}25%{transform:translateX(-18px) rotate(2deg)}50%{transform:translateX(0) rotate(0)}75%{transform:translateX(8px) rotate(-1deg)}100%{transform:translateX(0) rotate(0)}}
-  @keyframes novaSparkle{0%,100%{transform:translate(-50%,0) scale(.7);opacity:.3}50%{transform:translate(-50%,0) scale(1.3);opacity:1}}
-  .nsv2-action:focus-visible,.nsv2-btn:focus-visible{outline:2px solid #35d0ff;outline-offset:2px}
-  .nova-care-panel .nsv2-action .ico,.nova-settings-v2 .nsv2-action .ico{font-size:0!important}
-</style>
-<script id="nova-care-v6-script">
-(function(){
-  function toast(t){
-    if(typeof window.careToast==='function') return window.careToast(t);
-    let x=document.querySelector('.nsv2-toast');if(!x){x=document.createElement('div');x.className='nsv2-toast';document.body.appendChild(x)}x.textContent=t;x.classList.add('show');clearTimeout(x._novaT);x._novaT=setTimeout(()=>x.classList.remove('show'),1800);
-  }
-  function save(){try{if(typeof saveCare==='function')saveCare()}catch(e){}}
-  function petAnimate(kind){
-    const p=document.querySelector('.nova-care-panel .nsv2-pet-art, .nova-care-panel .pet-mini');
-    if(!p)return;
-    const key=kind==='dance'?'dance':kind==='ball'?'ball':'bounce';
-    const frames=key==='dance'?[{transform:'translateY(0) rotate(0)'},{transform:'translateY(-18px) rotate(-8deg)'},{transform:'translateY(0) rotate(8deg)'},{transform:'translateY(-10px) rotate(0)'},{transform:'translateY(0)'}]:key==='ball'?[{transform:'translateX(0) rotate(0)'},{transform:'translateX(35px) rotate(7deg)'},{transform:'translateX(-28px) rotate(-6deg)'},{transform:'translateX(0) rotate(0)'}]:[{transform:'translateY(0) scale(1)'},{transform:'translateY(-15px) scale(1.04)'},{transform:'translateY(0) scale(1)'}];
-    try{p.animate(frames,{duration:1100,easing:'ease-in-out'})}catch(e){}
-  }
-  function openCare(type){
-    if(typeof window.openSettings==='function'){
-      // Si la configuración no está abierta, ábrela primero.
-      if(!document.querySelector('.nova-settings-v2')) window.openSettings();
-    }
-    if(typeof window.__novaPetCarePanel==='function') return window.__novaPetCarePanel(type);
-  }
-  // Captura de clicks en fase capture: funciona incluso cuando otra capa/handler ha quedado mal enlazada.
-  document.addEventListener('click',function(ev){
-    const b=ev.target.closest?.('[data-care],[data-play],[data-food]');
-    if(!b)return;
-    const settings=b.closest('.nova-settings-v2');
-    if(!settings)return;
-    // Los botones de acciones de mascota se gestionan aquí con un único handler.
-    if(b.dataset.care){
-      ev.preventDefault();ev.stopImmediatePropagation();
-      const x=b.dataset.care;
-      if(x==='petpick'){const rail=settings.querySelector('.nsv2-tab[data-tab="pet"]'); if(rail){rail.click();setTimeout(()=>settings.querySelector('.nsv2-action[data-care="petpick"]')?.click(),0)}; return;}
-      if(x==='clothes'){settings.querySelector('.nsv2-tab[data-tab="clothes"]')?.click();return;}
-      if(typeof window.__novaPetCarePanel==='function')window.__novaPetCarePanel(x);
-      return;
-    }
-    if(b.dataset.food){
-      ev.preventDefault();ev.stopImmediatePropagation();
-      if(typeof care==='undefined')return;
-      const v=b.dataset.food;
-      care.hunger=Math.min(100,care.hunger+(v==='star'?40:v==='meal'?25:v==='water'?5:12));
-      if(v==='water')care.energy=Math.min(100,care.energy+18);
-      care.poop=true;care.lastFeed=Date.now();save();petAnimate('bounce');toast(v==='water'?'💧 Agua: +energía':'🍽️ ¡Comida servida!');
-      return;
-    }
-    if(b.dataset.play){
-      ev.preventDefault();ev.stopImmediatePropagation();
-      if(typeof care==='undefined')return;
-      const v=b.dataset.play;care.fun=Math.min(100,care.fun+18);care.energy=Math.max(0,care.energy-5);save();petAnimate(v);const st=document.querySelector('.nova-care-panel #playStatus');if(st)st.textContent=v==='ball'?'¡Corre detrás de la pelota!':v==='dance'?'¡Está bailando!':v==='toy'?'¡Está jugando con su juguete!':'¡Persigue las estrellas!';toast(v==='ball'?'🎾 ¡Pelota!':v==='dance'?'💃 ¡Baile!':v==='toy'?'🧸 ¡Juguete!':'✨ ¡Estrellas!');
-      const ball=document.querySelector('.nova-care-panel #playBall');if(ball&&v==='ball'){ball.classList.remove('run');void ball.offsetWidth;ball.classList.add('run');setTimeout(()=>ball.classList.remove('run'),1500)}
-    }
-  },true);
-
-  // Exporta una referencia segura al panel de cuidados original.
-  const wait=setInterval(()=>{
-    try{
-      if(typeof petCarePanel==='function'){
-        window.__novaPetCarePanel=function(type){petCarePanel(type);};
-        clearInterval(wait);
-      }
-    }catch(e){}
-  },20);
-
-  // Botones internos de caca/baño: handler de respaldo por delegación.
-  document.addEventListener('click',function(ev){
-    const b=ev.target.closest?.('#carePoop,#careBath,#careSleep');if(!b)return;
-    const panel=b.closest('.nova-care-panel');if(!panel)return;
-    if(b.id==='carePoop'){
-      ev.preventDefault();ev.stopImmediatePropagation();
-      try{care.poop=!care.poop;save();window.__novaPetCarePanel('poop')}catch(e){toast('No se pudo actualizar Caca')}
-    }else if(b.id==='careBath'){
-      ev.preventDefault();ev.stopImmediatePropagation();
-      const stage=panel.querySelector('#careBathStage'),pet=panel.querySelector('#careBathPet'),status=panel.querySelector('#bathStatus'),towel=panel.querySelector('#bathTowel');if(!stage||!pet)return;
-      b.disabled=true;stage.classList.remove('bath-run');void stage.offsetWidth;stage.classList.add('bath-run');status.textContent='Entrando en la bañera…';
-      try{pet.animate([{transform:'translateX(-100px)'},{transform:'translateX(-15px)'},{transform:'translateX(0)'}],{duration:900,easing:'cubic-bezier(.2,.9,.3,1)'})}catch(e){}
-      setTimeout(()=>status.textContent='Lavando con burbujas…',900);setTimeout(()=>status.textContent='Enjuagando…',2100);setTimeout(()=>{care.clean=100;care.fun=Math.min(100,care.fun+8);care.lastBath=Date.now();save();status.textContent='Secando…';towel?.classList.add('show')},3300);setTimeout(()=>{towel?.classList.remove('show');status.textContent='¡Baño terminado!';b.disabled=false;toast('🫧 ¡Tu mascota está limpia!')},4700);
-    }else if(b.id==='careSleep'){
-      ev.preventDefault();ev.stopImmediatePropagation();care.energy=100;save();toast('🌙 Tu mascota ha descansado');
-    }
-  },true);
-
-  // Evita que botones del panel pierdan interacción táctil por estilos de otras versiones.
-  const css=document.createElement('style');css.textContent='.nova-settings-v2,.nova-care-panel{isolation:isolate}.nova-settings-v2 button,.nova-care-panel button{user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}';document.head.appendChild(css);
-})();
-</script>
